@@ -4,4 +4,11 @@
     <string name="bottom_bar_historique">Historique</string>
     <string name="bottom_bar_itineraires">Itinéraire</string>
     <string name="bottom_bar_parametres">Paramètres</string>
+
+
+    <string name="email">Adresse e-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">Se connecter</string>
+    <string name="signin">Créer un compte</string>
+
 </resources>
