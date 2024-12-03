@@ -5,10 +5,20 @@
     <string name="bottom_bar_itineraires">Itinéraire</string>
     <string name="bottom_bar_parametres">Paramètres</string>
 
-
+    <string name="lastname">Nom</string>
+    <string name="firstname">Prénom</string>
     <string name="email">Adresse e-mail</string>
+
+    <string name="adresse">Adresse postale</string>
+    <string name="code_postal">Code postal</string>
+    <string name="ville">Ville</string>
+
     <string name="password">Mot de passe</string>
+    <string name="password_again">Resaisir le mot de passe</string>
+
     <string name="login">Se connecter</string>
     <string name="signin">Créer un compte</string>
+    <string name="save">Enregistrer</string>
+    <string name="app_name">Tournée de commercial</string>
 
 </resources>
