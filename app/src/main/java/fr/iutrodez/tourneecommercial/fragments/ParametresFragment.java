@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 
 public class ParametresFragment extends Fragment {
@@ -21,12 +21,12 @@ public class ParametresFragment extends Fragment {
     }
 
 
-    public MainActivity parent;
+    public ActivitePrincipale parent;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        parent = (MainActivity) context;
+        parent = (ActivitePrincipale) context;
     }
 
     @Nullable

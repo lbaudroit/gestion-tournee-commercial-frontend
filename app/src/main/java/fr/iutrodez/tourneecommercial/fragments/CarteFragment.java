@@ -11,12 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 
 public class CarteFragment extends Fragment {
 
-    public MainActivity parent;
+    public ActivitePrincipale parent;
 
     public static CarteFragment newInstance() {
         return new CarteFragment();
@@ -25,7 +25,7 @@ public class CarteFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        parent = (MainActivity) context;
+        parent = (ActivitePrincipale) context;
     }
 
     @Nullable

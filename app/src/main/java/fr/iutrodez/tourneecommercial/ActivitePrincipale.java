@@ -16,7 +16,7 @@ import fr.iutrodez.tourneecommercial.fragments.HistoriqueFragment;
 import fr.iutrodez.tourneecommercial.fragments.ItinerairesFragment;
 import fr.iutrodez.tourneecommercial.fragments.ParametresFragment;
 
-public class MainActivity extends AppCompatActivity
+public class ActivitePrincipale extends AppCompatActivity
         implements NavigationBarView.OnItemSelectedListener {
 
     NavigationBarView navbar;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activite_principale);
         navbar = findViewById(R.id.bottom_bar);
         navbar.setOnItemSelectedListener(this);
         replaceMainFragment(ClientsFragment.newInstance());
