@@ -1,72 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Informations"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+    <TableRow android:layout_marginBottom="8dp">
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Informations"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            />
+    </TableRow>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
+    <TableRow android:layout_marginBottom="8dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outline_edit_text"
+            android:hint="Nom de l'entreprise"
+            android:inputType="text"
+            android:textSize="16sp"
+            android:id="@+id/nomEntreprise"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
+    </TableRow>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
+    <TableRow android:layout_marginBottom="8dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outline_edit_text"
+            android:hint="Adresse de l'entreprise"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:drawableLeft="@drawable/home" />
+    </TableRow>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
+    <TableRow android:layout_marginBottom="8dp">
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/outline_edit_text"
+            android:hint="Code postal"
+            android:textSize="16sp"
+            android:drawableLeft="@drawable/location_city"
+            android:inputType="text" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp" />
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/outline_edit_text"
+            android:hint="Ville"
+            android:drawableLeft="@drawable/location_city"
+            android:ellipsize="end"
+            android:textSize="16sp"
 
+            android:inputType="text" />
+    </TableRow>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginVertical="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="18dp"
 
+        />
+
+    <TableRow android:layout_marginBottom="8dp">
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contact"
+            android:textSize="24sp"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="8dp">
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/outline_edit_text"
+            android:drawableLeft="@drawable/person"
+            android:hint="Nom"
+            android:textSize="16sp"
+
+            android:inputType="text" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/outline_edit_text"
+            android:drawableLeft="@drawable/person"
+            android:hint="Prénom"
+            android:textSize="16sp"
+
+            android:inputType="text" />
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="8dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outline_edit_text"
+            android:hint="Numéro de téléphone"
+            android:drawableLeft="@drawable/call"
+            android:layout_weight="1"
+            android:textSize="16sp"
+
+            android:inputType="text" />
+    </TableRow>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginVertical="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="18dp"
+        />
+
+    <TableRow android:layout_marginBottom="8dp">
+        <TextView
+            android:textColor="#000000"
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Statut"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="8dp">
+        <Switch
+            android:id="@+id/statut"
+            android:textSize="16sp"
+            android:text="Client"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </TableRow>
 
 </TableLayout>
