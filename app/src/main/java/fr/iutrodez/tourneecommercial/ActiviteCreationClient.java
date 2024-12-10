@@ -7,12 +7,12 @@ import android.widget.Switch;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class CreateClientActivity extends AppCompatActivity{
+public class ActiviteCreationClient extends AppCompatActivity{
         private Switch aswitch;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_create_clients);
+            setContentView(R.layout.activite_creation_client);
             ActionBar actionBar = getSupportActionBar();
             aswitch = findViewById(R.id.statut);
             if (actionBar != null) {

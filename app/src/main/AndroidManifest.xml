@@ -13,9 +13,8 @@
         android:theme="@style/Theme.TourneeCommercial"
         tools:targetApi="33">
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            >
+            android:name=".ActivitePrincipale"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

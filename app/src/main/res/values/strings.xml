@@ -1,14 +1,37 @@
 <resources>
+    <string name="app_name">Tournée de commercial</string>
+
+    <!-- Barre de navigation en bas -->
     <string name="bottom_bar_clients">Clients</string>
     <string name="bottom_bar_carte">Carte</string>
     <string name="bottom_bar_historique">Historique</string>
     <string name="bottom_bar_itineraires">Itinéraire</string>
     <string name="bottom_bar_parametres">Paramètres</string>
 
-
+    <!-- Informations utilisateurs -->
+    <string name="lastname">Nom</string>
+    <string name="firstname">Prénom</string>
     <string name="email">Adresse e-mail</string>
+    <string name="adresse">Adresse postale</string>
+    <string name="code_postal">Code postal</string>
+    <string name="ville">Ville</string>
+
+    <!-- Création de compte et connexion -->
     <string name="password">Mot de passe</string>
+    <string name="password_again">Resaisir le mot de passe</string>
     <string name="login">Se connecter</string>
     <string name="signin">Créer un compte</string>
+
+    <!-- Mots-clés généralistes -->
+    <string name="save">Enregistrer</string>
+    <string name="ajouter">Ajouter</string>
+    <string name="supprimer">Supprimer</string>
+
+    <!-- Utilitaires -->
+    <string name="todo">TODO</string>
+    <string name="placeholder">placeholder</string>
+
+    <!-- Itinéraires -->
+    <string name="affichage_nombre_km">%d km</string>
 
 </resources>

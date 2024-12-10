@@ -2,5 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blue">#46A0C4</color>
+    <color name="bg">@color/white</color> <!--TODO remplacer-->
+    <color name="supprimer">#DD3737</color>
+    <color name="ajouter">#46A0C4</color>
 </resources>
