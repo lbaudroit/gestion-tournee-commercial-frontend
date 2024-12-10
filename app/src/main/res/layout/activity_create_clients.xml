@@ -40,7 +40,7 @@
             android:drawableLeft="@drawable/home" />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="8dp" >
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -49,7 +49,8 @@
             android:hint="Code postal"
             android:textSize="16sp"
             android:drawableLeft="@drawable/location_city"
-            android:inputType="text" />
+            android:inputType="text"
+            android:layout_marginRight="3dp" />
 
         <EditText
             android:layout_width="0dp"
@@ -60,7 +61,7 @@
             android:drawableLeft="@drawable/location_city"
             android:ellipsize="end"
             android:textSize="16sp"
-
+            android:layout_marginLeft="3dp"
             android:inputType="text" />
     </TableRow>
 
@@ -85,7 +86,7 @@
             android:textStyle="bold" />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="8dp" >
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -94,7 +95,7 @@
             android:drawableLeft="@drawable/person"
             android:hint="Nom"
             android:textSize="16sp"
-
+            android:layout_marginRight="3dp"
             android:inputType="text" />
 
         <EditText
@@ -105,11 +106,12 @@
             android:drawableLeft="@drawable/person"
             android:hint="Prénom"
             android:textSize="16sp"
+            android:layout_marginLeft="3dp"
 
             android:inputType="text" />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="8dp" >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -119,7 +121,7 @@
             android:layout_weight="1"
             android:textSize="16sp"
 
-            android:inputType="text" />
+            android:inputType="phone" />
     </TableRow>
 
     <View
@@ -146,10 +148,16 @@
         <Switch
             android:id="@+id/statut"
             android:textSize="16sp"
-            android:text="Client"
+            android:text="Prospect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="changeStatut"
             />
     </TableRow>
-
+    <TableRow>
+        <Button
+            android:layout_span="1"
+            android:text="Enregistrer"
+            android:onClick="enregistrer"></Button>
+    </TableRow>
 </TableLayout>
