@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="@dimen/default_page_margin"
+    app:layout_constraintWidth="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/list_item_top_padding">
+
+        <TextView
+            android:id="@+id/titre"
+            style="@style/ListTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder" />
+
+        <TextView
+            android:id="@+id/sous_titre"
+            style="@style/ListSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/supprimer"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/supprimer"
+        android:src="@drawable/baseline_delete_24"
+        app:tint="@color/bg"
+        style="@style/ListItemDeleteButton" />
+</LinearLayout>

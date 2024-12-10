@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="default_page_margin">10dp</dimen>
+
+    <!-- element de liste -->
+    <dimen name="list_item_height">65dp</dimen>
+    <dimen name="list_item_top_padding">6dp</dimen>
+
+    <!-- bouton supprimer -->
+    <dimen name="padding_icone_btn_supprimer">6dp</dimen>
+    <dimen name="arrondi_btn_supprimer">20dp</dimen>
+    <dimen name="taille_btn_supprimer">30dp</dimen>
+
+    <!-- bouton ajouter -->
+    <dimen name="padding_start_btn_ajouter">10dp</dimen>
+    <dimen name="padding_end_btn_ajouter">30dp</dimen>
+    <dimen name="padding_horizontal_btn_ajouter">3dp</dimen>
 </resources>

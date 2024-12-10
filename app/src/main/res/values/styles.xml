@@ -6,4 +6,35 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
+    <style name="ListTitle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ListSubtitle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">12sp</item>
+        <item name="android:alpha">0.8</item>
+
+    </style>
+
+    <style name="ListItemDeleteButton">
+        <item name="android:layout_width">@dimen/taille_btn_supprimer</item>
+        <item name="android:layout_height">@dimen/taille_btn_supprimer</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:background">@drawable/arrondi_supprimer</item>
+        <item name="android:padding">@dimen/padding_icone_btn_supprimer</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="BoutonAjouter">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/ajouter</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">@dimen/padding_start_btn_ajouter</item>
+        <item name="android:paddingTop">@dimen/padding_horizontal_btn_ajouter</item>
+        <item name="android:paddingBottom">@dimen/padding_horizontal_btn_ajouter</item>
+        <item name="android:paddingEnd">@dimen/padding_end_btn_ajouter</item>
+    </style>
+
 </resources>
