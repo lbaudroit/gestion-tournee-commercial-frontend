@@ -35,9 +35,10 @@ public class CreateClientActivity extends AppCompatActivity{
         /**
          * enregistrement du client
          * @param view
+         * TODO
          */
         public void enregistrer(View view){
-            System.out.println("");
+            System.out.println("enregistrement");
         }
     }
 
