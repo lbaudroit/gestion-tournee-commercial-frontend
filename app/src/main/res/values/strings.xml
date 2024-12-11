@@ -9,8 +9,8 @@
     <string name="bottom_bar_parametres">Paramètres</string>
 
     <!-- Informations utilisateurs -->
-    <string name="lastname">Nom</string>
-    <string name="firstname">Prénom</string>
+    <string name="nom">Nom</string>
+    <string name="prenom">Prénom</string>
     <string name="email">Adresse e-mail</string>
     <string name="adresse">Adresse postale</string>
     <string name="code_postal">Code postal</string>
@@ -33,5 +33,15 @@
 
     <!-- Itinéraires -->
     <string name="affichage_nombre_km">%d km</string>
+
+    <!-- Client -->
+    <string name="statut">Statut</string>
+    <string name="statut_client">Prospect</string>
+    <string name="info">Informations</string>
+    <string name="nom_entreprise">Nom de l\'entreprise</string>
+    <string name="adresse_entreprise">Adresse de l\'entreprise</string>
+    <string name="contact">Contact</string>
+    <string name="telephone">Numéro de téléphone</string>
+
 
 </resources>

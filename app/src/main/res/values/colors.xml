@@ -5,4 +5,5 @@
     <color name="bg">@color/white</color> <!--TODO remplacer-->
     <color name="supprimer">#DD3737</color>
     <color name="ajouter">#46A0C4</color>
+    <color name="couleur_barre">#CCCCCC</color>
 </resources>

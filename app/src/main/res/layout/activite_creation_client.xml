@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:paddingBottom="50dp">
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,10 +14,10 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Informations"
+            android:text="@string/info"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="@color/black"
             />
     </TableRow>
 
@@ -21,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/outline_edit_text"
-            android:hint="Nom de l'entreprise"
+            android:hint="@string/nom_entreprise"
             android:inputType="text"
             android:textSize="16sp"
             android:id="@+id/nomEntreprise"
@@ -34,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/outline_edit_text"
-            android:hint="Adresse de l'entreprise"
+            android:hint="@string/nom_entreprise"
             android:layout_weight="1"
             android:textSize="16sp"
             android:drawableLeft="@drawable/home" />
@@ -46,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/outline_edit_text"
-            android:hint="Code postal"
+            android:hint="@string/code_postal"
             android:textSize="16sp"
             android:drawableLeft="@drawable/location_city"
             android:inputType="text"
@@ -57,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/outline_edit_text"
-            android:hint="Ville"
+            android:hint="@string/ville"
             android:drawableLeft="@drawable/location_city"
             android:ellipsize="end"
             android:textSize="16sp"
@@ -68,7 +73,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#CCCCCC"
+        android:background="@color/couleur_barre"
         android:layout_marginVertical="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="18dp"
@@ -80,9 +85,9 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contact"
+            android:text="@string/contact"
             android:textSize="24sp"
-            android:textColor="#000000"
+            android:textColor="@color/black"
             android:textStyle="bold" />
     </TableRow>
 
@@ -93,7 +98,7 @@
             android:layout_weight="1"
             android:background="@drawable/outline_edit_text"
             android:drawableLeft="@drawable/person"
-            android:hint="Nom"
+            android:hint="@string/nom"
             android:textSize="16sp"
             android:layout_marginRight="3dp"
             android:inputType="text" />
@@ -104,7 +109,7 @@
             android:layout_weight="1"
             android:background="@drawable/outline_edit_text"
             android:drawableLeft="@drawable/person"
-            android:hint="Prénom"
+            android:hint="@string/prenom"
             android:textSize="16sp"
             android:layout_marginLeft="3dp"
 
@@ -116,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/outline_edit_text"
-            android:hint="Numéro de téléphone"
+            android:hint="@string/telephone"
             android:drawableLeft="@drawable/call"
             android:layout_weight="1"
             android:textSize="16sp"
@@ -127,7 +132,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#CCCCCC"
+        android:background="@color/couleur_barre"
         android:layout_marginVertical="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="18dp"
@@ -135,11 +140,11 @@
 
     <TableRow android:layout_marginBottom="8dp">
         <TextView
-            android:textColor="#000000"
+            android:textColor="@color/black"
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Statut"
+            android:text="@string/statut"
             android:textSize="24sp"
             android:textStyle="bold" />
     </TableRow>
@@ -148,7 +153,7 @@
         <Switch
             android:id="@+id/statut"
             android:textSize="16sp"
-            android:text="Prospect"
+            android:text="@string/statut_client"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="changeStatut"
@@ -157,7 +162,8 @@
     <TableRow>
         <Button
             android:layout_span="1"
-            android:text="Enregistrer"
+            android:text="@string/save"
             android:onClick="enregistrer"></Button>
     </TableRow>
 </TableLayout>
+</ScrollView>
