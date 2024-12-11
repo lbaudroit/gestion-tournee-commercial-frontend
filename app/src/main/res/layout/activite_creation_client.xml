@@ -163,6 +163,7 @@
         <Button
             android:layout_span="1"
             android:text="@string/save"
+            android:id="@+id/enregistrer"
             android:onClick="enregistrer"></Button>
     </TableRow>
 </TableLayout>
