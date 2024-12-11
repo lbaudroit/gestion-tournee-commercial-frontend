@@ -53,7 +53,7 @@ public class FragmentItineraires extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View frag = inflater.inflate(R.layout.fragment_list_itineraires, container, false);
+        View frag = inflater.inflate(R.layout.fragment_liste_itineraires, container, false);
         liste = frag.findViewById(R.id.list_itineraires);
         ajouter = frag.findViewById(R.id.ajouter);
 
