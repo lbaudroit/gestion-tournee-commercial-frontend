@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name">Tournée de commercial</string>
     <string name="bottom_bar_clients">Clients</string>
     <string name="bottom_bar_carte">Carte</string>
     <string name="bottom_bar_historique">Historique</string>
