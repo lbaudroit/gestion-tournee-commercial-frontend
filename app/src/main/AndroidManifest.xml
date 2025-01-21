@@ -12,8 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TourneeCommercial"
         tools:targetApi="33">
+
         <activity
-            android:name=".ActivitePrincipale"
+            android:name=".ActiviteConnexion"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +22,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ActiviteInscription"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".ActivitePrincipale"
+            android:exported="true">
+        </activity>
+
     </application>
 
 </manifest>
