@@ -35,7 +35,7 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
     - name: Set Gradle version
-      run: ./gradlew wrapper--gradle-version=8.0
+      run: ./gradlew wrapper --gradle-version=8.0
     - name: Build and analyze
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
