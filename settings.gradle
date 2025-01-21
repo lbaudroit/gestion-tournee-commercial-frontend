@@ -13,5 +13,11 @@ dependencyResolutionManagement {
     }
 }
 
+buildscript {
+    dependencies {
+        classpath("org.apache.commons:commons-compress:1.21")
+    }
+}
+
 rootProject.name = "TourneeCommercial"
 include ':app'
