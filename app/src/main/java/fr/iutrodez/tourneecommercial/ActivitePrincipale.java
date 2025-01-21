@@ -7,12 +7,9 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-
 import com.google.android.material.navigation.NavigationBarView;
-
 import fr.iutrodez.tourneecommercial.fragments.FragmentCarte;
 import fr.iutrodez.tourneecommercial.fragments.FragmentClients;
-import fr.iutrodez.tourneecommercial.fragments.FragmentCreationClient;
 import fr.iutrodez.tourneecommercial.fragments.FragmentHistorique;
 import fr.iutrodez.tourneecommercial.fragments.FragmentItineraires;
 import fr.iutrodez.tourneecommercial.fragments.FragmentParametres;
@@ -24,8 +21,8 @@ public class ActivitePrincipale extends AppCompatActivity
 
     Fragment[] fragments = {
             // TODO Supprimer creationCLient et decommenter FragmentClient avec la liste client
-            //FragmentClients.newInstance(),
-            FragmentCreationClient.newInstance(),
+            FragmentClients.newInstance(),
+            //FragmentCreationClient.newInstance(),
             FragmentCarte.newInstance(),
             FragmentHistorique.newInstance(),
             FragmentItineraires.newInstance(),
