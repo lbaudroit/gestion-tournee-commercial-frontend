@@ -34,6 +34,7 @@
     <!-- Itinéraires -->
     <string name="affichage_nombre_km">%d km</string>
 
+    <!-- Client -->
 
     <string name="adresse_entreprise">Adresse de l\'entreprise</string>
     <string name="nom_entreprise">Nom de l\'entreprise</string>
