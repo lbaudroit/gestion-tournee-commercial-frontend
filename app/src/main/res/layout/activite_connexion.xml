@@ -1,53 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/default_page_margin"
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/default_page_margin"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/field_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="@string/email" />
-
-        <EditText
-            android:id="@+id/field_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="@string/password" />
-
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/login" />
-
-        <Button
-            android:id="@+id/btn_signin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/signin" />
-    </LinearLayout>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_bar"
+    <EditText
+        android:id="@+id/field_email"
+        style="@style/RoundedEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:menu="@menu/menu_bas" >
+        android:layout_marginBottom="@dimen/espace_vertical_champs"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
 
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+    <EditText
+        android:id="@+id/field_password"
+        style="@style/RoundedEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/espace_vertical_champs"
+        android:hint="@string/password"
+        android:inputType="textPassword" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btn_connexion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/BoutonPrincipal"
+        android:text="@string/connexion"
+        android:layout_marginBottom="@dimen/espace_vertical_champs"/>
+
+    <Button
+        android:id="@+id/btn_inscription"
+        style="@style/BoutonSecondaire"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="@string/inscription" />
+</LinearLayout>

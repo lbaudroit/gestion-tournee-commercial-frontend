@@ -2,162 +2,134 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp">
+    android:layout_margin="@dimen/default_page_margin">
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Informations"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
+            android:text="@string/informations"
+            style="@style/TitreSousPartie"
             />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/outline_edit_text"
-            android:hint="Nom de l'entreprise"
+            style="@style/RoundedEditText"
+            android:hint="@string/nom_entreprise"
             android:inputType="text"
-            android:textSize="16sp"
+            android:textSize="@dimen/default_font_size"
             android:id="@+id/nomEntreprise"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
+            android:drawableStart="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/outline_edit_text"
-            android:hint="Adresse de l'entreprise"
+            style="@style/RoundedEditText"
+            android:hint="@string/adresse_entreprise"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:drawableLeft="@drawable/home" />
+            android:drawableStart="@drawable/home" />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp" >
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs" >
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/outline_edit_text"
-            android:hint="Code postal"
-            android:textSize="16sp"
-            android:drawableLeft="@drawable/location_city"
+            style="@style/RoundedEditText"
+            android:hint="@string/code_postal"
+            android:drawableStart="@drawable/location_city"
             android:inputType="text"
-            android:layout_marginRight="3dp" />
+            android:layout_marginEnd="@dimen/demi_espace_horizontal_champs" />
 
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/outline_edit_text"
-            android:hint="Ville"
-            android:drawableLeft="@drawable/location_city"
+            style="@style/RoundedEditText"
+            android:hint="@string/ville"
+            android:drawableStart="@drawable/location_city"
             android:ellipsize="end"
-            android:textSize="16sp"
-            android:layout_marginLeft="3dp"
+            android:layout_marginStart="@dimen/demi_espace_horizontal_champs"
             android:inputType="text" />
     </TableRow>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginVertical="4dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="18dp"
+    <View style="@style/Separator"/>
 
-        />
-
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contact"
-            android:textSize="24sp"
-            android:textColor="#000000"
-            android:textStyle="bold" />
+            android:text="@string/contact"
+            style="@style/TitreSousPartie"/>
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp" >
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs" >
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/outline_edit_text"
-            android:drawableLeft="@drawable/person"
-            android:hint="Nom"
-            android:textSize="16sp"
-            android:layout_marginRight="3dp"
+            style="@style/RoundedEditText"
+            android:drawableStart="@drawable/person"
+            android:hint="@string/nom"
+            android:textSize="@dimen/default_font_size"
+            android:layout_marginEnd="@dimen/demi_espace_horizontal_champs"
             android:inputType="text" />
 
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/outline_edit_text"
-            android:drawableLeft="@drawable/person"
-            android:hint="Prénom"
-            android:textSize="16sp"
-            android:layout_marginLeft="3dp"
+            style="@style/RoundedEditText"
+            android:drawableStart="@drawable/person"
+            android:hint="@string/prenom"
+            android:textSize="@dimen/default_font_size"
+            android:layout_marginStart="@dimen/demi_espace_horizontal_champs"
 
             android:inputType="text" />
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp" >
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs" >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/outline_edit_text"
-            android:hint="Numéro de téléphone"
-            android:drawableLeft="@drawable/call"
+            style="@style/RoundedEditText"
+            android:hint="@string/numero_telephone"
+            android:drawableStart="@drawable/call"
             android:layout_weight="1"
-            android:textSize="16sp"
+            android:textSize="@dimen/default_font_size"
 
             android:inputType="phone" />
     </TableRow>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginVertical="4dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="18dp"
-        />
+    <View style="@style/Separator"/>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <TextView
-            android:textColor="#000000"
             android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Statut"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:text="@string/statut"
+            style="@style/TitreSousPartie"/>
     </TableRow>
 
-    <TableRow android:layout_marginBottom="8dp">
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <Switch
             android:id="@+id/statut"
-            android:textSize="16sp"
-            android:text="Prospect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:textSize="@dimen/default_font_size"
+            android:text="@string/prospect"
             android:onClick="changeStatut"
             />
     </TableRow>
     <TableRow>
         <Button
             android:layout_span="1"
-            android:text="Enregistrer"
-            android:onClick="enregistrer"></Button>
+            android:text="@string/enregistrer"
+            android:onClick="enregistrer"
+            style="@style/BoutonPrincipal"
+            ></Button>
     </TableRow>
 </TableLayout>
