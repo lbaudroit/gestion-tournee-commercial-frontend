@@ -38,13 +38,11 @@
 
     <Button
         android:id="@+id/button"
+        style="@style/BoutonPrincipal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:backgroundTint="@color/modif_button"
-        android:textColor="@color/white"
-
-        android:text="modifier" />
+        android:text="@string/modifier" />
 
     <ImageButton
         android:id="@+id/supprimer"

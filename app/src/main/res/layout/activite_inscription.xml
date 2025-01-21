@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:text="@string/nom"/>
+            android:hint="@string/nom"/>
 
         <Space
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:text="@string/prenom"/>
+            android:hint="@string/prenom"/>
 
         <Space
             android:layout_width="match_parent"

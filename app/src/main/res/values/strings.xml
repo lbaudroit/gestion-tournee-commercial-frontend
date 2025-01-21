@@ -44,5 +44,6 @@
     <string name="statut">Statut</string>
     <string name="prospect">Prospect</string>
     <string name="client">Client</string>
+    <string name="modifier">Modifier</string>
 
 </resources>
