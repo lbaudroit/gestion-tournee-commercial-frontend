@@ -9,52 +9,44 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import fr.iutrodez.tourneecommercial.R;
+import com.android.volley.VolleyError;
 
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentCreationClient extends Fragment {
-
-    public ActivitePrincipale parent;
+    private ActivitePrincipale parent;
     private Switch aSwitch;
     private EditText nomEntreprise, adresse, codePostal, ville, nom, prenom, numTel;
-    private static final String API_URL = "http://localhost:9090/client/creer/";
+
     public static FragmentCreationClient newInstance() {
         return new FragmentCreationClient();
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        parent = (ActivitePrincipale) context;
+        if (context instanceof ActivitePrincipale) {
+            parent = (ActivitePrincipale) context;
+        } else {
+            throw new ClassCastException("Le contexte doit être une instance d'ActivitePrincipale.");
+        }
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Charger le layout du fragment
-        return inflater.inflate(R.layout.activite_creation_client, container, false);
-    }
+        View view = inflater.inflate(R.layout.activite_creation_client, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Initialiser les composants
+        // Initialisation des vues
         aSwitch = view.findViewById(R.id.statut);
         nomEntreprise = view.findViewById(R.id.nomEntreprise);
         adresse = view.findViewById(R.id.adresse);
@@ -64,78 +56,59 @@ public class FragmentCreationClient extends Fragment {
         prenom = view.findViewById(R.id.prenom);
         numTel = view.findViewById(R.id.num_tel);
 
-        // Ajouter un écouteur au Switch
+        // Configuration des listeners
         aSwitch.setOnClickListener(this::changeStatut);
-
-        // Configurer le bouton d'enregistrement
         view.findViewById(R.id.enregistrer).setOnClickListener(this::enregistrer);
+
+        return view;
     }
 
-    /**
-     * Change le statut True client False Prospect
-     * @param view
-     */
-    public void changeStatut(View view) {
-        if (aSwitch.isChecked()) {
+    private void changeStatut(View view) {
+        if(aSwitch.isChecked()){
             aSwitch.setText("Client");
         } else {
             aSwitch.setText("Prospect");
         }
     }
+
     private JSONObject createClientJson() throws JSONException {
+        JSONObject adresseData = new JSONObject();
+        adresseData.put("libelle" , adresse.getText().toString());
+        adresseData.put("codePostal", codePostal.getText().toString());
+        adresseData.put("ville", ville.getText().toString());
+
+        JSONObject contact = new JSONObject();
+        contact.put("nom", nom.getText().toString());
+        contact.put("prenom", prenom.getText().toString());
+        contact.put("telephone", numTel.getText().toString());
+
         JSONObject clientData = new JSONObject();
-        clientData.put("nom_entreprise", nomEntreprise.getText().toString());
-        clientData.put("adresse", adresse.getText().toString());
-        clientData.put("code_postal", codePostal.getText().toString());
-        clientData.put("ville", ville.getText().toString());
-        clientData.put("nom", nom.getText().toString());
-        clientData.put("prenom", prenom.getText().toString());
-        clientData.put("telephone", numTel.getText().toString());
-        clientData.put("statut", aSwitch.isChecked() ? "Client" : "Prospect");
-        System.out.println(clientData.toString());
+        clientData.put("nomEntreprise", nomEntreprise.getText().toString());
+        clientData.put("adresse", adresseData);
+        clientData.put("contact", contact);
+
         return clientData;
     }
-    /**
-     * Enregistrement du client
-     * @param view
-     */
-    public void enregistrer(View view) {
+
+    private void enregistrer(View view) {
         try {
             JSONObject postData = createClientJson();
-            System.out.print("jaccept");
-            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+            String url = "client/creer";
+            ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
+                    // Retourner au fragment de liste des clients
+                    parent.replaceMainFragment(FragmentClients.newInstance());
+                }
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.PUT,
-                    API_URL,
-                    postData,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Toast.makeText(getContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
-                            // Retourner à la liste des clients ou effectuer une autre action
-                            if (parent != null) {
-                                System.out.println("marche");
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getContext(),
-                                    "Erreur lors de la création du client: " + error.toString(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-            );
-
-            requestQueue.add(jsonObjectRequest);
-
+                @Override
+                public void onError(VolleyError error) {
+                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
         } catch (JSONException e) {
-            Toast.makeText(getContext(),
-                    "Erreur lors de la création des données: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
     }
 }

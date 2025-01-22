@@ -54,7 +54,7 @@ public class FragmentClients extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        String url = "http://192.168.16.35:8080/client/";
+        String url = "http://10.0.0.2:9090/client/";
 
         RequestQueue queue = Volley.newRequestQueue(parent);
 
@@ -100,7 +100,6 @@ public class FragmentClients extends Fragment {
     }
 
     public void ajouter(View view) {
-        Intent intention = new Intent(parent, ActiviteCreationClient.class);
-        startActivity(intention);
+        parent.replaceMainFragment(FragmentCreationClient.newInstance());
     }
 }
