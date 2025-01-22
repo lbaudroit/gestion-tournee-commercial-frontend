@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class ActiviteCreationClient extends AppCompatActivity{
     private Switch aSwitch;
@@ -87,43 +88,25 @@ public class ActiviteCreationClient extends AppCompatActivity{
      * @param view
      *
      */
-    public void enregistrer(View view){
+    public void enregistrer(View view) {
         try {
             JSONObject postData = createClientJson();
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.POST,
-                    API_URL,
-                    postData,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                            public void onResponse(JSONObject response) {
-                                Toast.makeText(ActiviteCreationClient.this, "Client créé avec succès", Toast.LENGTH_SHORT).show();
-                            // Retourner à la liste des clients ou effectuer une autre action
-                            System.out.println("marche");
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println(error.toString());
+            ApiRequest.creationClient(this, API_URL, postData, new ApiRequest.ApiResponseCallback() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(ActiviteCreationClient.this, "Client créé avec succès", Toast.LENGTH_SHORT).show();
+                    // Actions supplémentaires après le succès
+                }
 
-                            Toast.makeText(ActiviteCreationClient.this,
-                                    "Erreur lors de la création du client: " + error.toString(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-            );
-
-            requestQueue.add(jsonObjectRequest);
-
+                @Override
+                public void onError(VolleyError error) {
+                    Toast.makeText(ActiviteCreationClient.this, "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
         } catch (JSONException e) {
-            System.out.println(e.toString());
-
-            Toast.makeText(this,
-                    "Erreur lors de la création des données: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
 }
