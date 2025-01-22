@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Separator" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/one</item>
@@ -49,6 +50,7 @@
 
     <style name="BoutonPrincipal">
         <item name="android:backgroundTint">@color/neutral_blue</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="BoutonSecondaire">
@@ -59,7 +61,7 @@
         <item name="strokeColor">@color/neutral_blue</item>
         <item name="strokeWidth">@dimen/one</item>
     </style>
-    
+
     <style name="RoundedEditText">
         <item name="android:paddingStart">@dimen/padding_start_edit_text</item>
         <item name="android:background">@drawable/outline_edit_text</item>

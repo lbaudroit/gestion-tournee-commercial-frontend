@@ -34,7 +34,10 @@ public class FragmentHistorique extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.fragment_test, container, false);
         TextView text = frag.findViewById(R.id.nom_frag);
-        text.setText("Historique");
+        //FIX: CECI EST JUSTE UN TEST, CA DOIT PAS RESTER
+        // Get le tocken depuis les SharedPreferences
+        String token = parent.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+        text.setText("Historique\n" + token); // Méthodes pour afficher le token
         return frag;
     }
 
