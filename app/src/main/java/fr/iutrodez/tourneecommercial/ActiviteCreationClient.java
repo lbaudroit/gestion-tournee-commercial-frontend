@@ -59,23 +59,33 @@ public class ActiviteCreationClient extends AppCompatActivity{
     }
 
     private JSONObject createClientJson() throws JSONException {
-        Adresse adresse = new Adresse();
+
+
+        JSONObject adresseData = new JSONObject();
+        adresseData.put("libelle" , adresse.getText().toString());
+        adresseData.put("codePostal",codePostal.getText().toString());
+        adresseData.put("ville",ville.getText().toString());
+
+        JSONObject contact = new JSONObject();
+        contact.put("nom", nom.getText().toString());
+        contact.put("prenom", prenom.getText().toString());
+        contact.put("telephone", numTel.getText().toString());
+
         JSONObject clientData = new JSONObject();
-        clientData.put("nom_entreprise", nomEntreprise.getText().toString());
-        clientData.put("adresse", adresse.getText().toString());
-        clientData.put("code_postal", codePostal.getText().toString());
-        clientData.put("ville", ville.getText().toString());
-        clientData.put("nom", nom.getText().toString());
-        clientData.put("prenom", prenom.getText().toString());
-        clientData.put("telephone", numTel.getText().toString());
-        clientData.put("statut", aSwitch.isChecked() ? "Client" : "Prospect");
+        clientData.put("nomEntreprise", nomEntreprise.getText().toString());
+        clientData.put("adresse",adresseData);
+
+        clientData.put("contact",contact);
+
+        //clientData.put("statut", aSwitch.isChecked() ? "Client" : "Prospect");
+
         return clientData;
     }
 
     /**
      * enregistrement du client
      * @param view
-     * TODO
+     *
      */
     public void enregistrer(View view){
         try {
@@ -91,6 +101,7 @@ public class ActiviteCreationClient extends AppCompatActivity{
                             public void onResponse(JSONObject response) {
                                 Toast.makeText(ActiviteCreationClient.this, "Client créé avec succès", Toast.LENGTH_SHORT).show();
                             // Retourner à la liste des clients ou effectuer une autre action
+                            System.out.println("marche");
                         }
                     },
                     new Response.ErrorListener() {
