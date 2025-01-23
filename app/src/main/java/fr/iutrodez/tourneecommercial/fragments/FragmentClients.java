@@ -7,12 +7,14 @@ import java.lang.reflect.Type;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,6 +31,8 @@ import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurListeItineraire;
 
 public class FragmentClients extends Fragment {
 
@@ -39,8 +43,16 @@ public class FragmentClients extends Fragment {
 
     public ActivitePrincipale parent;
 
-    private List<Client> client ;
 
+    private ListView liste ;
+
+    private AdaptateurListeClients adaptateur;
+
+    private List<Client> client = List.of(
+            new Client("Soupe", "trollo","500"),
+            new Client("Risotto", "trolla","5"),
+            new Client("Patate", "trolli","50")
+    );
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -54,41 +66,19 @@ public class FragmentClients extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        String url = "http://10.0.0.2:9090/client/";
 
-        RequestQueue queue = Volley.newRequestQueue(parent);
+        View frag = inflater.inflate(R.layout.activite_liste_client, container, false);
+        liste = frag.findViewById(R.id.listitem_client);
 
-        // Créer une requête GET
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>(){
-                    @Override
-                    public void onResponse(String response) {
-                        // Afficher la réponse dans le TextView
-                        Gson gson = new Gson();
+        // On utilise un adaptateur custom pour gérer les éléments de liste avec leurs boutons
+        adaptateur = new AdaptateurListeClients(
+                this.parent,
+                R.layout.listitem_client,
+                client);
+        liste.setAdapter(adaptateur);
 
-                        // Définir le type pour une liste de clients
-                        Type listType = (Type) TypeToken.getParameterized(List.class, Client.class).getType();
+        return frag;
 
-                        // Convertir le JSON en liste d'objets Client
-                        List<Client> clients = gson.fromJson(response, listType);
-
-                        // Afficher les clients ou effectuer une autre action
-                        for (Client client : clients) {
-
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println(error);
-                // Afficher une erreur en cas de problème
-            }
-        });
-
-        // Ajouter la requête à la file
-        queue.add(stringRequest);
-
-        return inflater.inflate(R.layout.activite_liste_client, container, false);
     }
 
     @Override
