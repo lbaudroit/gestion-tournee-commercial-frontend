@@ -6,7 +6,7 @@
     android:layout_height="@dimen/list_item_height"
     android:clickable="true"
     android:focusable="true"
-    android:padding="@dimen/default_page_margin"
+    android:padding="@dimen/list_item_padding"
     app:layout_constraintWidth="wrap_content">
 
     <LinearLayout
@@ -43,6 +43,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/modifier" />
+
+    <Space
+        android:layout_width="@dimen/espace_vertical_champs"
+        android:layout_height="wrap_content"/>
 
     <ImageButton
         android:id="@+id/supprimer"

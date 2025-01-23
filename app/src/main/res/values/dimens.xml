@@ -16,6 +16,7 @@
     <!-- element de liste -->
     <dimen name="list_item_height">65dp</dimen>
     <dimen name="list_item_top_padding">6dp</dimen>
+    <dimen name="list_item_padding">10dp</dimen>
 
     <!-- bouton supprimer -->
     <dimen name="padding_icone_btn_supprimer">6dp</dimen>
