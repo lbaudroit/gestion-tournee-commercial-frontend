@@ -86,8 +86,8 @@ public class ActiviteCreationClient extends AppCompatActivity {
     public void enregistrer(View view) {
         try {
             JSONObject postData = createClientJson();
-
-            ApiRequest.creationClient(this, API_URL, postData, new ApiRequest.ApiResponseCallback() {
+            String url = "client/creer";
+            ApiRequest.creationClient(this, url, postData, new ApiRequest.ApiResponseCallback() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Toast.makeText(ActiviteCreationClient.this, "Client créé avec succès", Toast.LENGTH_SHORT).show();
