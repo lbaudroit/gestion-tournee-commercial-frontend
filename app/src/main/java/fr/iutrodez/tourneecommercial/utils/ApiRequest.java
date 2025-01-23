@@ -37,6 +37,22 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
+    public static void inscription(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        System.out.println(API_URL + url);
+        System.out.println(postData.toString());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                API_URL + url,
+                postData,
+                callback::onSuccess,
+                callback::onError
+        );
+        requestQueue.add(jsonObjectRequest);
+    }
+
     public static void creationClient(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
