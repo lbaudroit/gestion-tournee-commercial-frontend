@@ -6,7 +6,7 @@
     android:layout_height="@dimen/list_item_height"
     android:clickable="true"
     android:focusable="true"
-    android:padding="@dimen/default_page_margin"
+    android:padding="@dimen/list_item_padding"
     app:layout_constraintWidth="wrap_content">
 
     <LinearLayout
