@@ -43,6 +43,10 @@
         <item name="android:paddingEnd">@dimen/padding_end_btn_ajouter</item>
     </style>
 
+    <style name="GrandBoutonAjouter">
+        <item name="android:backgroundTint">@color/ajouter</item>
+    </style>
+
     <style name="BoutonPrincipal">
         <item name="android:backgroundTint">@color/neutral_blue</item>
     </style>

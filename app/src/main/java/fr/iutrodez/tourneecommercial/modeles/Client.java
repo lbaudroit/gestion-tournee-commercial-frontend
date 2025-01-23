@@ -16,5 +16,18 @@ public class Client {
                   String description , double longitude , double latitude, Contact contact) {
         this.idUtilisateur = idUtilisateur;
         this.nomEntreprise = nomEntreprise;
+        this.adresse = adresse;
+        this.description = description;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.contact = contact;
+    }
+
+    public String getNomEntreprise() {
+        return nomEntreprise;
+    }
+
+    public Adresse getAdresse() {
+        return adresse;
     }
 }

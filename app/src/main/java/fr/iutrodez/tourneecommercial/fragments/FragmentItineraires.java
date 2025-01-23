@@ -1,6 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,9 @@ import androidx.fragment.app.Fragment;
 
 import java.util.List;
 
+import fr.iutrodez.tourneecommercial.consommateurapi.FakeData;
+import fr.iutrodez.tourneecommercial.ActiviteCreationClient;
+import fr.iutrodez.tourneecommercial.ActiviteCreationItineraire;
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
@@ -33,11 +37,7 @@ public class FragmentItineraires extends Fragment {
     private AdaptateurListeItineraire adaptateur;
 
     // TODO remove test data
-    private List<Itineraire> itineraires = List.of(
-            new Itineraire("Soupe", 50),
-            new Itineraire("Risotto", 48),
-            new Itineraire("Patate", 103)
-    );
+    private List<Itineraire> itineraires = FakeData.getItineraires();
 
     @Override
     public void onAttach(Context context) {
@@ -69,7 +69,7 @@ public class FragmentItineraires extends Fragment {
     }
 
     private void onClickAjouter(View view) {
-        // TODO add itineraire
-        Toast.makeText(this.parent, R.string.todo, Toast.LENGTH_SHORT).show();
+        Intent intention = new Intent(parent, ActiviteCreationItineraire.class);
+        startActivity(intention);
     }
 }
