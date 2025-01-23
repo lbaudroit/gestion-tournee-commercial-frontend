@@ -4,22 +4,24 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:paddingBottom="50dp">
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_page_margin">
 
         <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/informations"
-                style="@style/TitreSousPartie"
-                />
+                style="@style/TitreSousPartie" />
         </TableRow>
 
         <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <EditText
                 android:id="@+id/nomEntreprise"
                 android:layout_width="match_parent"
@@ -32,6 +34,7 @@
         </TableRow>
 
         <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <EditText
                 android:id="@+id/adresse"
                 android:layout_width="match_parent"
@@ -43,7 +46,8 @@
                 android:drawableStart="@drawable/home" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs" >
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <EditText
                 android:id="@+id/code_postal"
                 android:layout_width="@dimen/zero"
@@ -69,20 +73,22 @@
                 android:inputType="text" />
         </TableRow>
 
-        <View style="@style/Separator"/>
+        <View style="@style/Separator" />
 
-            />
+        />
 
         <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/contact"
-                style="@style/TitreSousPartie"/>
+                style="@style/TitreSousPartie" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs" >
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <EditText
                 android:id="@+id/nom"
                 android:layout_width="@dimen/zero"
@@ -104,9 +110,10 @@
                 android:hint="@string/prenom"
                 android:layout_marginStart="@dimen/demi_espace_horizontal_champs"
                 android:inputType="text" />
-            </TableRow>
+        </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs" >
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <EditText
                 android:id="@+id/num_tel"
                 android:layout_width="match_parent"
@@ -118,9 +125,10 @@
                 android:inputType="phone" />
         </TableRow>
 
-        <View style="@style/Separator"/>
+        <View style="@style/Separator" />
 
         <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
@@ -130,16 +138,20 @@
         </TableRow>
 
         <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <!--<com.google.android.material.materialswitch.MaterialSwitch-->
             <Switch
                 android:id="@+id/statut"
-                android:textSize="@dimen/default_font_size"
-                android:text="@string/prospect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:onClick="changeStatut"
-                />
+                android:text="@string/prospect"
+                android:textSize="@dimen/default_font_size" />
         </TableRow>
+
         <TableRow>
+
             <Button
                 android:id="@+id/enregistrer"
                 android:layout_span="1"
