@@ -14,7 +14,6 @@ public class ApiRequest {
     private static RequestQueue requestQueue;
     private static final String API_URL = "http://10.0.2.2:9090/";
 
-    private static final String API_URL = "http://10.0.2.2:9090/";
 
     public interface ApiResponseCallback {
         void onSuccess(JSONObject response);
