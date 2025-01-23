@@ -2,19 +2,21 @@ package fr.iutrodez.tourneecommercial.modeles;
 
 public class Client {
 
-    private int idUtilisateur;
 
     private String nomEntreprise;
 
-    private Adresse adresse;
-    private String description;
-    private double longitude;
-    private double latitude;
-    private Contact contact;
+    private String adresse;
 
-    public Client(int idUtilisateur , String nomEntreprise , Adresse adresse,
-                  String description , double longitude , double latitude, Contact contact) {
-        this.idUtilisateur = idUtilisateur;
+    public Client(  String nomEntreprise,String adresse , String codePostal) {
+        this.adresse = adresse + codePostal;
         this.nomEntreprise = nomEntreprise;
+    }
+
+    public String getAdresse(){
+        return this.adresse;
+    }
+
+    public String getNomEntreprise(){
+        return this.nomEntreprise;
     }
 }

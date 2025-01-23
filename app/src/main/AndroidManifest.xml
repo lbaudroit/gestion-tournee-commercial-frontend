@@ -33,7 +33,6 @@
             android:name=".ActivitePrincipale"
             android:exported="true">
         </activity>
-        <activity android:name=".ActiviteCreationClient"/>
 
     </application>
 
