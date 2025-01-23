@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -121,9 +122,33 @@ public class ActiviteInscription extends AppCompatActivity {
 
     private void onClickEnvoyer(View view) {
         if (checkFields()) {
-            startActivity(new Intent(this, ActivitePrincipale.class));
+            JSONObject postData = new JSONObject();
+            try {
+                postData.put("nom", nom.getText().toString());
+                postData.put("prenom", prenom.getText().toString());
+                postData.put("email", email.getText().toString());
+                postData.put("libelleAdresse", libelleAdresse.getText().toString());
+                postData.put("codePostal", codePostal.getText().toString());
+                postData.put("ville", ville.getText().toString());
+                postData.put("motDePasse", password.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            ApiRequest.inscription(this, "auth/creer", postData, new ApiRequest.ApiResponseCallback() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(ActiviteInscription.this, "Inscription réussie", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(ActiviteInscription.this, ActiviteConnexion.class));
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+                    Toast.makeText(ActiviteInscription.this, "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
         }
-        return;
     }
 
     private void onClickGoToConnexion(View view) {
