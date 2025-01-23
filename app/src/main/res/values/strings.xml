@@ -1,19 +1,23 @@
 <resources>
     <string name="app_name">Tournée de commercial</string>
-    <string name="connect_database_error">Erreur de connexion à la base de données</string>
-    <string name="empty_field_error">Veuillez remplir le champ</string>
-    <string name="invalid_field_error">Le champ est incorrecte car : %s</string>
 
-    <!-- Général -->
+    <!-- Mots-clés généralistes -->
     <string name="modifier">Modifier</string>
     <string name="valider">Valider</string>
     <string name="enregistrer">Enregistrer</string>
     <string name="ajouter">Ajouter</string>
     <string name="supprimer">Supprimer</string>
 
+    <!-- Erreurs généralistes -->
+    <string name="connect_database_error">Erreur de connexion à la base de données</string>
+    <string name="empty_field_error">Veuillez remplir le champ</string>
+    <string name="invalid_field_error">Le champ est incorrect car : %s</string>
+
     <!-- Utilitaires -->
     <string name="todo">TODO</string>
     <string name="placeholder">placeholder</string>
+
+
 
     <!-- Barre de navigation en bas -->
     <string name="bottom_bar_clients">Clients</string>
@@ -35,13 +39,13 @@
     <string name="password_again">Resaisir le mot de passe</string>
     <string name="connexion">Se connecter</string>
     <string name="inscription">S\'inscrire</string>
+
     <string name="empty_fields_error">Veuillez remplir tous les champs</string>
     <string name="invalid_email_error">Adresse e-mail invalide</string>
     <string name="password_length_error">Le mot de passe doit contenir au moins 8 caractères</string>
     <string name="password_pattern_error">Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre</string>
     <string name="invalid_params_connexion_error">Adresse e-mail ou mot de passe incorrect</string>
     <string name="password_confirmation_error">Les mots de passe ne correspondent pas</string>
-
 
     <!-- Itinéraires -->
     <string name="affichage_nombre_km">%d km</string>
