@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,30 +44,38 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
             convertView = inflater.inflate(identifiantVueItem, parent, false);
         }
 
-        // Récupération des vues à l’intérieur de l’élément de la liste
-        TextView titre = convertView.findViewById(R.id.titre);
-        TextView sousTitre = convertView.findViewById(R.id.sous_titre);
+        // Récupération des vues
+        TextView titre = convertView.findViewById(R.id.list_client_titre);
+        TextView sousTitre = convertView.findViewById(R.id.list_client_sous_titre);
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
-        // Récupération de l’objet ItemFestival correspondant à cette position
+        Button boutonModifier = convertView.findViewById(R.id.button);
+
+        // Récupération de l'objet Client
         final Client clientInfo = getItem(position);
-        // Définition du texte des TextViews
-        assert clientInfo != null;
-        titre.setText(clientInfo.getNomEntreprise());
-        sousTitre.setText(clientInfo.getAdresse());
 
-        // Gestion du clic sur la checkbox
-        boutonSuppression.setOnClickListener(this::onClickBtnSuppression);
-        // Gestion du clic sur l’ensemble de l’élément de la liste
+        if (clientInfo != null) {
+            // Définir les textes
+            titre.setText(clientInfo.getNomEntreprise());
+            sousTitre.setText(clientInfo.getAdresse());
+            System.out.println(titre.getText());
+            // Action pour le bouton "supprimer"
+            boutonSuppression.setOnClickListener(this::onClickBtnSuppression);
+
+            // Action pour le bouton "modifier"
+            boutonModifier.setOnClickListener(v -> {
+                Toast.makeText(getContext(), "Modifier : " + clientInfo.getNomEntreprise(), Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // Clic sur l'ensemble de l'élément
         convertView.setOnClickListener(v -> {
-            // Obtenez la ListView parente à partir de la vue fournie par le convertView
             ListView listView = (ListView) parent;
-
-            // Simuler un clic sur l’élément de la liste à la position donnée
             listView.performItemClick(v, position, listView.getItemIdAtPosition(position));
         });
 
         return convertView;
     }
+
 
 
     private void onClickBtnSuppression(View vue) {

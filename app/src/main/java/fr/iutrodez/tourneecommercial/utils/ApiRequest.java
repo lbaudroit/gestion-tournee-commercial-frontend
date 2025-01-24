@@ -225,16 +225,15 @@ public class ApiRequest {
         return token[0];
     }
 
-    public static void getClients(Context context, JSONObject postData, ApiResponseCallback callback) {
+    public static void getClients(Context context, ApiResponseCallback<JSONArray> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
-
+        String token = getAPI_KEY(context);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 API_URL + "client/",
-        null,
+                null,
                 callback::onSuccess,
                 callback::onError
         ) {

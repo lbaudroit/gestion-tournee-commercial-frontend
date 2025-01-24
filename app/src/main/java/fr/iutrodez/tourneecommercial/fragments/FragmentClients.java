@@ -7,7 +7,9 @@ import java.lang.reflect.Type;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +26,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import fr.iutrodez.tourneecommercial.ActiviteCreationClient;
@@ -33,6 +38,7 @@ import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeItineraire;
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentClients extends Fragment {
 
@@ -48,7 +54,7 @@ public class FragmentClients extends Fragment {
 
     private AdaptateurListeClients adaptateur;
 
-    private List<Client> mailclient = List.of(
+    private List<Client> client = List.of(
             new Client("Soupe", "trollo","500"),
             new Client("Risotto", "trolla","5"),
             new Client("Patate", "trolli","50")
@@ -68,14 +74,7 @@ public class FragmentClients extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View frag = inflater.inflate(R.layout.activite_liste_client, container, false);
-        liste = frag.findViewById(R.id.listitem_client);
 
-        // On utilise un adaptateur custom pour gérer les éléments de liste avec leurs boutons
-        adaptateur = new AdaptateurListeClients(
-                this.parent,
-                R.layout.listitem_client,
-                client);
-        liste.setAdapter(adaptateur);
 
         return frag;
 
@@ -87,6 +86,34 @@ public class FragmentClients extends Fragment {
 
         // Configurer le bouton d'enregistrement
         view.findViewById(R.id.ajouter).setOnClickListener(this::ajouter);
+
+        liste = view.findViewById(R.id.listitem_client);
+        adaptateur = new AdaptateurListeClients(
+                this.parent,
+                R.layout.listitem_client,
+                client);
+        liste.setAdapter(adaptateur);
+        ApiRequest.getClients(requireContext(), new ApiRequest.ApiResponseCallback<JSONArray>() {
+            @Override
+            public void onSuccess(JSONArray response) {
+                // Ajouter les données dans l'adaptateur
+                System.out.println(response);
+
+                // Afficher un message de succès
+                Toast.makeText(requireContext(), "Clients récupérés avec succès", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                // Afficher un message d'erreur
+                Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // On utilise un adaptateur custom pour gérer les éléments de liste avec leurs boutons
+
+
+
     }
 
     public void ajouter(View view) {
