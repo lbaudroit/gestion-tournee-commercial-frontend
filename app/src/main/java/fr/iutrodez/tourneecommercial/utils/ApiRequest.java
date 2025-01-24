@@ -1,7 +1,9 @@
 package fr.iutrodez.tourneecommercial.utils;
 
 import android.content.Context;
+import android.view.Display;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -10,11 +12,14 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ApiRequest {
     private static RequestQueue requestQueue;
     private static final String API_URL = "http://10.0.2.2:9090/";
 
-    private static final String API_URL = "http://10.0.2.2:9090/";
+    //private static final String API_URL = "http://10.0.2.2:9090/";
 
     public interface ApiResponseCallback {
         void onSuccess(JSONObject response);
@@ -54,18 +59,26 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public static void creationClient(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
+    public static void creationClient(Context context, String url, JSONObject postData, ApiResponseCallback callback) throws AuthFailureError {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
+        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
         url = API_URL + url;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                API_URL + url,
+                Request.Method.PUT,
+                 url,
                 postData,
                 callback::onSuccess,
                 callback::onError
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders()  {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         requestQueue.add(jsonObjectRequest);
     }
 

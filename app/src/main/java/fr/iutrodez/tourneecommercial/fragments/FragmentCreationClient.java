@@ -2,9 +2,13 @@ package fr.iutrodez.tourneecommercial.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -13,27 +17,43 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.VolleyError;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.iutrodez.tourneecommercial.ActiviteInscription;
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentCreationClient extends Fragment {
     private ActivitePrincipale parent;
     private Switch aSwitch;
-    private EditText nomEntreprise, adresse, codePostal, ville, nom, prenom, numTel;
+
+    private AdaptateurAdresse adapter;
+
+    private List<JSONObject> suggestionsAutoComplete ;
+    private AutoCompleteTextView adresse;
+    private Handler handler = new Handler();
+    private Runnable fetchSuggestionsRunnable;
+    private EditText nomEntreprise, codePostal, ville, nom, prenom, numTel;
 
     public static FragmentCreationClient newInstance() {
         return new FragmentCreationClient();
     }
 
+    private Context context;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        this.context=context;
         if (context instanceof ActivitePrincipale) {
             parent = (ActivitePrincipale) context;
         } else {
@@ -46,6 +66,8 @@ public class FragmentCreationClient extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activite_creation_client, container, false);
 
+        suggestionsAutoComplete = new ArrayList<>();
+
         // Initialisation des vues
         aSwitch = view.findViewById(R.id.statut);
         nomEntreprise = view.findViewById(R.id.nomEntreprise);
@@ -56,11 +78,104 @@ public class FragmentCreationClient extends Fragment {
         prenom = view.findViewById(R.id.prenom);
         numTel = view.findViewById(R.id.num_tel);
 
+        /*adapter = new AdaptateurAdresse(context,
+                android.R.layout.simple_dropdown_item_1line,
+                suggestionsAutoComplete,
+                FragmentCreationClient.this::onClickSuggestions);
+
+        adresse.setAdapter(adapter);*/
         // Configuration des listeners
         aSwitch.setOnClickListener(this::changeStatut);
         view.findViewById(R.id.enregistrer).setOnClickListener(this::enregistrer);
 
+        adresse.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 2) {
+                    fetchAdressSuggestions(charSequence.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         return view;
+    }
+
+
+    /**
+     * Récupére les suggestions d'adresses à l'aide de l'API du gouvernement
+     * @param text le texte d'exemple pour les suggestions
+     */
+    private void fetchAdressSuggestions(String text) {
+        if (fetchSuggestionsRunnable != null) {
+            handler.removeCallbacks(fetchSuggestionsRunnable);
+        }
+        fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(context, text,
+                new ApiRequest.ApiResponseCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        OnSuccessFetchSuggestions(response);
+                    }
+
+                    @Override
+                    public void onError(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+        handler.postDelayed(fetchSuggestionsRunnable, 300);
+    }
+
+    /**
+     * A utilisé lors du succés d'une requête de récupération de suggestions d'adresse.
+     * Met dans un autoCompleteView un adapter avec les suggestions dans
+     * @param response
+     */
+    private void OnSuccessFetchSuggestions(JSONObject response) {
+        try {
+            List<JSONObject> suggestions = new ArrayList<>();
+            JSONArray features = response.getJSONArray("features");
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
+                suggestions.add(properties);
+            }
+
+            /*handler.post(() -> {
+                adapter.clear();
+                adapter.addAll(suggestions);
+                adapter.notifyDataSetChanged();
+            });*/
+            // TODO not clean
+            AdaptateurAdresse adapterAdre = new AdaptateurAdresse(context,
+                    android.R.layout.simple_dropdown_item_1line,
+                    suggestions,
+                    FragmentCreationClient.this::onClickSuggestions);
+            adresse.setAdapter(adapterAdre);
+            adapterAdre.notifyDataSetChanged();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void onClickSuggestions(JSONObject adresse) {
+        try {
+            this.adresse.setText(adresse.getString("name"));
+            codePostal.setText(adresse.getString("postcode"));
+            ville.setText(adresse.getString("city"));
+            this.adresse.dismissDropDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void changeStatut(View view) {
@@ -93,6 +208,7 @@ public class FragmentCreationClient extends Fragment {
     private void enregistrer(View view) {
         try {
             JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
             String url = "client/creer";
             ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback() {
                 @Override
@@ -109,6 +225,8 @@ public class FragmentCreationClient extends Fragment {
             });
         } catch (JSONException e) {
             Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (AuthFailureError e) {
+            throw new RuntimeException(e);
         }
     }
 }
