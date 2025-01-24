@@ -96,7 +96,10 @@ public class FragmentCreationClient extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() > 2) {
+                if (fetchSuggestionsRunnable != null) {
+                    handler.removeCallbacks(fetchSuggestionsRunnable);
+                }
+                if (charSequence.length() > 3) {
                     fetchAdressSuggestions(charSequence.toString());
                 }
             }
@@ -116,9 +119,6 @@ public class FragmentCreationClient extends Fragment {
      * @param text le texte d'exemple pour les suggestions
      */
     private void fetchAdressSuggestions(String text) {
-        if (fetchSuggestionsRunnable != null) {
-            handler.removeCallbacks(fetchSuggestionsRunnable);
-        }
         fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(context, text,
                 new ApiRequest.ApiResponseCallback() {
                     @Override
