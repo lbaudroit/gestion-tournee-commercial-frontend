@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
@@ -86,6 +87,7 @@ public class ActiviteCreationClient extends AppCompatActivity {
     public void enregistrer(View view) {
         try {
             JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
             String url = "client/creer";
             ApiRequest.creationClient(this, url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override

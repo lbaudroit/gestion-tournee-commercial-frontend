@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -64,18 +65,26 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public static void creationClient(Context context, String url, JSONObject postData, ApiResponseCallback<JSONObject> callback) {
+    public static void creationClient(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-
+        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+        url = API_URL + url;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                API_URL + url,
+                Request.Method.PUT,
+                 url,
                 postData,
                 callback::onSuccess,
                 callback::onError
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders()  {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         requestQueue.add(jsonObjectRequest);
     }
 

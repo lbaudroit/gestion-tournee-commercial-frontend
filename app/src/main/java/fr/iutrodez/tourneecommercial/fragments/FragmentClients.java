@@ -48,7 +48,7 @@ public class FragmentClients extends Fragment {
 
     private AdaptateurListeClients adaptateur;
 
-    private List<Client> client = List.of(
+    private List<Client> mailclient = List.of(
             new Client("Soupe", "trollo","500"),
             new Client("Risotto", "trolla","5"),
             new Client("Patate", "trolli","50")
