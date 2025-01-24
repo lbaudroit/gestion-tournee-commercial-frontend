@@ -13,6 +13,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 import fr.iutrodez.tourneecommercial.R;
@@ -42,43 +46,40 @@ public class AdaptateurListeItineraire extends ArrayAdapter<Itineraire> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        // Opérations de récupération de la vue
         if (convertView == null) {
             convertView = inflater.inflate(identifiantVueItem, parent, false);
         }
-
-        // Récupération des vues à l’intérieur de l’élément de la liste
         TextView titre = convertView.findViewById(R.id.titre);
         TextView sousTitre = convertView.findViewById(R.id.sous_titre);
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
-
-        // Récupération de l’objet ItemFestival correspondant à cette position
         final Itineraire infosItineraire = getItem(position);
-
-        // Définition du texte des TextViews
         assert infosItineraire != null;
         titre.setText(infosItineraire.getNom());
-
         String texteKm = getContext().getString(R.string.affichage_nombre_km);
         sousTitre.setText(String.format(texteKm, infosItineraire.getKilometres()));
-
-        // Gestion du clic sur la checkbox
-        boutonSuppression.setOnClickListener(this::onClickBtnSuppression);
-
-        // Gestion du clic sur l’ensemble de l’élément de la liste
+        boutonSuppression.setOnClickListener(v -> onClickBtnSuppression(infosItineraire, position));
         convertView.setOnClickListener(v -> {
-            // Obtenez la ListView parente à partir de la vue fournie par le convertView
             ListView listView = (ListView) parent;
-
-            // Simuler un clic sur l’élément de la liste à la position donnée
             listView.performItemClick(v, position, listView.getItemIdAtPosition(position));
         });
 
         return convertView;
     }
 
-    private void onClickBtnSuppression(View vue) {
-        // TODO demander et supprimer l'itinéraire
-        Toast.makeText(getContext(), R.string.todo, Toast.LENGTH_SHORT).show();
+    private void onClickBtnSuppression(Itineraire itineraire, int position) {
+        ApiRequest.deleteItineraire(getContext(), itineraire.getId(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                remove(itineraire);
+                notifyDataSetChanged();
+                Toast.makeText(getContext(), R.string.itineraire_deleted, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                System.out.println(error);
+                Toast.makeText(getContext(), R.string.error_deleting_itineraire, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
