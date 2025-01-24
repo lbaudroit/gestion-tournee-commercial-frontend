@@ -23,16 +23,11 @@ import fr.iutrodez.tourneecommercial.R;
 
 public class ApiRequest {
     private static RequestQueue requestQueue;
+
     private static final String API_URL = "http://10.0.2.2:9090/";
 
-<<<<<<< HEAD
-
-    public interface ApiResponseCallback {
-        void onSuccess(JSONObject response);
-=======
     public interface ApiResponseCallback<T> {
         void onSuccess(T response);
->>>>>>> e5cc8f9 (Fix : ApiRequest is corrected to use genericity)
 
         void onError(VolleyError error);
     }
@@ -73,7 +68,7 @@ public class ApiRequest {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-        url = API_URL + url;
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 API_URL + url,
@@ -219,6 +214,29 @@ public class ApiRequest {
         }
         System.out.println("after : " + context.getSharedPreferences("user", MODE_PRIVATE).getLong("expiration", 0));
         return token[0];
+    }
+
+    public static void getClients(Context context, JSONObject postData, ApiResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                API_URL + "client/",
+        null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
     }
 
 }

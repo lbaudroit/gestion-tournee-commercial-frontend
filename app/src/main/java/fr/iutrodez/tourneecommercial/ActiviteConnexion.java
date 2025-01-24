@@ -105,7 +105,7 @@ public class ActiviteConnexion extends AppCompatActivity {
             }
             System.out.println(postData);
             // Création de la requête
-            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback() {
+            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     // Récupération du token
