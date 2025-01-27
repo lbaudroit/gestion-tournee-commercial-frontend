@@ -41,6 +41,17 @@
         </TableRow>
 
     <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <AutoCompleteTextView
+            android:id="@+id/client_autocomplete"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:layout_span="2"
+            android:layout_height="wrap_content"
+            android:hint="@string/rechercher_entreprise"
+            android:drawableStart="@drawable/search"/>
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
         <Button
             android:id="@+id/ajouter"
             style="@style/GrandBoutonAjouter"

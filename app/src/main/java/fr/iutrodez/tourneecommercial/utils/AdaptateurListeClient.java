@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,16 @@ import fr.iutrodez.tourneecommercial.modeles.Client;
 
 public class AdaptateurListeClient extends ArrayAdapter<Client> {
 
+    public interface OnClickModifierCallback {
+
+        void onClickModifierClientItem(Client client);
+    }
+
+    public interface OnClickSupprimerCallback {
+
+        void onClickSupprimerClientItem(Client client);
+    }
+
     /**
      * Identifiant de la vue permettant d’afficher chaque item de la liste
      */
@@ -30,14 +41,14 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
      */
     private final LayoutInflater inflater;
 
-    private final View.OnClickListener onClickModifier;
-    private final View.OnClickListener onClickSupprimer;
+    private final OnClickModifierCallback onClickModifier;
+    private final OnClickSupprimerCallback onClickSupprimer;
 
     public AdaptateurListeClient(@NonNull Context contexte,
                                  int resource,
                                  @NonNull List<Client> objects,
-                                 View.OnClickListener onClickModifier,
-                                 View.OnClickListener onClickSupprimer) {
+                                 OnClickModifierCallback onClickModifier,
+                                 OnClickSupprimerCallback onClickSupprimer) {
         super(contexte, resource, objects);
         this.identifiantVueItem = resource;
         inflater = (LayoutInflater) getContext()
@@ -60,7 +71,7 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
         Button boutonModification = convertView.findViewById(R.id.modifier);
 
-        // Récupération de l’objet ItemFestival correspondant à cette position
+        // Récupération de l’objet Client correspondant à cette position
         final Client infosClient = getItem(position);
 
         // Définition du texte des TextViews
@@ -71,7 +82,9 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
 
         // Ajoute le listener de suppression s'il existe, sinon cache le bouton
         if (onClickSupprimer != null) {
-            boutonSuppression.setOnClickListener(onClickSupprimer);
+            boutonSuppression.setOnClickListener((View v) -> {
+                onClickSupprimer.onClickSupprimerClientItem(infosClient);
+            });
             boutonSuppression.setVisibility(View.VISIBLE);
         } else {
             boutonSuppression.setVisibility(View.GONE);
@@ -79,11 +92,22 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
 
         // Ajoute le listener de modification s'il existe, sinon cache le bouton
         if (onClickModifier != null) {
-            boutonModification.setOnClickListener(onClickModifier);
+            boutonModification.setOnClickListener((View v) -> {
+                onClickModifier.onClickModifierClientItem(infosClient);
+            });
             boutonModification.setVisibility(View.VISIBLE);
         } else {
             boutonModification.setVisibility(View.GONE);
         }
+
+        // Gestion du clic sur l’ensemble de l’élément de la liste
+        convertView.setOnClickListener(v -> {
+            // Obtenez la ListView parente à partir de la vue fournie par le convertView
+            ListView listView = (ListView) parent;
+
+            // Simuler un clic sur l’élément de la liste à la position donnée
+            listView.performItemClick(v, position, listView.getItemIdAtPosition(position));
+        });
 
         return convertView;
     }

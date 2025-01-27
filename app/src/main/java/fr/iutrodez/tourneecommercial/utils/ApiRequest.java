@@ -2,13 +2,28 @@ package fr.iutrodez.tourneecommercial.utils;
 
 import android.content.Context;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import fr.iutrodez.tourneecommercial.modeles.Client;
 
 public class ApiRequest {
     private static RequestQueue requestQueue;
@@ -17,6 +32,12 @@ public class ApiRequest {
 
     public interface ApiResponseCallback {
         void onSuccess(JSONObject response);
+
+        void onError(VolleyError error);
+    }
+
+    public interface ApiArrayResponseCallback {
+        void onSuccess(JSONArray response);
 
         void onError(VolleyError error);
     }
@@ -99,4 +120,123 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
+    public static void recupererClients(Context context, ApiArrayResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String url = API_URL + "client/";
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public static void recupererItineraire(Context context, Long id, ApiArrayResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String url = API_URL + "itineraire/?id=" + id;
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public static void genererItineraire(Context context, List<Client> clients, ApiArrayResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String ids = clients.stream()
+                .map(Client::get_id)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        String url = API_URL + "itineraire/generer/?clients=" + ids;
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public static JSONObject creationDTOCreationItineraire(String nom, List<Client> clients) throws JSONException {
+            // Création de l'objet avec les données
+            JSONObject itineraireData = new JSONObject();
+            itineraireData.put("nom", nom);
+            itineraireData.put("clients", clients.stream()
+                    .map(Client::get_id)
+                    .collect(Collectors.toList()));
+
+            return itineraireData;
+    }
+
+    public static void creationItineraire(Context context, String nom, List<Client> clients, ApiArrayResponseCallback callback) throws JSONException {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+
+        JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients);
+
+        String url = API_URL + "itineraire/creer/";
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public static Client jsonToClient(JSONObject json) {
+        Gson gson = new Gson();
+
+        // Définir le type pour une liste de clients
+        Type clientType = TypeToken.get(Client.class).getType();
+
+        // Convertir le JSON en liste d'objets Client
+        return gson.fromJson(json.toString(), clientType);
+    }
 }

@@ -60,7 +60,7 @@ public class ActiviteConnexion extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
             // Création de la requête
-            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     // Récupération du token
@@ -141,7 +141,7 @@ public class ActiviteConnexion extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
             // Création de la requête
-            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     // Récupération du token

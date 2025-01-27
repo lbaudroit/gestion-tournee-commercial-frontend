@@ -53,6 +53,8 @@
     <string name="entreprises_a_visiter">Entreprises à visiter</string>
     <string name="generer">Générer</string>
 
+    <string name="aucun_client_saisi_error">Aucun client n\'a été saisi</string>
+
     <!-- Client -->
     <string name="adresse_entreprise">Adresse de l\'entreprise</string>
     <string name="nom_entreprise">Nom de l\'entreprise</string>
