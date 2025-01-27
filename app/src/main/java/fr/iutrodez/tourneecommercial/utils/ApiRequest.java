@@ -64,6 +64,31 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
+    public static void modifierClient(Context context,String id,JSONObject postData,ApiResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+        String url = API_URL + "/client/modifier/";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                postData,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders()  {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                headers.put("id",id);
+                return headers;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
     public static void creationClient(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);

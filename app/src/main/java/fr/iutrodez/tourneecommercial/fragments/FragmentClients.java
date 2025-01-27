@@ -78,11 +78,7 @@ public class FragmentClients extends Fragment {
 
         View frag = inflater.inflate(R.layout.activite_liste_client, container, false);
         // On utilise un adaptateur custom pour gérer les éléments de liste avec leurs boutons
-        adaptateur = new AdaptateurListeClients(
-                this.parent,
-                R.layout.listitem_client,
-                clients);
-        liste.setAdapter(adaptateur);
+
 
         return frag;
 
@@ -94,7 +90,7 @@ public class FragmentClients extends Fragment {
 
         // Configurer le bouton d'enregistrement
         view.findViewById(R.id.ajouter).setOnClickListener(this::ajouter);
-
+        clients =new ArrayList<>();
         liste = view.findViewById(R.id.listitem_client);
         adaptateur = new AdaptateurListeClients(
                 this.parent,
