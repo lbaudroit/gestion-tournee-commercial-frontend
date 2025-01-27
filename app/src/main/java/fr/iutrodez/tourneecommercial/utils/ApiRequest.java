@@ -18,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,19 +30,13 @@ public class ApiRequest {
 
     private static final String API_URL = "http://10.0.2.2:9090/";
 
-    public interface ApiResponseCallback {
-        void onSuccess(JSONObject response);
+    public interface ApiResponseCallback<T> {
+        void onSuccess(T response);
 
         void onError(VolleyError error);
     }
 
-    public interface ApiArrayResponseCallback {
-        void onSuccess(JSONArray response);
-
-        void onError(VolleyError error);
-    }
-
-    public static void connexion(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
+    public static void connexion(Context context, String url, JSONObject postData, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -59,7 +52,7 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public static void inscription(Context context, String url, JSONObject postData, ApiResponseCallback callback) {
+    public static void inscription(Context context, String url, JSONObject postData, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -121,7 +114,7 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public static void recupererClients(Context context, ApiArrayResponseCallback callback) {
+    public static void recupererClients(Context context, ApiResponseCallback<JSONArray> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -144,7 +137,7 @@ public class ApiRequest {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public static void recupererItineraire(Context context, Long id, ApiArrayResponseCallback callback) {
+    public static void recupererItineraire(Context context, Long id, ApiResponseCallback<JSONArray> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -167,7 +160,7 @@ public class ApiRequest {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public static void genererItineraire(Context context, List<Client> clients, ApiArrayResponseCallback callback) {
+    public static void genererItineraire(Context context, List<Client> clients, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -176,7 +169,7 @@ public class ApiRequest {
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
         String url = API_URL + "itineraire/generer/?clients=" + ids;
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
@@ -194,27 +187,30 @@ public class ApiRequest {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public static JSONObject creationDTOCreationItineraire(String nom, List<Client> clients) throws JSONException {
+    private static JSONObject creationDTOCreationItineraire(String nom, List<Client> clients, int distance) throws JSONException {
             // Création de l'objet avec les données
             JSONObject itineraireData = new JSONObject();
-            itineraireData.put("nom", nom);
-            itineraireData.put("clients", clients.stream()
+            List<String> clientIds = clients.stream()
                     .map(Client::get_id)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+            itineraireData.put("nom", nom);
+            itineraireData.put("idClients", new JSONArray(clientIds));
+            itineraireData.put("distance", distance);
 
             return itineraireData;
     }
 
-    public static void creationItineraire(Context context, String nom, List<Client> clients, ApiResponseCallback callback) throws JSONException {
+    public static void creationItineraire(Context context, String nom, List<Client> clients, int distance, ApiResponseCallback<JSONObject> callback) throws JSONException {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
 
-        JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients);
+        JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients, distance);
+        System.out.println(donneesAEnvoyer.toString());
 
         String url = API_URL + "itineraire/creer/";
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
-                Request.Method.GET,
+                Request.Method.POST,
                 url,
                 donneesAEnvoyer,
                 callback::onSuccess,
