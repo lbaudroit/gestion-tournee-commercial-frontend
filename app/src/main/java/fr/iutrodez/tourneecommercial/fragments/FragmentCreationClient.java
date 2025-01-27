@@ -215,6 +215,7 @@ public class FragmentCreationClient extends Fragment {
                 public void onSuccess(JSONObject response) {
                     Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
                     // Retourner au fragment de liste des clients
+
                     parent.replaceMainFragment(FragmentClients.newInstance());
                 }
 

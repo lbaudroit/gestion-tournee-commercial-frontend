@@ -168,8 +168,15 @@ public class FragmentClients extends Fragment {
     }
 
     public void ajouter(View view) {
-        parent.replaceMainFragment(FragmentCreationClient.newInstance());
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false);
     }
+
+    public void modifier(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("id","0");
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
+    }
+
     private List<Client> parseClient(JSONObject response) {
         // Parse the JSON response and return a list of Itineraire objects
         List<Client> cli = new ArrayList<>();
