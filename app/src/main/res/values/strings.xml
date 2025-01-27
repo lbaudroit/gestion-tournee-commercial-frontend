@@ -59,6 +59,10 @@
     <string name="prospect">Prospect</string>
     <string name="client">Client</string>
     <string name="modifier">Modifier</string>
+    <string name="modifierParametresLabel">Modifier</string>
+    <string name="error_fetching_params">Nous n\'avons pas pû récupéré vos informations</string>
+    <string name="params_updated">Mise à jour de l\'utilisateur réussite</string>
+    <string name="error_updating_params">Mise à jour impossible</string>
 
 
 </resources>

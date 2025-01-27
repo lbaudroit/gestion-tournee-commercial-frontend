@@ -1,13 +1,15 @@
 package fr.iutrodez.tourneecommercial;
 
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.os.Bundle;
-import android.view.MenuItem;
 import com.google.android.material.navigation.NavigationBarView;
+
 import fr.iutrodez.tourneecommercial.fragments.FragmentCarte;
 import fr.iutrodez.tourneecommercial.fragments.FragmentClients;
 import fr.iutrodez.tourneecommercial.fragments.FragmentHistorique;
@@ -83,5 +85,11 @@ public class ActivitePrincipale extends AppCompatActivity
             return fragments[4];
         }
         throw new IllegalArgumentException("No such fragment");
+    }
+
+    public void navigateToFragmentHistorique(Bundle bundle) {
+        FragmentHistorique fragmentHistorique = FragmentHistorique.newInstance();
+        fragmentHistorique.setArguments(bundle);
+        replaceMainFragment(fragmentHistorique);
     }
 }

@@ -42,6 +42,21 @@ public class FragmentHistorique extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        String param1 = ":)";
+        if (bundle != null) {
+            param1 = bundle.getString("param1");
+            String param2 = bundle.getString("param2");
+            // Utiliser les paramètres comme nécessaire
+        }
+
+        // Initialiser les composants
+        TextView text = view.findViewById(R.id.nom_frag);
+        text.setText(param1);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
