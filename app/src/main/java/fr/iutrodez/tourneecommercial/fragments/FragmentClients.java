@@ -99,6 +99,6 @@ public class FragmentClients extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString("param1", "Enzo est trop géniale meme si il dit que non ce con"); // Remplacez par vos paramètres
         bundle.putString("param2", "valeur2");
-        parent.navigateToFragmentHistorique(bundle);
+        parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_HISTORIQUE, false, bundle);
     }
 }
