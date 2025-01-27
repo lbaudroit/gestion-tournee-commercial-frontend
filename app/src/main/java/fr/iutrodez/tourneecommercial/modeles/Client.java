@@ -5,18 +5,24 @@ public class Client {
 
     private String nomEntreprise;
 
-    private String adresse;
+    private Adresse adresse;
 
-    public Client(  String nomEntreprise,String adresse , String codePostal) {
-        this.adresse = adresse + codePostal;
+    private Contact contact;
+    public Client(  String nomEntreprise,Adresse adresse ) {
+        this.adresse = adresse;
         this.nomEntreprise = nomEntreprise;
     }
 
-    public String getAdresse(){
+    public Adresse getAdresse(){
         return this.adresse;
     }
 
+
     public String getNomEntreprise(){
         return this.nomEntreprise;
+    }
+
+    public Contact getContact() {
+        return contact;
     }
 }

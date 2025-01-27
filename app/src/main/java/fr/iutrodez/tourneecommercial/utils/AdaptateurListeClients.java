@@ -52,11 +52,16 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
 
         // Récupération de l'objet Client
         final Client clientInfo = getItem(position);
+        // Définition du texte des TextViews
+        assert clientInfo != null;
+        titre.setText(clientInfo.getNomEntreprise());
+        sousTitre.setText(clientInfo.getAdresse().getLibelle()+ clientInfo.getAdresse().getCode_postal());
+
 
         if (clientInfo != null) {
             // Définir les textes
             titre.setText(clientInfo.getNomEntreprise());
-            sousTitre.setText(clientInfo.getAdresse());
+            sousTitre.setText(clientInfo.getAdresse().getLibelle());
             System.out.println(titre.getText());
             // Action pour le bouton "supprimer"
             boutonSuppression.setOnClickListener(this::onClickBtnSuppression);

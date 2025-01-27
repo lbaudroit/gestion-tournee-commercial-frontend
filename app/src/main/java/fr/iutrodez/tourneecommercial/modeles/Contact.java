@@ -11,4 +11,15 @@ public class Contact {
         this.prenom = prenom;
         this.tel = tel;
     }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public  String getPrenom() {
+        return prenom;
+    }
+    public String getTel() {
+        return tel;
+    }
 }

@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import fr.iutrodez.tourneecommercial.R;
 
 public class ApiRequest {
@@ -85,6 +84,22 @@ public class ApiRequest {
                 return headers;
             }
         };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public static void recupererClient(Context context,String id,ApiResponseCallback callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String url = API_URL + "/client/recuperer/";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        );
         requestQueue.add(jsonObjectRequest);
     }
 

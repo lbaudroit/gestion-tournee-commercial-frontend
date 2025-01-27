@@ -23,14 +23,18 @@ import org.json.JSONObject;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import fr.iutrodez.tourneecommercial.ActiviteInscription;
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentCreationClient extends Fragment {
@@ -44,6 +48,9 @@ public class FragmentCreationClient extends Fragment {
     private Handler handler = new Handler();
     private Runnable fetchSuggestionsRunnable;
     private EditText nomEntreprise, codePostal, ville, nom, prenom, numTel;
+
+    private String idModif;
+    private Runnable onEnregistrer;
 
     public static FragmentCreationClient newInstance() {
         return new FragmentCreationClient();
@@ -107,6 +114,12 @@ public class FragmentCreationClient extends Fragment {
             }
         });
 
+        // TODO : modifications
+        if(false) {
+
+            //TODO : Bundle
+            //onEnregistrer = FragmentCreationClient.this::creer;
+        }
         return view;
     }
 
@@ -178,6 +191,30 @@ public class FragmentCreationClient extends Fragment {
         }
     }
 
+    private void recupererClient(String id) throws JSONException {
+        ApiRequest.recupererClient(requireContext(), id, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Gson gson = new Gson();
+                Client client = gson.fromJson(response.toString(),Client.class);
+                adresse.setText(client.getAdresse().getLibelle());
+                codePostal.setText(client.getAdresse().getCode_postal());
+                ville.setText(client.getAdresse().getVille());
+                nom.setText(client.getContact().getNom());
+                prenom.setText(client.getContact().getPrenom());
+                numTel.setText(client.getContact().getTel());
+                nomEntreprise.setText(client.getNomEntreprise());
+
+            }
+
+
+            @Override
+            public void onError(VolleyError error) {
+                Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void changeStatut(View view) {
         if(aSwitch.isChecked()){
             aSwitch.setText("Client");
@@ -216,7 +253,7 @@ public class FragmentCreationClient extends Fragment {
                     Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
                     // Retourner au fragment de liste des clients
 
-                    parent.replaceMainFragment(FragmentClients.newInstance());
+                    parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
                 }
 
                 @Override
