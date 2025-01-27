@@ -20,7 +20,6 @@ public class FragmentHistorique extends Fragment {
         return new FragmentHistorique();
     }
 
-
     public ActivitePrincipale parent;
 
     @Override

@@ -40,7 +40,6 @@ public class FragmentItineraires extends Fragment {
     private ListView liste;
     private Button ajouter;
     private AdaptateurListeItineraire adaptateur;
-
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
@@ -93,8 +92,7 @@ public class FragmentItineraires extends Fragment {
 
 
     private void onClickAjouter(View view) {
-        // TODO add itineraire
-        Toast.makeText(this.parent, R.string.todo, Toast.LENGTH_SHORT).show();
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_ITINERAIRE, false);
     }
 
     private void fetchNombreItineraires() {
