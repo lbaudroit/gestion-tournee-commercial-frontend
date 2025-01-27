@@ -1,15 +1,20 @@
-package fr.iutrodez.tourneecommercial;
+package fr.iutrodez.tourneecommercial.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.VolleyError;
 
@@ -20,13 +25,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
+import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClient;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
-public class ActiviteCreationItineraire extends AppCompatActivity {
+public class FragmentCreationItineraire extends Fragment {
 
     private List<Client> tousClients;
     private EditText nom;
@@ -43,24 +48,20 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
     private AdaptateurListeClient adaptateurClientsAjoutes;
     private AdaptateurListeClient adaptateurClientsPotentiels;
 
-    private List<Client> getClientsDisponibles() {
-        ArrayList<Client> disponibles = new ArrayList<>(tousClients);
-        disponibles.removeAll(clientsAjoutes);
-        return disponibles;
+    public static FragmentCreationItineraire newInstance() {
+        return new FragmentCreationItineraire();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        setContentView(R.layout.fragment_creation_itineraire);
+        nom = view.findViewById(R.id.nom_itineraire);
+        clientAutocomplete = view.findViewById(R.id.client_autocomplete);
 
-        nom = findViewById(R.id.nom_itineraire);
-        clientAutocomplete = findViewById(R.id.client_autocomplete);
-
-        btnAjouterClient = findViewById(R.id.ajouter);
-        btnGenererItineraire = findViewById(R.id.generer);
-        btnValider = findViewById(R.id.valider);
+        btnAjouterClient = view.findViewById(R.id.ajouter);
+        btnGenererItineraire = view.findViewById(R.id.generer);
+        btnValider = view.findViewById(R.id.valider);
 
         // Ajouter les écouteurs sur les boutons
         btnAjouterClient.setOnClickListener(this::ajouter);
@@ -69,14 +70,14 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
 
         // Remplir la liste des clients disponibles
         tousClients = new ArrayList<>();
-        ApiRequest.recupererClients(this, new ApiRequest.ApiArrayResponseCallback() {
+        ApiRequest.recupererClients(getContext(), new ApiRequest.ApiArrayResponseCallback() {
             @Override
             public void onSuccess(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.optJSONObject(i);
                     tousClients.add(ApiRequest.jsonToClient(obj));
                 }
-                Toast.makeText(ActiviteCreationItineraire.this,
+                Toast.makeText(getContext(),
                         "Réussite",
                         Toast.LENGTH_SHORT).show();
 
@@ -86,19 +87,19 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(ActiviteCreationItineraire.this,
+                Toast.makeText(getContext(),
                         "Erreur : impossible de récupérer les clients disponibles",
                         Toast.LENGTH_SHORT).show();
             }
         });
 
         // Gestion de la liste des clients déjà ajoutés
-        ListView listeClientsAjoutes = findViewById(R.id.list_clients);
+        ListView listeClientsAjoutes = view.findViewById(R.id.list_clients);
 
         // Création, association de l'adaptateur
         clientsAjoutes = new ArrayList<>();
         adaptateurClientsAjoutes = new AdaptateurListeClient(
-                this,
+                getContext(),
                 R.layout.listitem_client,
                 clientsAjoutes,
                 null,
@@ -110,7 +111,7 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
         // Retirer les clients de la liste des clients disponibles
 
         // Modification du titre dans l'action bar
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = ((AppCompatActivity) this.getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getString(R.string.creation_itineraire));
         }
@@ -121,11 +122,18 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
         disableView(btnAjouterClient);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_creation_itineraire, container, false);
+    }
+
     private void setupAutocomplete() {
         List<Client> potentiels = getClientsDisponibles();
 
         // On crée l'adapteur s'il n'existe pas déjà et on associe les données
-        adaptateurClientsPotentiels = new AdaptateurListeClient(ActiviteCreationItineraire.this,
+        adaptateurClientsPotentiels = new AdaptateurListeClient(getContext(),
                 R.layout.listitem_client,
                 potentiels,
                 null,
@@ -157,11 +165,6 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
         clientAutocomplete.setOnClickListener(v -> {
             clientAutocomplete.showDropDown();
         });
-
-        // Ensure the adapter is updated on the UI thread
-        runOnUiThread(() -> {
-            // Your code to update the adapter
-        });
     }
 
     private void supprimerClientListe(Client client) {
@@ -177,8 +180,14 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
         disableView(btnValider);
     }
 
+    private List<Client> getClientsDisponibles() {
+        ArrayList<Client> disponibles = new ArrayList<>(tousClients);
+        disponibles.removeAll(clientsAjoutes);
+        return disponibles;
+    }
+
     private void ajouter(View view) {
-        Toast.makeText(ActiviteCreationItineraire.this,
+        Toast.makeText(getContext(),
                 "Ajout d'un client",
                 Toast.LENGTH_SHORT).show();
 
@@ -213,7 +222,7 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
     }
 
     private void generer(View view) {
-        ApiRequest.genererItineraire(this, clientsAjoutes, new ApiRequest.ApiArrayResponseCallback() {
+        ApiRequest.genererItineraire(getContext(), clientsAjoutes, new ApiRequest.ApiArrayResponseCallback() {
             @Override
             public void onSuccess(JSONArray response) {
                 // Réordonner les clients
@@ -231,7 +240,7 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(ActiviteCreationItineraire.this,
+                Toast.makeText(getContext(),
                         "Erreur : impossible de générer l'itinéraire",
                         Toast.LENGTH_SHORT).show();
             }
@@ -249,20 +258,19 @@ public class ActiviteCreationItineraire extends AppCompatActivity {
         }
 
         Consumer<Exception> onExceptionCallback = (e) -> {
-            Toast.makeText(ActiviteCreationItineraire.this,
+            Toast.makeText(getContext(),
                     "Erreur : impossible de créer l'itinéraire",
                     Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         };
 
         try {
-            ApiRequest.creationItineraire(this, nomItineraire, clientsAjoutes, new ApiRequest.ApiArrayResponseCallback() {
+            ApiRequest.creationItineraire(getContext(), nomItineraire, clientsAjoutes, new ApiRequest.ApiResponseCallback() {
                 @Override
-                public void onSuccess(JSONArray response) {
-                    Toast.makeText(ActiviteCreationItineraire.this,
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(getContext(),
                             "Itinéraire créé avec succès",
                             Toast.LENGTH_SHORT).show();
-                    finish();
                 }
 
                 @Override

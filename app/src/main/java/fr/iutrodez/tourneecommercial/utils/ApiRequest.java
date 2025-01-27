@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -204,7 +205,7 @@ public class ApiRequest {
             return itineraireData;
     }
 
-    public static void creationItineraire(Context context, String nom, List<Client> clients, ApiArrayResponseCallback callback) throws JSONException {
+    public static void creationItineraire(Context context, String nom, List<Client> clients, ApiResponseCallback callback) throws JSONException {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -212,10 +213,10 @@ public class ApiRequest {
         JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients);
 
         String url = API_URL + "itineraire/creer/";
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
-                null,
+                donneesAEnvoyer,
                 callback::onSuccess,
                 callback::onError
         ) {

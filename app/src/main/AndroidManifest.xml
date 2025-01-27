@@ -34,7 +34,6 @@
             android:exported="true">
         </activity>
         <activity android:name=".ActiviteCreationClient"/>
-        <activity android:name=".ActiviteCreationItineraire"/>
 
     </application>
 
