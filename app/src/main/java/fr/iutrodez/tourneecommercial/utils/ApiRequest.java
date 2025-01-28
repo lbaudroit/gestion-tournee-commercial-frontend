@@ -5,6 +5,8 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -206,6 +208,37 @@ public class ApiRequest {
             }
         };
         requestQueue.add(jsonArrayRequest);
+    }
+
+    /**
+     * Méthode d'appel API pour supprimer un client
+     * @param context
+     * @param idClient client à supprimer
+     * @param callback les méthodes de callbacks
+     */
+    public static void removeClient(Context context,String idClient,ApiResponseCallback<JSONObject> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+
+        String url = API_URL + "client/supprimer/?id="+idClient;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 
     public static void deleteItineraire(Context context, long itineraireId, ApiResponseCallback<JSONObject> callback) {

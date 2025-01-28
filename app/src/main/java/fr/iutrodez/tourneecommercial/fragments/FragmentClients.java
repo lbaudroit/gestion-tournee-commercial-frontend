@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,7 +28,6 @@ import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.Contact;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
@@ -51,8 +49,6 @@ public class FragmentClients extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Client c = new Client("1","1","nomE",new Adresse("1 Rte de l'Aubrac", "12210", "Laguiole"),new Contact());
-        clients.add(c);
         if (context instanceof ActivitePrincipale) {
             parent = (ActivitePrincipale) context;
         } else {
@@ -71,7 +67,7 @@ public class FragmentClients extends Fragment {
         adaptateur = new AdaptateurListeClients(
                 this.parent,
                 R.layout.listitem_client,
-                clients);
+                clients, this::onClickSupprimerAdaptateur, this::onClickModifierAdaptateur);
         liste.setAdapter(adaptateur);
 
         // Initial data loading
@@ -96,6 +92,39 @@ public class FragmentClients extends Fragment {
 
 
         return frag;
+    }
+
+    /**
+     * Callback lorsque le bouton modifier de l'adaptateur est cliqué
+     * @param client le client appuyé
+     */
+    public void onClickModifierAdaptateur(Client client) {
+        Bundle bundle = new Bundle();
+        bundle.putString("id",client.get_id());
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
+
+        Toast.makeText(getContext(), "Modifier : " + client.getNomEntreprise(), Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * Callback lorsque le bouton supprimer de l'adaptateur est cliqué
+     * @param client le client appuyé
+     */
+    public void onClickSupprimerAdaptateur(Client client) {
+        ApiRequest.removeClient(requireContext(), client.get_id(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Toast.makeText(getContext(), "Le client " + client.getNomEntreprise()+ " a été modifié", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                Toast.makeText(getContext(), "Le client n'a pas été modifié. \n"+ error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+        });
+        adaptateur.remove(client);
     }
 
     private void fetchNombreClients() {

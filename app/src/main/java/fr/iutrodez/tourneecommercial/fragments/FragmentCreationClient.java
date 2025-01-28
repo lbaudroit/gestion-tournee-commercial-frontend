@@ -50,6 +50,10 @@ public class FragmentCreationClient extends Fragment {
     private EditText nomEntreprise, codePostal, ville, nom, prenom, numTel;
 
     private String idModif;
+
+    /**
+     * Fonction à appeler lors de l'enregistrement
+     */
     private Runnable onEnregistrer;
 
     public static FragmentCreationClient newInstance() {
@@ -114,18 +118,22 @@ public class FragmentCreationClient extends Fragment {
             }
         });
 
+        // On récupère les arguments mis dans le fragment
         Bundle args =getArguments();
-        // TODO : modifications
+
+        // On vérifie si l'argument id existe
         if(args != null && args.containsKey("id") ) {
-            //TODO : Bundle
+            // Modification
             idModif = args.getString("id");
             try {
+                // On récupère le client par rapport à l'id
                 recupererClient(idModif);
             } catch (JSONException exception) {
 
             }
             onEnregistrer = FragmentCreationClient.this::modifier;
         } else {
+            // Création
             onEnregistrer = FragmentCreationClient.this::creer;
         }
         return view;
@@ -155,6 +163,9 @@ public class FragmentCreationClient extends Fragment {
         handler.postDelayed(fetchSuggestionsRunnable, 300);
     }
 
+    /**
+     * Fonction pour créer un client
+     */
     public void creer() {
         try {
             JSONObject postData = createClientJson();
@@ -180,6 +191,9 @@ public class FragmentCreationClient extends Fragment {
         }
     }
 
+    /**
+     * Fonction pour modifier un client à partir de l'id récupéré dans le bundle
+     */
     public void modifier() {
         try {
             JSONObject postData = createClientJson();
@@ -247,6 +261,11 @@ public class FragmentCreationClient extends Fragment {
         }
     }
 
+    /**
+     * Méthode d'appel API pour récupérer "un" client
+     * @param id du client à récupérer
+     * @throws JSONException
+     */
     private void recupererClient(String id) throws JSONException {
         ApiRequest.recupererClient(requireContext(), id, new ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
@@ -300,27 +319,5 @@ public class FragmentCreationClient extends Fragment {
 
     private void enregistrer(View view) {
         onEnregistrer.run();
-        /*try {
-            JSONObject postData = createClientJson();
-            System.out.println(postData.toString());
-            String url = "client/creer";
-            ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
-                    // Retourner au fragment de liste des clients
-
-                    parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
-                }
-
-                @Override
-                public void onError(VolleyError error) {
-                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
-
-        } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }*/
     }
 }

@@ -12,15 +12,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 
 
 public class AdaptateurListeClients extends ArrayAdapter<Client> {
+
+    /**
+     * Interface pour définir la logique du bouton modifier de l'adapteur
+     */
+    public interface OnClickModifierCallback {
+
+        void onClickModifierClientItem(Client client);
+    }
+
+    /**
+     * Interface pour définir la logique du bouton supprimer de l'adapteur
+     */
+    public interface OnClickSupprimerCallback {
+
+        void onClickSupprimerClientItem(Client client);
+    }
 
     /**
      * Identifiant de la vue permettant d’afficher chaque item de la liste
@@ -32,12 +52,16 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
      */
     private final LayoutInflater inflater;
 
-    private ActivitePrincipale activitePrincipale;
+    private final OnClickSupprimerCallback onClickSupprimerCallback;
+    private  final  OnClickModifierCallback onClickModifierCallback;
 
-    public AdaptateurListeClients(@NonNull Context context, int resource , @NonNull List<Client> client) {
+    public AdaptateurListeClients(@NonNull Context context, int resource , @NonNull List<Client> client,
+                                  OnClickSupprimerCallback onClickSupprimerCallback,
+                                  OnClickModifierCallback onClickModifierCallback) {
         super(context, resource , client);
         this.identifiantVueItem = resource;
-        this.activitePrincipale = (ActivitePrincipale) context;
+        this.onClickSupprimerCallback = onClickSupprimerCallback;
+        this.onClickModifierCallback = onClickModifierCallback;
         inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -64,16 +88,13 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         sousTitre.setText(clientInfo.getAdresse().getCodePostal() + " " + clientInfo.getAdresse().getVille());
 
         if (clientInfo != null) {
-            // Définir les textes
-            boutonSuppression.setOnClickListener(this::onClickBtnSuppression);
+            boutonSuppression.setOnClickListener(v-> {
+                onClickSupprimerCallback.onClickSupprimerClientItem(clientInfo);
+            });
 
             // Action pour le bouton "modifier"
             boutonModifier.setOnClickListener(v -> {
-                Bundle bundle = new Bundle();
-                bundle.putString("id",clientInfo.get_id());
-                activitePrincipale.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
-
-                Toast.makeText(getContext(), "Modifier : " + clientInfo.getNomEntreprise(), Toast.LENGTH_SHORT).show();
+                onClickModifierCallback.onClickModifierClientItem(clientInfo);
             });
         }
 
@@ -86,10 +107,4 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         return convertView;
     }
 
-
-
-    private void onClickBtnSuppression(View vue) {
-        // TODO demander et supprimer l'itinéraire
-        Toast.makeText(getContext(), R.string.todo, Toast.LENGTH_SHORT).show();
-    }
 }
