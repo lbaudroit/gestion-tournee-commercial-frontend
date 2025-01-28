@@ -1,5 +1,6 @@
 package fr.iutrodez.tourneecommercial.utils;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.List;
+
+import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
@@ -29,9 +32,12 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
      */
     private final LayoutInflater inflater;
 
+    private ActivitePrincipale activitePrincipale;
+
     public AdaptateurListeClients(@NonNull Context context, int resource , @NonNull List<Client> client) {
         super(context, resource , client);
         this.identifiantVueItem = resource;
+        this.activitePrincipale = (ActivitePrincipale) context;
         inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -55,8 +61,7 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         // Définition du texte des TextViews
         assert clientInfo != null;
         titre.setText(clientInfo.getNomEntreprise());
-        sousTitre.setText(clientInfo.getAdresse().getCodePostal());
-
+        sousTitre.setText(clientInfo.getAdresse().getCodePostal() + " " + clientInfo.getAdresse().getVille());
 
         if (clientInfo != null) {
             // Définir les textes
@@ -64,6 +69,10 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
 
             // Action pour le bouton "modifier"
             boutonModifier.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("id",clientInfo.get_id());
+                activitePrincipale.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
+
                 Toast.makeText(getContext(), "Modifier : " + clientInfo.getNomEntreprise(), Toast.LENGTH_SHORT).show();
             });
         }

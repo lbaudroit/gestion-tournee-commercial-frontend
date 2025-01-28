@@ -23,6 +23,9 @@ public class Client {
     }
 
 
+    public String  get_id() {
+        return this._id;
+    }
     public Adresse getAdresse(){
         return this.adresse;
     }
