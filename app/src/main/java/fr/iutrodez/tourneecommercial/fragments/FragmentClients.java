@@ -132,11 +132,7 @@ public class FragmentClients extends Fragment {
             @Override
             public void onSuccess(JSONObject response) {
                 try {
-
-                    System.out.println(response);
-                    totalPages = response.getInt("nombre") ;
-
-                    System.out.println("Total pages: " + totalPages);
+                    totalPages = response.getInt("nombre");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -144,54 +140,51 @@ public class FragmentClients extends Fragment {
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(parent, "Erreur lors de la récupération du nombre de clients", Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent, "Erreur lors de la récupération du nombre de clients",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void fetchClientsPage() {
+
+
+        isLoading = true;
+
         ApiRequest.getClientsBy30(requireContext(), currentPage, new ApiRequest.ApiResponseCallback<JSONArray>() {
             @Override
             public void onSuccess(JSONArray response) {
-                int len = response.length();
-                for (int i = 0; i < len; i++) {
-                    try {
-                        JSONObject clientJson = response.getJSONObject(i);
+                try {
+                    int len = response.length();
+                    List<Client> newClients = new ArrayList<>();
+                    for (int i = 0; i < len; i++) {
                         Gson gson = new Gson();
-                        Client client = gson.fromJson(response.getJSONObject(i).toString(),Client.class);
-
-                        // Create new client object
-                        clients.add(client);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        Client client = gson.fromJson(response.getJSONObject(i).toString(), Client.class);
+                        newClients.add(client);
                     }
+
+                    clients.addAll(newClients);
+
+                    // Notifier l'adaptateur
+                    adaptateur.notifyDataSetChanged();
+                    currentPage++;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    isLoading = false;
                 }
-                adaptateur.notifyDataSetChanged();
-                currentPage++;
             }
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(parent, "Erreur lors de la récupération des clients", Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent, "Erreur lors de la récupération des clients",
+                        Toast.LENGTH_SHORT).show();
+                isLoading = false;
             }
         });
     }
 
     public void ajouter(View view) {
         parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false);
-    }
-
-    public void modifier(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString("id","5588");
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
-    }
-
-    private List<Client> parseClient(JSONObject response) {
-        // Parse the JSON response and return a list of Itineraire objects
-        List<Client> cli = new ArrayList<>();
-        // Add parsing logic here
-        return cli;
     }
 }
