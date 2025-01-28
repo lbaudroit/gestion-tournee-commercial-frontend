@@ -163,54 +163,6 @@ public class FragmentCreationClient extends Fragment {
         handler.postDelayed(fetchSuggestionsRunnable, 300);
     }
 
-    public void creer() {
-        try {
-            JSONObject postData = createClientJson();
-            System.out.println(postData.toString());
-            String url = "client/creer";
-            ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
-                    // Retourner au fragment de liste des clients
-
-                    //parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
-                }
-
-                @Override
-                public void onError(VolleyError error) {
-                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
-
-        } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void modifier() {
-        try {
-            JSONObject postData = createClientJson();
-            System.out.println(postData.toString());
-            ApiRequest.modifierClient(requireContext(), idModif,postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    Toast.makeText(requireContext(), "Client modifiée avec succès", Toast.LENGTH_SHORT).show();
-                    // Retourner au fragment de liste des clients
-
-                    //parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
-                }
-
-                @Override
-                public void onError(VolleyError error) {
-                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
-
-        } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
     /**
      * Fonction pour créer un client
      */
