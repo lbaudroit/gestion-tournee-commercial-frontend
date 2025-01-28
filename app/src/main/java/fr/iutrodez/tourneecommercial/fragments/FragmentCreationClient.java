@@ -107,6 +107,20 @@ public class FragmentCreationClient extends Fragment {
             }
         });
 
+        Bundle args =getArguments();
+        // TODO : modifications
+        if(args != null && args.containsKey("id") ) {
+            //TODO : Bundle
+            idModif = args.getString("id");
+            try {
+                recupererClient(idModif);
+            } catch (JSONException exception) {
+
+            }
+            onEnregistrer = FragmentCreationClient.this::modifier;
+        } else {
+            onEnregistrer = FragmentCreationClient.this::creer;
+        }
         return view;
     }
 
@@ -134,6 +148,54 @@ public class FragmentCreationClient extends Fragment {
         handler.postDelayed(fetchSuggestionsRunnable, 300);
     }
 
+    public void creer() {
+        try {
+            JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
+            String url = "client/creer";
+            ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
+                    // Retourner au fragment de liste des clients
+
+                    parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        } catch (JSONException e) {
+            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void modifier() {
+        try {
+            JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
+            ApiRequest.modifierClient(requireContext(), idModif,postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(requireContext(), "Client modifiée avec succès", Toast.LENGTH_SHORT).show();
+                    // Retourner au fragment de liste des clients
+
+                    parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        } catch (JSONException e) {
+            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
     /**
      * A utilisé lors du succés d'une requête de récupération de suggestions d'adresse.
      * Met dans un autoCompleteView un adapter avec les suggestions dans
@@ -176,6 +238,30 @@ public class FragmentCreationClient extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void recupererClient(String id) throws JSONException {
+        ApiRequest.recupererClient(requireContext(), id, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Gson gson = new Gson();
+                Client client = gson.fromJson(response.toString(),Client.class);
+                adresse.setText(client.getAdresse().getLibelle());
+                codePostal.setText(client.getAdresse().getCodePostal());
+                ville.setText(client.getAdresse().getVille());
+                nom.setText(client.getContact().getNom());
+                prenom.setText(client.getContact().getPrenom());
+                numTel.setText(client.getContact().getTel());
+                nomEntreprise.setText(client.getNomEntreprise());
+
+            }
+
+
+            @Override
+            public void onError(VolleyError error) {
+                Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void changeStatut(View view) {

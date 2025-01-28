@@ -24,7 +24,10 @@ import java.util.List;
 
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.Contact;
+import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
@@ -42,11 +45,16 @@ public class FragmentClients extends Fragment {
     private int currentPage = 0;
     private int totalPages = 0;
     private List<Client> clients = new ArrayList<>();
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        parent = (ActivitePrincipale) context;
+        Client c = new Client("1","1","nomE",new Adresse("1 Rte de l'Aubrac", "12210", "Laguiole"),new Contact());
+        clients.add(c);
+        if (context instanceof ActivitePrincipale) {
+            parent = (ActivitePrincipale) context;
+        } else {
+            throw new ClassCastException("Le contexte doit être une instance d'ActivitePrincipale.");
+        }
     }
 
     @Nullable
@@ -146,5 +154,18 @@ public class FragmentClients extends Fragment {
 
     public void ajouter(View view) {
         parent.replaceMainFragment(FragmentCreationClient.newInstance());
+    }
+
+    public void modifier(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("id","5588");
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
+    }
+
+    private List<Client> parseClient(JSONObject response) {
+        // Parse the JSON response and return a list of Itineraire objects
+        List<Client> cli = new ArrayList<>();
+        // Add parsing logic here
+        return cli;
     }
 }
