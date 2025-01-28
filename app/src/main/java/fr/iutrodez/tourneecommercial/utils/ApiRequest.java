@@ -296,7 +296,7 @@ public class ApiRequest {
         String token = getAPI_KEY(context);
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
                 Request.Method.GET,
-                API_URL + "client/number",
+                API_URL + "client/number/",
                 null,
                 callback::onSuccess,
                 callback::onError
