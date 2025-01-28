@@ -55,15 +55,11 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         // Définition du texte des TextViews
         assert clientInfo != null;
         titre.setText(clientInfo.getNomEntreprise());
-        sousTitre.setText(clientInfo.getAdresse().getLibelle()+ clientInfo.getAdresse().getCodePostal());
+        sousTitre.setText(clientInfo.getAdresse().getCodePostal());
 
 
         if (clientInfo != null) {
             // Définir les textes
-            titre.setText(clientInfo.getNomEntreprise());
-            sousTitre.setText(clientInfo.getAdresse().getLibelle());
-            System.out.println(titre.getText());
-            // Action pour le bouton "supprimer"
             boutonSuppression.setOnClickListener(this::onClickBtnSuppression);
 
             // Action pour le bouton "modifier"

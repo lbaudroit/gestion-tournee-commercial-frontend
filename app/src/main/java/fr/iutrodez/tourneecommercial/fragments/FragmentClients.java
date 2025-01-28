@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,14 +48,6 @@ public class FragmentClients extends Fragment {
     private int totalPages = 0;
     private List<Client> clients = new ArrayList<>();
 
-    private ListView liste ;
-
-    private AdaptateurListeClients adaptateur;
-
-    private boolean isLoading = false;
-    private int currentPage = 0;
-    private int totalPages = 0;
-    private List<Client> clients = new ArrayList<>();
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -134,17 +127,10 @@ public class FragmentClients extends Fragment {
                 for (int i = 0; i < len; i++) {
                     try {
                         JSONObject clientJson = response.getJSONObject(i);
-
-                        // Parse client data
-                        String nomEntreprise = clientJson.getString("nomEntreprise");
-
-                        // Get address data
-                        JSONObject adresse = clientJson.getJSONObject("adresse");
-                        String ville = adresse.getString("ville");
-                        String codePostal = adresse.getString("codePostal");
+                        Gson gson = new Gson();
+                        Client client = gson.fromJson(response.getJSONObject(i).toString(),Client.class);
 
                         // Create new client object
-                        Client client = new Client(nomEntreprise, ville, codePostal);
                         clients.add(client);
 
                     } catch (JSONException e) {
