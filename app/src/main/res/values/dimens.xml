@@ -17,7 +17,8 @@
     <dimen name="list_item_height">65dp</dimen>
     <dimen name="list_item_top_padding">6dp</dimen>
     <dimen name="list_item_padding">10dp</dimen>
-    <dimen name="margin_modification">10dp</dimen>
+    <dimen name="modification_button_width">125dp</dimen>
+    <dimen name="margin_modification">15dp</dimen>
 
     <!-- bouton supprimer -->
     <dimen name="padding_icone_btn_supprimer">6dp</dimen>
