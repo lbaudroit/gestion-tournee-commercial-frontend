@@ -1,5 +1,7 @@
 package fr.iutrodez.tourneecommercial.modeles;
 
+import android.view.View;
+
 public class Adresse {
 
     private String libelle;
