@@ -114,11 +114,16 @@ public class FragmentCreationClient extends Fragment {
             }
         });
 
+        Bundle args =getArguments();
         // TODO : modifications
-        if(savedInstanceState != null) {
-
+        if(args != null && args.containsKey("id") ) {
             //TODO : Bundle
-            idModif = savedInstanceState.getString("id");
+            idModif = args.getString("id");
+            try {
+                recupererClient(idModif);
+            } catch (JSONException exception) {
+
+            }
             onEnregistrer = FragmentCreationClient.this::modifier;
         } else {
             onEnregistrer = FragmentCreationClient.this::creer;
@@ -182,7 +187,7 @@ public class FragmentCreationClient extends Fragment {
             ApiRequest.modifierClient(requireContext(), idModif,postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
-                    Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Client modifiée avec succès", Toast.LENGTH_SHORT).show();
                     // Retourner au fragment de liste des clients
 
                     parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
@@ -249,7 +254,7 @@ public class FragmentCreationClient extends Fragment {
                 Gson gson = new Gson();
                 Client client = gson.fromJson(response.toString(),Client.class);
                 adresse.setText(client.getAdresse().getLibelle());
-                codePostal.setText(client.getAdresse().getCode_postal());
+                codePostal.setText(client.getAdresse().getCodePostal());
                 ville.setText(client.getAdresse().getVille());
                 nom.setText(client.getContact().getNom());
                 prenom.setText(client.getContact().getPrenom());

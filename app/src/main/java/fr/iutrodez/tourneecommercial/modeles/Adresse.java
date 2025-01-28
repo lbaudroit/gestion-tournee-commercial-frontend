@@ -5,15 +5,16 @@ import android.view.View;
 public class Adresse {
 
     private String libelle;
-    private String code_postal;
+    private String codePostal;
     private String ville;
 
-    public Adresse(String libelle,String code_postal , String ville){
+    public Adresse(String libelle,String codePostal , String ville){
 
         this.libelle = libelle;
-        this.code_postal = code_postal;
+        this.codePostal = codePostal;
         this.ville = ville;
     }
+
     public String getLibelle( ) {
         return this.libelle;
 
@@ -23,7 +24,7 @@ public class Adresse {
         return ville;
     }
 
-    public String getCode_postal() {
-        return code_postal;
+    public String getCodePostal() {
+        return codePostal;
     }
 }

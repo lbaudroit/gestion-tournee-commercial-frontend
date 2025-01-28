@@ -69,9 +69,9 @@ public class ApiRequest {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
-        String url = API_URL + "/client/modifier/";
+        String url = API_URL + "client/modifier/?id="+id;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.PUT,
+                Request.Method.POST,
                 url,
                 postData,
                 callback::onSuccess,
@@ -81,7 +81,7 @@ public class ApiRequest {
             public Map<String, String> getHeaders()  {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + token);
-                headers.put("id",id);
+
                 return headers;
             }
         };
@@ -117,14 +117,23 @@ public class ApiRequest {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-        String url = API_URL + "/client/recuperer/";
+        String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+
+        String url = API_URL + "client/recuperer/?id="+id;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
                 callback::onSuccess,
                 callback::onError
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         requestQueue.add(jsonObjectRequest);
     }
 

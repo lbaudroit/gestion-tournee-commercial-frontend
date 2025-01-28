@@ -37,7 +37,9 @@ import java.util.List;
 import fr.iutrodez.tourneecommercial.ActiviteCreationClient;
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.Contact;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeItineraire;
@@ -61,10 +63,11 @@ public class FragmentClients extends Fragment {
     private int currentPage = 0;
     private int totalPages = 0;
     private List<Client> clients = new ArrayList<>();
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        Client c = new Client("1","1","nomE",new Adresse("1 Rte de l'Aubrac", "12210", "Laguiole"),new Contact());
+        clients.add(c);
         if (context instanceof ActivitePrincipale) {
             parent = (ActivitePrincipale) context;
         } else {
@@ -97,8 +100,9 @@ public class FragmentClients extends Fragment {
                 R.layout.listitem_client,
                 clients);
         liste.setAdapter(adaptateur);
-        getClientsBy30();
-        getNumberPage();
+        //getClientsBy30();
+        //getNumberPage();
+
 
         liste.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -174,7 +178,7 @@ public class FragmentClients extends Fragment {
 
     public void modifier(View view) {
         Bundle bundle = new Bundle();
-        bundle.putString("id","0");
+        bundle.putString("id","5588");
         parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
     }
 

@@ -55,7 +55,7 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         // Définition du texte des TextViews
         assert clientInfo != null;
         titre.setText(clientInfo.getNomEntreprise());
-        sousTitre.setText(clientInfo.getAdresse().getLibelle()+ clientInfo.getAdresse().getCode_postal());
+        sousTitre.setText(clientInfo.getAdresse().getLibelle()+ clientInfo.getAdresse().getCodePostal());
 
 
         if (clientInfo != null) {
