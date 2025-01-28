@@ -2,13 +2,9 @@ package fr.iutrodez.tourneecommercial.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,16 +14,11 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.VolleyError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentParametres extends Fragment {
@@ -37,10 +28,6 @@ public class FragmentParametres extends Fragment {
     private EditText nom;
     private EditText prenom;
     private EditText email;
-    private AutoCompleteTextView adresse;
-    private EditText codePostal;
-    private EditText ville;
-
     private JSONObject userParams;
 
     public static FragmentParametres newInstance() {
@@ -77,9 +64,6 @@ public class FragmentParametres extends Fragment {
         nom = view.findViewById(R.id.field_nom);
         prenom = view.findViewById(R.id.field_prenom);
         email = view.findViewById(R.id.field_email);
-        adresse = view.findViewById(R.id.field_adresse);
-        codePostal = view.findViewById(R.id.field_code_postal);
-        ville = view.findViewById(R.id.field_ville);
         view.findViewById(R.id.btn_modification).setOnClickListener(this::modifier);
 
         ApiRequest.getParametres(getContext(), new ApiRequest.ApiResponseCallback<JSONObject>() {
@@ -89,9 +73,6 @@ public class FragmentParametres extends Fragment {
                     nom.setText(response.getString("nom"));
                     prenom.setText(response.getString("prenom"));
                     email.setText(response.getString("email"));
-                    adresse.setText(response.getString("libelleAdresse"));
-                    codePostal.setText(response.getString("codePostale"));
-                    ville.setText(response.getString("ville"));
                     userParams = response;
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -103,67 +84,6 @@ public class FragmentParametres extends Fragment {
                 Toast.makeText(getContext(), R.string.error_fetching_params, Toast.LENGTH_LONG).show();
             }
         });
-        // Add TextWatcher for address autocomplete
-        adresse.addTextChangedListener(new TextWatcher() {
-            private Handler handler = new Handler();
-            private Runnable fetchSuggestionsRunnable;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 2) {
-                    if (fetchSuggestionsRunnable != null) {
-                        handler.removeCallbacks(fetchSuggestionsRunnable);
-                    }
-                    fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(getContext(), s.toString(),
-                            new ApiRequest.ApiResponseCallback<JSONObject>() {
-                                @Override
-                                public void onSuccess(JSONObject response) {
-                                    try {
-                                        List<JSONObject> suggestions = new ArrayList<>();
-                                        JSONArray features = response.getJSONArray("features");
-                                        for (int i = 0; i < features.length(); i++) {
-                                            JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
-                                            suggestions.add(properties);
-                                        }
-                                        AdaptateurAdresse adapter = new AdaptateurAdresse(getContext(),
-                                                android.R.layout.simple_dropdown_item_1line,
-                                                suggestions,
-                                                FragmentParametres.this::onClickSuggestions);
-                                        adresse.setAdapter(adapter);
-                                        adapter.notifyDataSetChanged();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onError(VolleyError error) {
-                                    error.printStackTrace();
-                                }
-                            });
-                    handler.postDelayed(fetchSuggestionsRunnable, 300);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-    }
-
-    private void onClickSuggestions(JSONObject adresse) {
-        try {
-            this.adresse.setText(adresse.getString("name"));
-            codePostal.setText(adresse.getString("postcode"));
-            ville.setText(adresse.getString("city"));
-            this.adresse.dismissDropDown();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void modifier(View view) {
@@ -173,9 +93,6 @@ public class FragmentParametres extends Fragment {
                 userParams.put("nom", nom.getText().toString());
                 userParams.put("prenom", prenom.getText().toString());
                 userParams.put("email", email.getText().toString());
-                userParams.put("libelleAdresse", adresse.getText().toString());
-                userParams.put("codePostale", codePostal.getText().toString());
-                userParams.put("ville", ville.getText().toString());
                 System.out.println(userParams.toString());
                 ApiRequest.modifierParametres(getContext(), userParams, new ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
@@ -198,14 +115,10 @@ public class FragmentParametres extends Fragment {
         String nom = this.nom.getText().toString();
         String prenom = this.prenom.getText().toString();
         String email = this.email.getText().toString();
-        String adresse = this.adresse.getText().toString();
-        String codePostal = this.codePostal.getText().toString();
-        String ville = this.ville.getText().toString();
         // utilisation de l'opérateur & pour évaluer toutes les conditions
         return checkNom(nom) &
                 checkPrenom(prenom) &
-                checkEmail(email) &
-                checkAdresse(adresse, codePostal, ville);
+                checkEmail(email);
     }
 
     private boolean checkNom(String nom) {
@@ -238,46 +151,5 @@ public class FragmentParametres extends Fragment {
             retour = false;
         }
         return retour;
-    }
-
-    private boolean checkAdresse(String adresse, String codePostal, String ville) {
-        final boolean[] retour = {true}; // utilisation d'un tableau pour pouvoir modifier la valeur dans une lambda
-        if (adresse.trim().isEmpty()) {
-            this.adresse.setError(getString(R.string.empty_field_error));
-            retour[0] = false;
-        }
-        if (codePostal.trim().isEmpty()) {
-            this.codePostal.setError(getString(R.string.empty_field_error));
-            retour[0] = false;
-        }
-        if (ville.trim().isEmpty()) {
-            this.ville.setError(getString(R.string.empty_field_error));
-            retour[0] = false;
-        }
-        ApiRequest.validationAdresse(getContext(), adresse, codePostal, ville, new ApiRequest.ApiResponseCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                try {
-                    if (!((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties").getString("name").equals(adresse)) {
-                        FragmentParametres.this.adresse.setError("Adresse non valide");
-                        FragmentParametres.this.codePostal.setError("Adresse non valide");
-                        FragmentParametres.this.ville.setError("Adresse non valide");
-                        retour[0] = false;
-                    }
-
-                } catch (Exception e) {
-                    FragmentParametres.this.adresse.setError("Adresse non valide");
-                    FragmentParametres.this.codePostal.setError("Adresse non valide");
-                    FragmentParametres.this.ville.setError("Adresse non valide");
-                    retour[0] = false;
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-
-            }
-        });
-        return retour[0];
     }
 }
