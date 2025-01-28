@@ -37,8 +37,6 @@ public class ApiRequest {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-        System.out.println(API_URL + url);
-        System.out.println(postData.toString());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 API_URL + url,
@@ -53,8 +51,6 @@ public class ApiRequest {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-        System.out.println(API_URL + url);
-        System.out.println(postData.toString());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 API_URL + url,
@@ -168,7 +164,6 @@ public class ApiRequest {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = getAPI_KEY(context);
-        System.out.println(API_URL + "itineraire/supprimer/?id=" + itineraireId);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
                 API_URL + "itineraire/supprimer/?id=" + itineraireId,
@@ -221,7 +216,6 @@ public class ApiRequest {
                 }
             });
         }
-        System.out.println("after : " + context.getSharedPreferences("user", MODE_PRIVATE).getLong("expiration", 0));
         return token[0];
     }
 
