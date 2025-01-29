@@ -1,5 +1,6 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -70,7 +71,9 @@ public class FragmentItineraires extends Fragment {
         adaptateur = new AdaptateurListeItineraire(
                 this.parent,
                 R.layout.listitem_itineraire,
-                itineraires);
+                itineraires,
+                this::onClickBtnModification,
+                this::onClickBtnSuppression);
         liste.setAdapter(adaptateur);
         ajouter.setOnClickListener(this::onClickAjouter);
         liste.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -154,5 +157,39 @@ public class FragmentItineraires extends Fragment {
         List<Itineraire> fetchedItineraires = new ArrayList<>();
         // Add parsing logic here
         return fetchedItineraires;
+    }
+
+    private void onClickBtnSuppression(Itineraire itineraire, int position) {
+        String message = getContext().getString(R.string.confirmation_suppression_itineraire, itineraire.getNom());
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.suppression_itineraire)
+                .setMessage(message)
+                .setPositiveButton(R.string.oui, (dialog, which) -> deleteItineraire(itineraire))
+                .setNegativeButton(R.string.non, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void deleteItineraire(Itineraire itineraire) {
+        ApiRequest.deleteItineraire(getContext(), itineraire.getId(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                adaptateur.remove(itineraire);
+                adaptateur.notifyDataSetChanged();
+                Toast.makeText(getContext(), R.string.itineraire_deleted, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                System.out.println(error);
+                Toast.makeText(getContext(), R.string.error_deleting_itineraire, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void onClickBtnModification(Itineraire itineraire, int position) {
+        Bundle bundle = new Bundle();
+        bundle.putLong("id_itineraire", itineraire.getId());
+
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_ITINERAIRE, false, bundle);
     }
 }

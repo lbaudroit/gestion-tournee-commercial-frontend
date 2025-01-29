@@ -5,42 +5,39 @@
     android:stretchColumns="*"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+            <EditText
+                android:id="@+id/nom_itineraire"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditText"
+                android:hint="@string/nom_itineraire"
+                android:inputType="text"
+                android:layout_span="2"
+                android:drawableStart="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
+        </TableRow>
 
-        <EditText
-            android:id="@+id/nom_itineraire"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/RoundedEditText"
-            android:hint="@string/nom_itineraire"
-            android:inputType="text"
-            android:layout_span="2"
-            android:drawableStart="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
-    </TableRow>
+        <View style="@style/Separator"/>
 
-    <View style="@style/Separator" />
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/entreprises_a_visiter"
+                style="@style/TitreSousPartie"
+                android:layout_span="2"/>
+        </TableRow>
 
-    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/entreprises_a_visiter"
-            style="@style/TitreSousPartie"
-            android:layout_span="2" />
-    </TableRow>
-
-    <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
-
-        <ListView
-            android:id="@+id/list_clients"
-            android:layout_span="2"
-            android:layout_marginBottom="@dimen/espace_vertical_champs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/listitem_client" />
-    </TableRow>
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+            <ListView
+                android:id="@+id/list_clients"
+                android:layout_span="2"
+                android:layout_marginBottom="@dimen/espace_vertical_champs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/listitem_client" />
+        </TableRow>
 
     <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
 
