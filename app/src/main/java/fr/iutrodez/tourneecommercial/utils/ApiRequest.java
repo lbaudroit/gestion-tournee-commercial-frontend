@@ -4,9 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.widget.Toast;
-import android.content.Context;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -20,16 +18,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import fr.iutrodez.tourneecommercial.R;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
 
@@ -240,7 +235,7 @@ public class ApiRequest {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = getAPI_KEY(context);
-        String url = API_URL + "itineraire/?id=" + id;
+        String url = API_URL + "itineraire/recuperer/?id=" + id;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
@@ -346,16 +341,16 @@ public class ApiRequest {
     }
 
     private static JSONObject creationDTOCreationItineraire(String nom, List<Client> clients, int distance) throws JSONException {
-            // Création de l'objet avec les données
-            JSONObject itineraireData = new JSONObject();
-            List<String> clientIds = clients.stream()
-                    .map(Client::get_id)
-                    .collect(Collectors.toList());
-            itineraireData.put("nom", nom);
-            itineraireData.put("idClients", new JSONArray(clientIds));
-            itineraireData.put("distance", distance);
+        // Création de l'objet avec les données
+        JSONObject itineraireData = new JSONObject();
+        List<String> clientIds = clients.stream()
+                .map(Client::get_id)
+                .collect(Collectors.toList());
+        itineraireData.put("nom", nom);
+        itineraireData.put("idClients", new JSONArray(clientIds));
+        itineraireData.put("distance", distance);
 
-            return itineraireData;
+        return itineraireData;
     }
 
     public static void creationItineraire(Context context, String nom, List<Client> clients, int distance, ApiResponseCallback<JSONObject> callback) throws JSONException {

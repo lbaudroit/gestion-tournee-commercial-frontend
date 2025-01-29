@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,8 +30,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
@@ -44,8 +43,6 @@ import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentCreationItineraire extends Fragment {
 
-    private Optional<Long> idItineraireModifie = Optional.empty();
-    public ActivitePrincipale parent;
 
     //Elements de la vue
     private EditText nom;
@@ -53,6 +50,7 @@ public class FragmentCreationItineraire extends Fragment {
     private Button btnAjouterClient;
     private Button btnGenererItineraire;
     private Button btnValiderItineraire;
+    public ActivitePrincipale parent;
 
     //Listes
     private List<Client> clientsItineraire;
@@ -61,15 +59,13 @@ public class FragmentCreationItineraire extends Fragment {
     //Elements secondaires de la vue
     private AdaptateurListeClient adaptateurClientsItineraire;
     private AdaptateurListeClient adaptateurClientsDisponibles;
+    private Dialog dialog;
 
     //Autres variables
     private final static int MAX_CLIENTS = 8;
     private Integer distance;
-    private Dialog dialog;
     private Client clientSelectionne;
-
-    private AdaptateurListeClient adaptateurClientsAjoutes;
-    private AdaptateurListeClient adaptateurClientsPotentiels;
+    private Optional<Long> idItineraireModifie = Optional.empty();
 
     //Méthodes principales
     public static FragmentCreationItineraire newInstance() {
@@ -85,6 +81,7 @@ public class FragmentCreationItineraire extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         // Récupération des éléments de la vue
         nom = view.findViewById(R.id.nom_itineraire);
         selectionClient = view.findViewById(R.id.client_selectionne);
@@ -101,10 +98,8 @@ public class FragmentCreationItineraire extends Fragment {
         tousClients = new ArrayList<>();
         recuperationDesClients();
 
-        // Gestion de la liste des clients séléctionnés
-        ListView listeClientsAjoutes = view.findViewById(R.id.list_clients);
-
         // Création, association de l'adaptateur et association de la liste à l'adaptateur
+        ListView listeClientsAjoutes = view.findViewById(R.id.list_clients);
         clientsItineraire = new ArrayList<>();
         adaptateurClientsItineraire = new AdaptateurListeClient(
                 getContext(),
@@ -125,9 +120,16 @@ public class FragmentCreationItineraire extends Fragment {
         disableView(btnValiderItineraire);
         disableView(btnAjouterClient);
 
-
         // Gestion du champ de recherche des clients
         creationRechercheClient();
+
+        //Récupération du bundle si on est en modification
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            Long idItineraire = bundle.getLong("idItineraire");
+            System.out.println("Modification de l'itinéraire " + idItineraire);
+            preparerPourModification(idItineraire);
+        }
     }
 
     @Nullable
@@ -146,12 +148,6 @@ public class FragmentCreationItineraire extends Fragment {
                     JSONObject obj = response.optJSONObject(i);
                     tousClients.add(ApiRequest.jsonToClient(obj));
                 }
-                Toast.makeText(getContext(),
-                        "Réussite",
-                        Toast.LENGTH_SHORT).show();
-
-                // Gestion de l'autocomplete
-                //setupAutocomplete();
             }
 
             @Override
@@ -213,84 +209,6 @@ public class FragmentCreationItineraire extends Fragment {
         });
     }
 
-//        // Gestion de la liste des clients déjà ajoutés
-//        ListView listeClientsAjoutes = view.findViewById(R.id.list_clients);
-//
-//        // Création, association de l'adaptateur
-//        clientsAjoutes = new ArrayList<>();
-//        adaptateurClientsAjoutes = new AdaptateurListeClient(
-//                parent,
-//                R.layout.listitem_client,
-//                clientsAjoutes,
-//                null,
-//                this::supprimerClientListe);
-//        listeClientsAjoutes.setAdapter(adaptateurClientsAjoutes);
-//
-//        // Remplissage avec les données en cas de modification
-//        if (savedInstanceState != null && savedInstanceState.containsKey("id_itineraire")) {
-//            long idItineraire = savedInstanceState.getLong("id_itineraire");
-//            preparerPourModification(idItineraire);
-//        } else {
-//            idItineraireModifie = Optional.empty();
-//        }
-//
-//        // Modification du titre dans l'action bar
-//        ActionBar actionBar = parent.getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setTitle(getString(R.string.creation_itineraire));
-//        }
-//
-//        // Blocage des boutons
-//        disableView(btnGenererItineraire);
-//        disableView(btnValider);
-//        disableView(btnAjouterClient);
-//    }
-
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        super.onCreateView(inflater, container, savedInstanceState);
-//        return inflater.inflate(R.layout.fragment_creation_itineraire, container, false);
-//    }
-//
-//    private void setupAutocomplete() {
-//        List<Client> potentiels = getClientsDisponibles();
-//
-//        // On crée l'adapteur s'il n'existe pas déjà et on associe les données
-//        adaptateurClientsPotentiels = new AdaptateurListeClient(parent,
-//                R.layout.listitem_client,
-//                potentiels,
-//                null,
-//                null
-//        );
-//
-//        clientAutocomplete.setAdapter(adaptateurClientsPotentiels);
-//
-//        clientAutocomplete.setOnItemClickListener(
-//                (parent, view, position, id) -> {
-//                    Client selectedClient = (Client) parent.getItemAtPosition(position);
-//                    clientSelectionne = selectedClient;
-//                    clientAutocomplete.setText(selectedClient.getNomEntreprise());
-//                    clientAutocomplete.dismissDropDown();
-//
-//                    enableView(btnAjouterClient);
-//                });
-//
-//        // Set the threshold for the AutoCompleteTextView
-//        clientAutocomplete.setThreshold(1);
-//
-//        // Ensure the AutoCompleteTextView retains focus
-//        clientAutocomplete.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) {
-//                clientAutocomplete.showDropDown();
-//            }
-//        });
-//
-//        clientAutocomplete.setOnClickListener(v -> {
-//            clientAutocomplete.showDropDown();
-//        });
-//    }
-
     private void supprimerClientListe(Client client) {
         clientsItineraire.remove(client);
         adaptateurClientsItineraire.notifyDataSetChanged();
@@ -299,12 +217,17 @@ public class FragmentCreationItineraire extends Fragment {
         if (clientsItineraire.size() < MAX_CLIENTS) {
             enableView(selectionClient);
         }
-        enableView(btnGenererItineraire);
+        if (clientsItineraire.isEmpty()) {
+            disableView(btnGenererItineraire);
+        } else {
+            enableView(btnGenererItineraire);
+        }
         disableView(btnValiderItineraire);
     }
 
     private List<Client> getClientsDisponibles() {
         List<Client> disponibles = new ArrayList<>(tousClients);
+        System.out.println("Clients itinéraire : " + clientsItineraire);
         disponibles.removeAll(clientsItineraire);
         return disponibles;
     }
@@ -315,7 +238,6 @@ public class FragmentCreationItineraire extends Fragment {
                 Toast.LENGTH_SHORT).show();
 
         adaptateurClientsItineraire.add(clientSelectionne);
-        adaptateurClientsDisponibles.remove(clientSelectionne);
         clientSelectionne = null;
 
         // On ré-active le bouton de génération
@@ -393,11 +315,13 @@ public class FragmentCreationItineraire extends Fragment {
         String nomItineraire = nom.getText().toString();
         if (nomItineraire.trim().isEmpty()) {
             nom.setError(getString(R.string.empty_field_error));
+            return;
         }
 
         // Vérification des clients
         if (clientsItineraire.isEmpty()) {
             selectionClient.setError(getString(R.string.aucun_client_saisi_error));
+            return;
         }
 
         // Envoie de la requête au back-end
@@ -438,6 +362,7 @@ public class FragmentCreationItineraire extends Fragment {
             onExceptionCallback.accept(e);
         }
     }
+
     private void requeteModifierItineraire(Consumer<Exception> onExceptionCallback) {
         if (idItineraireModifie.isPresent()) {
             String nomItineraire = nom.getText().toString();
@@ -464,13 +389,13 @@ public class FragmentCreationItineraire extends Fragment {
     }
 
 
-
     /**
      * Prépare les champs pour une modification d'itinéraire
      * - rajoute les clients existants
      * - affiche le nom de l'itinéraire
      * - désactive le bouton de génération
      * - met à jour le texte du bouton de validation
+     *
      * @param idItineraire l'identifiant de l'itinéraire à modifier
      */
     private void preparerPourModification(Long idItineraire) {
@@ -483,18 +408,38 @@ public class FragmentCreationItineraire extends Fragment {
                 List<Client> clientsExistants = itineraireExistant.getClients();
                 clientsItineraire.clear();
                 clientsItineraire.addAll(clientsExistants);
-                adaptateurClientsAjoutes.notifyDataSetChanged();
+                adaptateurClientsItineraire.notifyDataSetChanged();
 
                 // Remplir les informations
                 nom.setText(itineraireExistant.getNom());
                 distance = itineraireExistant.getDistance();
                 idItineraireModifie = Optional.of(itineraireExistant.getId());
 
-                // On désactive la génération et on propose l'option de validation
+                // On désactive la génération
                 disableView(btnGenererItineraire);
-                enableView(btnValiderItineraire);
 
-                btnAjouterClient.setText(R.string.modifier);
+                // On vérifie si on a atteint le nombre maximum de clients
+                if (clientsItineraire.size() == MAX_CLIENTS) {
+                    disableView(selectionClient);
+                }
+                // On active le bouton de validation et on change son texte en "Modifier"
+                btnValiderItineraire.setText(R.string.modifier);
+
+                // On rajoute un TextWatcher pour vérifier si le nom change
+                nom.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        enableView(btnValiderItineraire);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
             }
 
             @Override

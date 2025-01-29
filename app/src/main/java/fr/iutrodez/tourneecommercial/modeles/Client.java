@@ -13,8 +13,8 @@ public class Client {
 
     private boolean clientEffectif;
 
-    public Client(int idUtilisateur , String nomEntreprise , Adresse adresse,
-                  String description , double longitude , double latitude, Contact contact) {
+    public Client(int idUtilisateur, String nomEntreprise, Adresse adresse,
+                  String description, double longitude, double latitude, Contact contact) {
         this.idUtilisateur = idUtilisateur;
         this.nomEntreprise = nomEntreprise;
         this.adresse = adresse;
@@ -33,5 +33,13 @@ public class Client {
 
     public Adresse getAdresse() {
         return adresse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Client) {
+            return ((Client) obj).get_id().equals(this.get_id());
+        }
+        return false;
     }
 }

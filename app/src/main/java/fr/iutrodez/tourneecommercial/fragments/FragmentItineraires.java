@@ -188,7 +188,8 @@ public class FragmentItineraires extends Fragment {
 
     private void onClickBtnModification(Itineraire itineraire, int position) {
         Bundle bundle = new Bundle();
-        bundle.putLong("id_itineraire", itineraire.getId());
+        bundle.putLong("idItineraire", itineraire.getId());
+        System.out.println("Navigating to FragmentCreationItineraire with id: " + itineraire.getId());
 
         parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_ITINERAIRE, false, bundle);
     }
