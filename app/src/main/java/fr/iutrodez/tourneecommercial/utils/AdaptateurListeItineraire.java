@@ -1,5 +1,6 @@
 package fr.iutrodez.tourneecommercial.utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,16 @@ public class AdaptateurListeItineraire extends ArrayAdapter<Itineraire> {
     }
 
     private void onClickBtnSuppression(Itineraire itineraire, int position) {
+        String message = getContext().getString(R.string.confirmation_suppression_itineraire, itineraire.getNom());
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.suppression_itineraire)
+                .setMessage(message)
+                .setPositiveButton(R.string.oui, (dialog, which) -> deleteItineraire(itineraire))
+                .setNegativeButton(R.string.non, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void deleteItineraire(Itineraire itineraire) {
         ApiRequest.deleteItineraire(getContext(), itineraire.getId(), new ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {

@@ -73,4 +73,8 @@
     <string name="rechercher_entreprise">Recherche une entreprise</string>
     <string name="sectionner_un_client">Séléctionner un client</string>
     <string name="rechercher">Rechercher...</string>
+    <string name="suppression_itineraire">Suppresion de l\'itinéraire</string>
+    <string name="confirmation_suppression_itineraire">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
+    <string name="oui">Oui</string>
+    <string name="non">Non\n</string>
 </resources>

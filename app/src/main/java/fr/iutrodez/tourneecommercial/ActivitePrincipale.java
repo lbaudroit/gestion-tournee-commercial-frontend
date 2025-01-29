@@ -1,8 +1,10 @@
 package fr.iutrodez.tourneecommercial;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import fr.iutrodez.tourneecommercial.fragments.FragmentCarte;
 import fr.iutrodez.tourneecommercial.fragments.FragmentClients;
@@ -76,6 +79,28 @@ public class ActivitePrincipale extends AppCompatActivity
         navbar.setOnItemSelectedListener(this);
         fm = getSupportFragmentManager();
         navigateToFragment(FRAGMENT_CLIENTS, false);
+        System.out.println(fm.getBackStackEntryCount());
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button press
+
+                if (fm.getBackStackEntryCount() > 1) {
+                    int id = Integer.parseInt(Objects.requireNonNull(fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName()));
+                    System.out.println(id);
+                    navbar.setSelectedItemId(id);
+                    fm.popBackStack();
+                } else {
+                    new AlertDialog.Builder(ActivitePrincipale.this)
+                            .setTitle("Quitter l'application")
+                            .setMessage("Voulez-vous vraiment quitter l'application ?")
+                            .setPositiveButton("Oui", (dialog, which) -> finish())
+                            .setNegativeButton("Non", null)
+                            .show();
+
+                }
+            }
+        });
     }
 
     /**
@@ -106,8 +131,8 @@ public class ActivitePrincipale extends AppCompatActivity
      * @param cached Indique s'il faut utiliser un fragment mis en cache.
      */
     public void navigateToNavbarItem(int id, boolean cached) {
-        navbar.setSelectedItemId(getNavbarItemId(id));
         navigateToFragment(id, cached);
+        navbar.setSelectedItemId(getNavbarItemId(id));
     }
 
     /**
@@ -119,8 +144,8 @@ public class ActivitePrincipale extends AppCompatActivity
      * @param bundle Paramètres supplémentaires à passer au fragment.
      */
     public void navigateToNavbarItem(int id, boolean cached, Bundle bundle) {
-        navbar.setSelectedItemId(getNavbarItemId(id));
         navigateToFragment(id, cached, bundle);
+        navbar.setSelectedItemId(getNavbarItemId(id));
     }
 
     /**
@@ -133,6 +158,7 @@ public class ActivitePrincipale extends AppCompatActivity
         Fragment fragment = cached ? getCachedFragment(id) : getNotCachedFragment(id);
         fm.beginTransaction()
                 .replace(R.id.replaceable, fragment)
+                .addToBackStack(String.valueOf(navbar.getSelectedItemId()))
                 .commit();
     }
 
@@ -148,6 +174,7 @@ public class ActivitePrincipale extends AppCompatActivity
         fragment.setArguments(bundle);
         fm.beginTransaction()
                 .replace(R.id.replaceable, fragment)
+                .addToBackStack(String.valueOf(getNavbarItemId(id)))
                 .commit();
     }
 
