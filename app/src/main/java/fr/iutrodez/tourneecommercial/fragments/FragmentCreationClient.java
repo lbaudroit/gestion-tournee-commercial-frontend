@@ -37,6 +37,15 @@ import fr.iutrodez.tourneecommercial.modeles.Client;
 
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
+/**
+ * Fragment pour afficher l'interface de création client ou de modification client
+ *
+ * @author
+ * Ahmed BRIBACH
+ * Leila Baudroit
+ * Enzo CLUZEL
+ * Benjamin NICOL
+ */
 public class FragmentCreationClient extends Fragment {
     private ActivitePrincipale parent;
     private Switch aSwitch;
@@ -250,6 +259,10 @@ public class FragmentCreationClient extends Fragment {
     }
 
 
+    /**
+     * Méthode qui ajoute dans les champs les suggestions récupérées
+     * @param adresse  récupéré lors de l'autocomplete
+     */
     private void onClickSuggestions(JSONObject adresse) {
         try {
             this.adresse.setText(adresse.getString("name"));

@@ -31,6 +31,16 @@ import fr.iutrodez.tourneecommercial.modeles.Contact;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
+/**
+ * Fragment de la navBar pour afficher la liste des clients
+ * et pour soit modifier, créer ou supprimer un client
+ *
+ * @author
+ * Ahmed BRIBACH
+ * Leila Baudroit
+ * Enzo CLUZEL
+ * Benjamin NICOL
+ */
 public class FragmentClients extends Fragment {
 
     public static FragmentClients newInstance() {
@@ -147,10 +157,7 @@ public class FragmentClients extends Fragment {
     }
 
     private void fetchClientsPage() {
-
-
         isLoading = true;
-
         ApiRequest.getClientsBy30(requireContext(), currentPage, new ApiRequest.ApiResponseCallback<JSONArray>() {
             @Override
             public void onSuccess(JSONArray response) {
@@ -184,6 +191,10 @@ public class FragmentClients extends Fragment {
         });
     }
 
+    /**
+     * Méthode appelée quand le
+     * @param view
+     */
     public void ajouter(View view) {
         parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false);
     }
