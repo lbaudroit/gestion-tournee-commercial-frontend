@@ -25,6 +25,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -218,7 +219,15 @@ public class FragmentCreationClient extends Fragment {
 
                 @Override
                 public void onError(VolleyError error) {
-                    Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                    String erreur = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    JSONObject jsonError=null;
+                    try {
+                         jsonError = new JSONObject(erreur);
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Toast.makeText(requireContext(), "Erreur: " + jsonError.optString("message"), Toast.LENGTH_LONG).show();
                 }
             });
 
