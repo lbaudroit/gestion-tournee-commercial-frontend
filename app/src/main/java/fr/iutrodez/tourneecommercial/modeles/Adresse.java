@@ -8,23 +8,23 @@ public class Adresse {
     private String codePostal;
     private String ville;
 
-    public Adresse(String libelle,String codePostal , String ville){
+    
+    public Adresse(String libelle,String codePostal , String ville) {
 
         this.libelle = libelle;
         this.codePostal = codePostal;
         this.ville = ville;
     }
 
-    public String getLibelle( ) {
+    public String getLibelle() {
         return this.libelle;
-
+    }
+      
+    public String getCodePostal() {
+        return codePostal;
     }
 
     public String getVille() {
         return ville;
-    }
-
-    public String getCodePostal() {
-        return codePostal;
     }
 }

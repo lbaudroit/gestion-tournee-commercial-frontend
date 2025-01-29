@@ -261,7 +261,7 @@ public class ActiviteInscription extends AppCompatActivity {
             this.password.setError(getString(R.string.password_length_error));
             retour = false;
         }
-        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$";
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=_]).+$";
         if (!password.matches(passwordPattern)) {
             this.password.setError(getString(R.string.password_pattern_error));
             retour = false;

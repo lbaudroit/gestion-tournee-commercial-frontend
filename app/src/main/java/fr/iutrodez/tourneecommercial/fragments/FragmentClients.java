@@ -99,8 +99,6 @@ public class FragmentClients extends Fragment {
                 }
             }
         });
-
-
         return frag;
     }
 

@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
@@ -14,11 +13,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
 import java.util.HashMap;
 import java.util.Map;
 import fr.iutrodez.tourneecommercial.R;
@@ -92,6 +103,7 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
+
     /**
      * Modifie les informations d'un client existant.
      * @param context Le contexte de l'application
@@ -153,6 +165,7 @@ public class ApiRequest {
 
         requestQueue.add(jsonObjectRequest);
     }
+
 
     /**
      * Récupère les informations d'un client spécifique.
@@ -286,6 +299,52 @@ public class ApiRequest {
         requestQueue.add(jsonArrayRequest);
     }
 
+
+    public static void recupererClients(Context context, ApiResponseCallback<JSONArray> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = getAPI_KEY(context);
+        String url = API_URL + "client/";
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public static void deleteItineraire(Context context, long itineraireId, ApiResponseCallback<JSONObject> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = getAPI_KEY(context);
+        System.out.println(API_URL + "itineraire/supprimer/?id=" + itineraireId);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.DELETE,
+                API_URL + "itineraire/supprimer/?id=" + itineraireId,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
+    }
     /**
      * Méthode d'appel API pour supprimer un client
      * @param context
@@ -312,7 +371,28 @@ public class ApiRequest {
                 headers.put("Authorization", "Bearer " + token);
                 return headers;
             }
+        };
+        requestQueue.add(jsonObjectRequest);
+    }
 
+    public static void getParametres(Context context, ApiResponseCallback<JSONObject> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = getAPI_KEY(context);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                API_URL + "utilisateur/",
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
         };
         requestQueue.add(jsonObjectRequest);
     }
@@ -328,6 +408,10 @@ public class ApiRequest {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = getAPI_KEY(context);
+        String url = API_URL + "itineraire/recuperer/?id=" + id;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
                 API_URL + "itineraire/supprimer/?id=" + itineraireId,
@@ -343,7 +427,55 @@ public class ApiRequest {
             }
         };
         requestQueue.add(jsonObjectRequest);
+    }
 
+    public static void modifierParametres(Context context, JSONObject postData, ApiResponseCallback<JSONObject> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = getAPI_KEY(context);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                API_URL + "utilisateur/modifier/",
+                postData,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public static void genererItineraire(Context context, List<Client> clients, ApiResponseCallback<JSONObject> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = getAPI_KEY(context);
+        String ids = clients.stream()
+                .map(Client::get_id)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        String url = API_URL + "itineraire/generer/?clients=" + ids;
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
     }
 
     /**
@@ -386,6 +518,34 @@ public class ApiRequest {
                 }
             });
         }
+        return token[0];
+    }
+
+    private static JSONObject creationDTOCreationItineraire(String nom, List<Client> clients, int distance) throws JSONException {
+        // Création de l'objet avec les données
+        JSONObject itineraireData = new JSONObject();
+        List<String> clientIds = clients.stream()
+                .map(Client::get_id)
+                .collect(Collectors.toList());
+        itineraireData.put("nom", nom);
+        itineraireData.put("idClients", new JSONArray(clientIds));
+        itineraireData.put("distance", distance);
+
+        return itineraireData;
+    }
+
+    public static void creationItineraire(Context context, String nom, List<Client> clients, int distance, ApiResponseCallback<JSONObject> callback) throws JSONException {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+
+        JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients, distance);
+
+        String url = API_URL + "itineraire/creer/";
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                donneesAEnvoyer,
         return token[0];
     }
 
@@ -437,13 +597,41 @@ public class ApiRequest {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
                 headers.put("Authorization", "Bearer " + token);
                 return headers;
             }
         };
         requestQueue.add(jsonArrayRequest);
     }
+          
+    public static void modificationItineraire(Context context, long id, String nom, List<Client> clients, int distance, ApiResponseCallback<JSONObject> callback) throws JSONException {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
 
+        JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients, distance);
+
+        String url = API_URL + "itineraire/modifier/?id=" + id;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                donneesAEnvoyer,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
+    }
+          
     /**
      * Récupère une page de 30 clients pour le lazy loading.
      * @param context Le contexte de l'application
@@ -465,10 +653,32 @@ public class ApiRequest {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
                 headers.put("Authorization", "Bearer " + token);
                 return headers;
             }
         };
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public static Client jsonToClient(JSONObject json) {
+        Gson gson = new Gson();
+
+        // Définir le type pour une liste de clients
+        Type clientType = TypeToken.get(Client.class).getType();
+
+        // Convertir le JSON en liste d'objets Client
+        return gson.fromJson(json.toString(), clientType);
+    }
+
+    public static ItineraireDTO itineraireDTOToClient(JSONObject json) {
+        Gson gson = new Gson();
+
+        // Définir le type pour une liste de clients
+        Type dtoType = TypeToken.get(ItineraireDTO.class).getType();
+
+        // Convertir le JSON en liste d'objets Client
+        return gson.fromJson(json.toString(), dtoType);
         requestQueue.add(jsonArrayRequest);
     }
 }

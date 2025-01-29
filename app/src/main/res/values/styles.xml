@@ -46,6 +46,11 @@
         <item name="android:layout_marginBottom">@dimen/margin_bottom_ajouter</item>
     </style>
 
+    <style name="GrandBoutonAjouter">
+        <item name="android:backgroundTint">@color/ajouter</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="BoutonPrincipal">
         <item name="android:backgroundTint">@color/neutral_blue</item>
         <item name="android:textColor">@color/white</item>

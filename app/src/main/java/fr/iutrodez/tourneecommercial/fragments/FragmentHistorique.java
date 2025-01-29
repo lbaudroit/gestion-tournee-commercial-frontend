@@ -20,7 +20,6 @@ public class FragmentHistorique extends Fragment {
         return new FragmentHistorique();
     }
 
-
     public ActivitePrincipale parent;
 
     @Override
@@ -39,6 +38,21 @@ public class FragmentHistorique extends Fragment {
         String token = parent.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
         text.setText("Historique\n" + token); // Méthodes pour afficher le token
         return frag;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        String param1 = ":)";
+        if (bundle != null) {
+            param1 = bundle.getString("param1");
+            String param2 = bundle.getString("param2");
+            // Utiliser les paramètres comme nécessaire
+        }
+
+        // Initialiser les composants
+        TextView text = view.findViewById(R.id.nom_frag);
+        text.setText(param1);
     }
 
     @Override

@@ -57,6 +57,10 @@ public class ActiviteConnexion extends AppCompatActivity {
 
         findViewById(R.id.btn_connexion).setOnClickListener(this::onClickEnvoyer);
         findViewById(R.id.btn_inscription).setOnClickListener(this::onClickGoToInscription);
+        //TODO: Supprimer
+        email.setText("en@cl.fr");
+        password.setText("Enzo_123");
+        findViewById(R.id.btn_connexion).performClick();
     }
 
     /**
@@ -93,7 +97,7 @@ public class ActiviteConnexion extends AppCompatActivity {
         }
 
         // On vérifie que le mot de passe contient au moins une majuscule, une minuscule et un chiffre
-        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$";
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=_]).+$";
         if (!password.getText().toString().matches(passwordPattern)) {
             password.setError(getString(R.string.password_pattern_error));
             auth = false;
@@ -110,7 +114,6 @@ public class ActiviteConnexion extends AppCompatActivity {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println(postData);
             // Création de la requête
             ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
@@ -119,10 +122,17 @@ public class ActiviteConnexion extends AppCompatActivity {
                     try {
                         System.out.println(response);
                         String token = response.getString("token");
+                        // Current time in milliseconde
+                        long expirationTime = System.currentTimeMillis() + response.getLong("expiration");
                         // Enregistrement du token dans les SharedPreferences
+                        getSharedPreferences("user", MODE_PRIVATE).edit().putLong("expiration", expirationTime).apply();
                         getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", token).apply();
+                        getSharedPreferences("user", MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
+                        getSharedPreferences("user", MODE_PRIVATE).edit().putString("password", password.getText().toString()).apply();
                         // Si l'authentification est réussie, on enregistre le token dans les SharedPreferences et on redirige vers l'activité principale
-                        startActivity(new Intent(ActiviteConnexion.this, ActivitePrincipale.class));
+                        Intent intent = new Intent(ActiviteConnexion.this, ActivitePrincipale.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
