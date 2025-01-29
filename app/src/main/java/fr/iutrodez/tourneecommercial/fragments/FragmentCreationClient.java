@@ -117,7 +117,7 @@ public class FragmentCreationClient extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 2) {
-                    fetchAdressSuggestions(charSequence.toString());
+                    fetchAdressSuggestions(charSequence.toString().replace(" ", "%20"));
                 }
             }
 
@@ -128,7 +128,7 @@ public class FragmentCreationClient extends Fragment {
         });
 
         // On récupère les arguments mis dans le fragment
-        Bundle args =getArguments();
+        Bundle args = getArguments();
 
         // On vérifie si l'argument id existe
         if(args != null && args.containsKey("id") ) {
@@ -157,7 +157,7 @@ public class FragmentCreationClient extends Fragment {
         if (fetchSuggestionsRunnable != null) {
             handler.removeCallbacks(fetchSuggestionsRunnable);
         }
-        fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(context, text,
+        fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(requireContext(), text,
                 new ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
                     public void onSuccess(JSONObject response) {
@@ -331,6 +331,123 @@ public class FragmentCreationClient extends Fragment {
     }
 
     private void enregistrer(View view) {
-        onEnregistrer.run();
+        if(areCorrectFields()) {
+            onEnregistrer.run();
+        }
+
+    }
+
+    private boolean areCorrectFields() {
+        boolean correct = true;
+        if(!isCorrectNomEntreprise()) {
+            correct = false;
+        }
+        if(!isCorrectAdress(adresse.getText().toString(),codePostal.getText().toString(),
+                ville.getText().toString())) {
+            correct = false;
+        }
+        /*if(isCorrectContact(nom.getText().toString(),prenom.getText().toString(),numTel.getText().toString())) {
+            correct = false;
+        }*/
+        return correct;
+
+    }
+
+    private boolean isCorrectNomEntreprise() {
+        boolean correct = true;
+        if(nomEntreprise.getText().toString().trim().isEmpty()) {
+            nomEntreprise.setError(getString(R.string.empty_field_error));
+            correct = false;
+        }
+        return correct;
+    }
+    private boolean isCorrectContact(String nomC, String prenomC, String telephone) {
+        boolean correct = true;
+        if(isFilledContact(nomC,prenomC,telephone)) {
+            if(!isFilled(nom.getText().toString())) {
+                nom.setError(getString(R.string.empty_field_error));
+                correct = false;
+            }
+            if(!isFilled(prenom.getText().toString())) {
+                prenom.setError(getString(R.string.empty_field_error));
+                correct =false;
+            }
+            if(!isFilled(numTel.getText().toString())) {
+                numTel.setError(getString(R.string.empty_field_error));
+                correct = false;
+            }
+
+            if(!isCorrectPhoneNumber(telephone)) {
+                numTel.setError(getString(R.string.invalid_field_error,
+                        "il ne correspond pas à un numéro de téléphone"));
+                correct = false;
+            }
+
+        }
+        return correct;
+    }
+    private boolean isCorrectPhoneNumber(String phoneNumber) {
+        boolean correct = true;
+        if(phoneNumber.length() != 10) {
+            correct = false;
+        }
+        return correct;
+    }
+
+    private boolean isFilled(String text) {
+        return !text.trim().isEmpty();
+    }
+    private boolean isFilledContact(String ... values) {
+        boolean filled = false;
+        for(String value: values) {
+            if(!value.trim().isEmpty()) {
+                filled = true;
+            }
+        }
+        return filled;
+    }
+
+
+    private boolean isCorrectAdress(String adresse,String codePostal,String ville) {
+        final boolean[] retour = {true}; // utilisation d'un tableau pour pouvoir modifier la valeur dans une lambda
+        if (adresse.trim().isEmpty()) {
+            this.adresse.setError(getString(R.string.empty_field_error));
+            retour[0] = false;
+        }
+        if (codePostal.trim().isEmpty()) {
+            this.codePostal.setError(getString(R.string.empty_field_error));
+            retour[0] = false;
+        }
+        if (ville.trim().isEmpty()) {
+            this.ville.setError(getString(R.string.empty_field_error));
+            retour[0] = false;
+        }
+        ApiRequest.validationAdresse(parent, adresse, codePostal, ville, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+                    JSONObject jsonObject = ((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties");
+                    if (!jsonObject.getString("name").equals(adresse)
+                            || !jsonObject.getString("city").equals(ville)
+                            || ! jsonObject.getString("postcode").equals(codePostal)) {                  FragmentCreationClient.this.adresse.setError("Adresse non valide");
+                        FragmentCreationClient.this.codePostal.setError("Adresse non valide");
+                        FragmentCreationClient.this.ville.setError("Adresse non valide");
+                        retour[0] = false;
+                    }
+
+                } catch (Exception e) {
+                    FragmentCreationClient.this.adresse.setError("Adresse non valide");
+                    FragmentCreationClient.this.codePostal.setError("Adresse non valide");
+                    FragmentCreationClient.this.ville.setError("Adresse non valide");
+                    retour[0] = false;
+                }
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        });
+        return retour[0];
     }
 }

@@ -219,6 +219,7 @@ public class ApiRequest {
             requestQueue = Volley.newRequestQueue(context);
         }
         String url = "https://api-adresse.data.gouv.fr/search/?q=" + query + "&limit=20" + "&type=housenumber";
+        System.out.println(url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
