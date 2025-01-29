@@ -85,7 +85,7 @@ public class ItineraryFragment extends Fragment {
      */
     private void fetchNumberOfItinerarypages() {
         API_REQUEST.itineraire.getNumberOfPages(requireContext(), response -> totalPages = response,
-                error -> Toast.makeText(getContext(), R.string.fetch_routes_error, Toast.LENGTH_SHORT).show());
+                error -> Toast.makeText(getContext(), R.string.fetch_itinerary_error, Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -96,7 +96,7 @@ public class ItineraryFragment extends Fragment {
             itineraries.addAll(response);
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
-        }, error -> Toast.makeText(getContext(), R.string.fetch_routes_error, Toast.LENGTH_SHORT).show());
+        }, error -> Toast.makeText(getContext(), R.string.fetch_itinerary_error, Toast.LENGTH_SHORT).show());
     }
 
     /**
