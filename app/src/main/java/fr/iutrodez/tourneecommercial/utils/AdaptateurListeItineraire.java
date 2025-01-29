@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.android.volley.VolleyError;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
@@ -34,11 +36,19 @@ public class AdaptateurListeItineraire extends ArrayAdapter<Itineraire> {
      */
     private final LayoutInflater inflater;
 
+    BiConsumer<Itineraire, Integer> onClickBtnSuppression;
+
+    BiConsumer<Itineraire, Integer> onClickBtnModification;
+
     public AdaptateurListeItineraire(@NonNull Context contexte,
                                      int resource,
-                                     @NonNull List<Itineraire> objects) {
+                                     @NonNull List<Itineraire> objects,
+                                     BiConsumer<Itineraire, Integer> onClickBtnModification,
+                                     BiConsumer<Itineraire, Integer> onClickBtnSuppression) {
         super(contexte, resource, objects);
         this.identifiantVueItem = resource;
+        this.onClickBtnModification = onClickBtnModification;
+        this.onClickBtnSuppression = onClickBtnSuppression;
         inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -52,34 +62,21 @@ public class AdaptateurListeItineraire extends ArrayAdapter<Itineraire> {
         TextView titre = convertView.findViewById(R.id.titre);
         TextView sousTitre = convertView.findViewById(R.id.sous_titre);
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
+        Button boutonModification = convertView.findViewById(R.id.modifier);
+
         final Itineraire infosItineraire = getItem(position);
         assert infosItineraire != null;
+
         titre.setText(infosItineraire.getNom());
         String texteKm = getContext().getString(R.string.affichage_nombre_km);
         sousTitre.setText(String.format(texteKm, infosItineraire.getKilometres()));
-        boutonSuppression.setOnClickListener(v -> onClickBtnSuppression(infosItineraire, position));
+        boutonSuppression.setOnClickListener(v -> this.onClickBtnSuppression.accept(infosItineraire, position));
+        boutonModification.setOnClickListener(v -> this.onClickBtnModification.accept(infosItineraire, position));
         convertView.setOnClickListener(v -> {
             ListView listView = (ListView) parent;
             listView.performItemClick(v, position, listView.getItemIdAtPosition(position));
         });
 
         return convertView;
-    }
-
-    private void onClickBtnSuppression(Itineraire itineraire, int position) {
-        ApiRequest.deleteItineraire(getContext(), itineraire.getId(), new ApiRequest.ApiResponseCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                remove(itineraire);
-                notifyDataSetChanged();
-                Toast.makeText(getContext(), R.string.itineraire_deleted, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                System.out.println(error);
-                Toast.makeText(getContext(), R.string.error_deleting_itineraire, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

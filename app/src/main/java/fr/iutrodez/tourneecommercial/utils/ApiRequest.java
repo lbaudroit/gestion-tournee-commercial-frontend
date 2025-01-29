@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
 
 public class ApiRequest {
     private static RequestQueue requestQueue;
@@ -234,13 +235,13 @@ public class ApiRequest {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public static void recupererItineraire(Context context, Long id, ApiResponseCallback<JSONArray> callback) {
+    public static void recupererItineraire(Context context, Long id, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = getAPI_KEY(context);
         String url = API_URL + "itineraire/?id=" + id;
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
@@ -254,7 +255,7 @@ public class ApiRequest {
                 return headers;
             }
         };
-        requestQueue.add(jsonArrayRequest);
+        requestQueue.add(jsonObjectRequest);
     }
 
     public static void modifierParametres(Context context, JSONObject postData, ApiResponseCallback<JSONObject> callback) {
@@ -363,7 +364,6 @@ public class ApiRequest {
         }
 
         JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients, distance);
-        System.out.println(donneesAEnvoyer.toString());
 
         String url = API_URL + "itineraire/creer/";
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
@@ -384,6 +384,32 @@ public class ApiRequest {
         requestQueue.add(jsonArrayRequest);
     }
 
+    public static void modificationItineraire(Context context, long id, String nom, List<Client> clients, int distance, ApiResponseCallback<JSONObject> callback) throws JSONException {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+
+        JSONObject donneesAEnvoyer = creationDTOCreationItineraire(nom, clients, distance);
+
+        String url = API_URL + "itineraire/modifier/?id=" + id;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                donneesAEnvoyer,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
+    }
+
     public static Client jsonToClient(JSONObject json) {
         Gson gson = new Gson();
 
@@ -392,5 +418,15 @@ public class ApiRequest {
 
         // Convertir le JSON en liste d'objets Client
         return gson.fromJson(json.toString(), clientType);
+    }
+
+    public static ItineraireDTO itineraireDTOToClient(JSONObject json) {
+        Gson gson = new Gson();
+
+        // Définir le type pour une liste de clients
+        Type dtoType = TypeToken.get(ItineraireDTO.class).getType();
+
+        // Convertir le JSON en liste d'objets Client
+        return gson.fromJson(json.toString(), dtoType);
     }
 }

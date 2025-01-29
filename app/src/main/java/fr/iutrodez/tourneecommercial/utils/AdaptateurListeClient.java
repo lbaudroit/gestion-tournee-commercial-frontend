@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.iutrodez.tourneecommercial.R;
@@ -46,10 +44,6 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
     private final OnClickModifierCallback onClickModifier;
     private final OnClickSupprimerCallback onClickSupprimer;
 
-    private List<Client> originalClients;
-    private List<Client> filteredClients;
-    private ClientFilter clientFilter;
-
     public AdaptateurListeClient(@NonNull Context contexte,
                                  int resource,
                                  @NonNull List<Client> objects,
@@ -57,23 +51,10 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
                                  OnClickSupprimerCallback onClickSupprimer) {
         super(contexte, resource, objects);
         this.identifiantVueItem = resource;
-        this.originalClients = new ArrayList<>(objects);
-        this.filteredClients = objects;
         inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.onClickModifier = onClickModifier;
         this.onClickSupprimer = onClickSupprimer;
-    }
-
-    @Override
-    public int getCount() {
-        return filteredClients.size();
-    }
-
-    @Nullable
-    @Override
-    public Client getItem(int position) {
-        return filteredClients.get(position);
     }
 
     @NonNull
@@ -130,51 +111,4 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
 
         return convertView;
     }
-
-    @Override
-    public Filter getFilter() {
-        if (clientFilter == null) {
-            clientFilter = new ClientFilter();
-        }
-        return clientFilter;
-    }
-
-    private class ClientFilter extends Filter {
-
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            FilterResults results = new FilterResults();
-            List<Client> filteredList = new ArrayList<>();
-
-            if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(originalClients);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-
-                for (Client client : originalClients) {
-                    if (client.getNomEntreprise().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(client);
-                    }
-                    if (client.getAdresse().getVille().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(client);
-                    }
-                    if (client.getAdresse().getCodePostal().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(client);
-                    }
-                }
-            }
-
-            results.values = filteredList;
-            results.count = filteredList.size();
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredClients.clear();
-            filteredClients.addAll((List) results.values);
-            notifyDataSetChanged();
-        }
-    }
-
 }
