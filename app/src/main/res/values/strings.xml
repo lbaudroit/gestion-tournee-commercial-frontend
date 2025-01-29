@@ -71,4 +71,6 @@
     <!-- Action bar -->
     <string name="creation_itineraire">Création d\'un itinéraire</string>
     <string name="rechercher_entreprise">Recherche une entreprise</string>
+    <string name="sectionner_un_client">Séléctionner un client</string>
+    <string name="rechercher">Rechercher...</string>
 </resources>
