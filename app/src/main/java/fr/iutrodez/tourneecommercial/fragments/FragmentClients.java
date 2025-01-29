@@ -125,6 +125,7 @@ public class FragmentClients extends Fragment {
         ApiRequest.removeClient(requireContext(), client.get_id(), new ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
+                adaptateur.remove(client);
                 Toast.makeText(getContext(), "Le client " + client.getNomEntreprise()+ " a été modifié", Toast.LENGTH_SHORT).show();
             }
 
@@ -134,7 +135,6 @@ public class FragmentClients extends Fragment {
             }
 
         });
-        adaptateur.remove(client);
     }
 
     private void fetchNombreClients() {
