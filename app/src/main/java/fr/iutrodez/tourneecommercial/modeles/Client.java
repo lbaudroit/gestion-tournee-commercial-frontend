@@ -62,4 +62,8 @@ public class Client {
     public String getDescriptif() {
         return descriptif;
     }
+
+    public boolean isClientEffectif() {
+        return clientEffectif;
+    }
 }

@@ -1,6 +1,6 @@
 package fr.iutrodez.tourneecommercial.modeles;
 
-import android.view.View;
+import androidx.annotation.NonNull;
 
 public class Adresse {
 
@@ -8,8 +8,8 @@ public class Adresse {
     private String codePostal;
     private String ville;
 
-    
-    public Adresse(String libelle,String codePostal , String ville) {
+
+    public Adresse(String libelle, String codePostal, String ville) {
 
         this.libelle = libelle;
         this.codePostal = codePostal;
@@ -19,12 +19,18 @@ public class Adresse {
     public String getLibelle() {
         return this.libelle;
     }
-      
+
     public String getCodePostal() {
         return codePostal;
     }
 
     public String getVille() {
         return ville;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return libelle + ", " + codePostal + ", " + ville;
     }
 }

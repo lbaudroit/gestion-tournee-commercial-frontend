@@ -1,14 +1,18 @@
 package fr.iutrodez.tourneecommercial;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,23 +27,26 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class ActiviteInscription extends AppCompatActivity {
 
-    private Handler handler = new Handler();
-    private Runnable fetchSuggestionsRunnable;
+    private List<Adresse> adressesProposes;
+
+    private Dialog dialog;
     private EditText nom;
     private EditText prenom;
     private EditText email;
-    private AutoCompleteTextView
-            libelleAdresse;
-    private EditText codePostal;
-    private EditText ville;
+    private TextView adresse_view;
     private EditText password;
     private EditText passwordConfirmation;
     private Button btnInscription;
+
+    private AdaptateurAdresse adaptateurAdresse;
+
+    private Adresse selectedAdresse;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,74 +57,98 @@ public class ActiviteInscription extends AppCompatActivity {
         nom = findViewById(R.id.field_nom);
         prenom = findViewById(R.id.field_prenom);
         email = findViewById(R.id.field_email);
-        libelleAdresse = findViewById(R.id.field_adresse);
-        codePostal = findViewById(R.id.field_code_postal);
-        ville = findViewById(R.id.field_ville);
+        adresse_view = findViewById(R.id.adresse_view);
         password = findViewById(R.id.field_password);
         passwordConfirmation = findViewById(R.id.field_password_again);
         btnInscription = findViewById(R.id.btn_inscription);
 
         btnInscription.setOnClickListener(this::onClickEnvoyer);
         findViewById(R.id.btn_connexion).setOnClickListener(this::onClickGoToConnexion);
-
-        // Add TextWatcher for address autocomplete
-        libelleAdresse.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 2) {
-                    if (fetchSuggestionsRunnable != null) {
-                        handler.removeCallbacks(fetchSuggestionsRunnable);
-                    }
-                    fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(ActiviteInscription.this, s.toString(),
-                            new ApiRequest.ApiResponseCallback<JSONObject>() {
-                                @Override
-                                public void onSuccess(JSONObject response) {
-                                    try {
-                                        List<JSONObject> suggestions = new ArrayList<>();
-                                        JSONArray features = response.getJSONArray("features");
-                                        for (int i = 0; i < features.length(); i++) {
-                                            JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
-                                            suggestions.add(properties);
-                                        }
-                                        AdaptateurAdresse adapter = new AdaptateurAdresse(ActiviteInscription.this,
-                                                android.R.layout.simple_dropdown_item_1line,
-                                                suggestions,
-                                                ActiviteInscription.this::onClickSuggestions);
-                                        libelleAdresse.setAdapter(adapter);
-                                        adapter.notifyDataSetChanged();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onError(VolleyError error) {
-                                    error.printStackTrace();
-                                }
-                            });
-                    handler.postDelayed(fetchSuggestionsRunnable, 300);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        adressesProposes = new ArrayList<>();
+        setupAdresse();
     }
 
-    private void onClickSuggestions(JSONObject adresse) {
-        try {
-            libelleAdresse.setText(adresse.getString("name"));
-            codePostal.setText(adresse.getString("postcode"));
-            ville.setText(adresse.getString("city"));
-            libelleAdresse.dismissDropDown();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void setupAdresse() {
+        adresse_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Préparer le dialog
+                dialog = new Dialog(ActiviteInscription.this);
+                dialog.setContentView(R.layout.dialog_searchable_spinner);
+                dialog.getWindow().setLayout(650, 800);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                // Récupérer les éléments du dialog
+                EditText editText = dialog.findViewById(R.id.edit_text);
+                ListView listView = dialog.findViewById(R.id.list_view);
+                TextView titre = dialog.findViewById(R.id.titre);
+                titre.setText(R.string.recherche_adresse);
+
+                // Initialiser l'adapter
+                adaptateurAdresse = new AdaptateurAdresse(
+                        ActiviteInscription.this,
+                        android.R.layout.simple_list_item_1,
+                        adressesProposes);
+                listView.setAdapter(adaptateurAdresse);
+
+                // Ajout de l'écouteur sur le champ de recherche
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        ApiRequest.fetchAddressSuggestions(ActiviteInscription.this, s.toString(),
+                                new ApiRequest.ApiResponseCallback<JSONObject>() {
+                                    @Override
+                                    public void onSuccess(JSONObject response) {
+                                        try {
+                                            List<Adresse> suggestions = new ArrayList<>();
+                                            JSONArray features = response.getJSONArray("features");
+                                            for (int i = 0; i < features.length(); i++) {
+                                                JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
+                                                suggestions.add(new Adresse(
+                                                        properties.getString("name"),
+                                                        properties.getString("postcode"),
+                                                        properties.getString("city")
+                                                ));
+                                            }
+                                            adaptateurAdresse.clear();
+                                            adaptateurAdresse.addAll(suggestions);
+                                            adaptateurAdresse.notifyDataSetChanged();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(VolleyError error) {
+                                        error.printStackTrace();
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
+                if (selectedAdresse != null) {
+                    editText.setText(selectedAdresse.toString());
+                }
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        selectedAdresse = adaptateurAdresse.getItem(i);
+                        adresse_view.setText(selectedAdresse.toString());
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
     }
 
     private void onClickEnvoyer(View view) {
@@ -127,10 +158,11 @@ public class ActiviteInscription extends AppCompatActivity {
                 postData.put("nom", nom.getText().toString());
                 postData.put("prenom", prenom.getText().toString());
                 postData.put("email", email.getText().toString());
-                postData.put("libelleAdresse", libelleAdresse.getText().toString());
-                postData.put("codePostal", codePostal.getText().toString());
-                postData.put("ville", ville.getText().toString());
+                postData.put("libelleAdresse", selectedAdresse.getLibelle());
+                postData.put("codePostal", selectedAdresse.getCodePostal());
+                postData.put("ville", selectedAdresse.getVille());
                 postData.put("motDePasse", password.getText().toString());
+                System.out.println(postData.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
                 return;
@@ -160,19 +192,25 @@ public class ActiviteInscription extends AppCompatActivity {
         String nom = this.nom.getText().toString();
         String prenom = this.prenom.getText().toString();
         String email = this.email.getText().toString();
-        String libelleAdresse = this.libelleAdresse.getText().toString();
-        String codePostal = this.codePostal.getText().toString();
-        String ville = this.ville.getText().toString();
         String password = this.password.getText().toString();
         String passwordConfirmation = this.passwordConfirmation.getText().toString();
         // utilisation de l'opérateur & pour évaluer toutes les conditions
         return checkNom(nom) &
                 checkPrenom(prenom) &
                 checkEmail(email) &
-                checkAdresse(libelleAdresse,
-                        codePostal, ville) &
+                checkAdresse() &
                 checkPassword(password) &
                 checkPasswordConfirmation(password, passwordConfirmation);
+    }
+
+    private boolean checkAdresse() {
+        if (selectedAdresse == null) {
+            adresse_view.setError(getString(R.string.empty_field_error));
+            return false;
+        } else {
+            adresse_view.setError(null);
+            return true;
+        }
     }
 
     private boolean checkNom(String nom) {
@@ -205,50 +243,6 @@ public class ActiviteInscription extends AppCompatActivity {
             retour = false;
         }
         return retour;
-    }
-
-    private boolean checkAdresse(String libelleAdresse, String codePostal, String ville) {
-        final boolean[] retour = {true}; // utilisation d'un tableau pour pouvoir modifier la valeur dans une lambda
-        if (libelleAdresse.trim().isEmpty()) {
-            this.libelleAdresse.setError(getString(R.string.empty_field_error));
-            retour[0] = false;
-        }
-        if (codePostal.trim().isEmpty()) {
-            this.codePostal.setError(getString(R.string.empty_field_error));
-            retour[0] = false;
-        }
-        if (ville.trim().isEmpty()) {
-            this.ville.setError(getString(R.string.empty_field_error));
-            retour[0] = false;
-        }
-        ApiRequest.validationAdresse(this, libelleAdresse, codePostal, ville, new ApiRequest.ApiResponseCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                try {
-                    JSONObject jsonObject = ((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties");
-                    if (!jsonObject.getString("name").equals(libelleAdresse)
-                            || !jsonObject.getString("city").equals(ville)
-                            || ! jsonObject.getString("postcode").equals(codePostal)) {
-                        ActiviteInscription.this.libelleAdresse.setError("Adresse non valide");
-                        ActiviteInscription.this.codePostal.setError("Adresse non valide");
-                        ActiviteInscription.this.ville.setError("Adresse non valide");
-                        retour[0] = false;
-                    }
-
-                } catch (Exception e) {
-                    ActiviteInscription.this.libelleAdresse.setError("Adresse non valide");
-                    ActiviteInscription.this.codePostal.setError("Adresse non valide");
-                    ActiviteInscription.this.ville.setError("Adresse non valide");
-                    retour[0] = false;
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-
-            }
-        });
-        return retour[0];
     }
 
     private boolean checkPassword(String password) {

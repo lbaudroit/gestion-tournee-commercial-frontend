@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
@@ -30,9 +29,6 @@ public class ActiviteCreationClient extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         aSwitch = findViewById(R.id.statut);
         nomEntreprise = findViewById(R.id.nomEntreprise);
-        adresse = findViewById(R.id.adresse);
-        codePostal = findViewById(R.id.code_postal);
-        ville = findViewById(R.id.ville);
         nom = findViewById(R.id.nom);
         prenom = findViewById(R.id.prenom);
         numTel = findViewById(R.id.num_tel);

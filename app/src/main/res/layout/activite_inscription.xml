@@ -45,40 +45,13 @@
         style="@style/Separator"
         android:layout_width="match_parent" />
 
-    <AutoCompleteTextView
-        android:id="@+id/field_adresse"
-        style="@style/RoundedEditText"
+    <TextView
+        android:id="@+id/adresse_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:maxLength="300"
-        android:hint="@string/adresse" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/espace_vertical_champs" />
-
-    <EditText
-        android:id="@+id/field_code_postal"
         style="@style/RoundedEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:maxLength="5"
-        android:hint="@string/code_postal" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/espace_vertical_champs" />
-
-    <EditText
-        android:id="@+id/field_ville"
-        style="@style/RoundedEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:maxLength="45"
-        android:hint="@string/ville" />
+        android:hint="@string/adresse"
+        android:drawableEnd="@drawable/baseline_expand_more_24" />
 
     <View
         android:id="@+id/view2"
@@ -90,7 +63,7 @@
         style="@style/RoundedEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textVisiblePassword"
+        android:inputType="textPassword"
         android:maxLength="50"
         android:hint="@string/password" />
 
@@ -103,7 +76,7 @@
         style="@style/RoundedEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textVisiblePassword"
+        android:inputType="textPassword"
         android:maxLength="50"
         android:hint="@string/password_again" />
 
