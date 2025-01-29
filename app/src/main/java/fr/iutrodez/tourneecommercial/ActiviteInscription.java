@@ -73,7 +73,7 @@ public class ActiviteInscription extends AppCompatActivity {
                         handler.removeCallbacks(fetchSuggestionsRunnable);
                     }
                     fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(ActiviteInscription.this, s.toString(),
-                            new ApiRequest.ApiResponseCallback() {
+                            new ApiRequest.ApiResponseCallback<JSONObject>() {
                                 @Override
                                 public void onSuccess(JSONObject response) {
                                     try {
@@ -136,7 +136,7 @@ public class ActiviteInscription extends AppCompatActivity {
                 return;
             }
 
-            ApiRequest.inscription(this, "auth/creer", postData, new ApiRequest.ApiResponseCallback() {
+            ApiRequest.inscription(this, "auth/creer", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Toast.makeText(ActiviteInscription.this, "Inscription réussie", Toast.LENGTH_SHORT).show();
@@ -221,11 +221,14 @@ public class ActiviteInscription extends AppCompatActivity {
             this.ville.setError(getString(R.string.empty_field_error));
             retour[0] = false;
         }
-        ApiRequest.validationAdresse(this, libelleAdresse, codePostal, ville, new ApiRequest.ApiResponseCallback() {
+        ApiRequest.validationAdresse(this, libelleAdresse, codePostal, ville, new ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 try {
-                    if (!((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties").getString("name").equals(libelleAdresse)) {
+                    JSONObject jsonObject = ((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties");
+                    if (!jsonObject.getString("name").equals(libelleAdresse)
+                            || !jsonObject.getString("city").equals(ville)
+                            || ! jsonObject.getString("postcode").equals(codePostal)) {
                         ActiviteInscription.this.libelleAdresse.setError("Adresse non valide");
                         ActiviteInscription.this.codePostal.setError("Adresse non valide");
                         ActiviteInscription.this.ville.setError("Adresse non valide");

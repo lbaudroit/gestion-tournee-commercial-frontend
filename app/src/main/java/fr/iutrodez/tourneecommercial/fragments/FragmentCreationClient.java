@@ -2,59 +2,94 @@ package fr.iutrodez.tourneecommercial.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import fr.iutrodez.tourneecommercial.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import fr.iutrodez.tourneecommercial.ActiviteInscription;
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
+import fr.iutrodez.tourneecommercial.modeles.Client;
 
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
+
+/**
+ * Fragment pour afficher l'interface de création client ou de modification client
+ *
+ * @author
+ * Ahmed BRIBACH
+ * Leila Baudroit
+ * Enzo CLUZEL
+ * Benjamin NICOL
+ */
 public class FragmentCreationClient extends Fragment {
-
-    public ActivitePrincipale parent;
+    private ActivitePrincipale parent;
     private Switch aSwitch;
-    private EditText nomEntreprise, adresse, codePostal, ville, nom, prenom, numTel;
-    private static final String API_URL = "http://localhost:9090/client/creer/";
+
+    private AdaptateurAdresse adapter;
+
+    private List<JSONObject> suggestionsAutoComplete ;
+    private AutoCompleteTextView adresse;
+    private Handler handler = new Handler();
+    private Runnable fetchSuggestionsRunnable;
+    private EditText nomEntreprise, codePostal, ville, nom, prenom, numTel;
+
+    private String idModif;
+
+    /**
+     * Fonction à appeler lors de l'enregistrement
+     */
+    private Runnable onEnregistrer;
+
     public static FragmentCreationClient newInstance() {
         return new FragmentCreationClient();
     }
 
+    private Context context;
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        parent = (ActivitePrincipale) context;
+        this.context=context;
+        if (context instanceof ActivitePrincipale) {
+            parent = (ActivitePrincipale) context;
+        } else {
+            throw new ClassCastException("Le contexte doit être une instance d'ActivitePrincipale.");
+        }
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Charger le layout du fragment
-        return inflater.inflate(R.layout.activite_creation_client, container, false);
-    }
+        View view = inflater.inflate(R.layout.activite_creation_client, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        suggestionsAutoComplete = new ArrayList<>();
 
-        // Initialiser les composants
+        // Initialisation des vues
         aSwitch = view.findViewById(R.id.statut);
         nomEntreprise = view.findViewById(R.id.nomEntreprise);
         adresse = view.findViewById(R.id.adresse);
@@ -64,78 +99,372 @@ public class FragmentCreationClient extends Fragment {
         prenom = view.findViewById(R.id.prenom);
         numTel = view.findViewById(R.id.num_tel);
 
-        // Ajouter un écouteur au Switch
-        aSwitch.setOnClickListener(this::changeStatut);
+        /*adapter = new AdaptateurAdresse(context,
+                android.R.layout.simple_dropdown_item_1line,
+                suggestionsAutoComplete,
+                FragmentCreationClient.this::onClickSuggestions);
 
-        // Configurer le bouton d'enregistrement
+        adresse.setAdapter(adapter);*/
+        // Configuration des listeners
+        aSwitch.setOnClickListener(this::changeStatut);
         view.findViewById(R.id.enregistrer).setOnClickListener(this::enregistrer);
+
+        adresse.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 2) {
+                    fetchAdressSuggestions(charSequence.toString().replace(" ", "%20"));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        // On récupère les arguments mis dans le fragment
+        Bundle args = getArguments();
+
+        // On vérifie si l'argument id existe
+        if(args != null && args.containsKey("id") ) {
+            // Modification
+            idModif = args.getString("id");
+            try {
+                // On récupère le client par rapport à l'id
+                recupererClient(idModif);
+            } catch (JSONException exception) {
+
+            }
+            onEnregistrer = FragmentCreationClient.this::modifier;
+        } else {
+            // Création
+            onEnregistrer = FragmentCreationClient.this::creer;
+        }
+        return view;
+    }
+
+
+    /**
+     * Récupére les suggestions d'adresses à l'aide de l'API du gouvernement
+     * @param text le texte d'exemple pour les suggestions
+     */
+    private void fetchAdressSuggestions(String text) {
+        if (fetchSuggestionsRunnable != null) {
+            handler.removeCallbacks(fetchSuggestionsRunnable);
+        }
+        fetchSuggestionsRunnable = () -> ApiRequest.fetchAddressSuggestions(requireContext(), text,
+                new ApiRequest.ApiResponseCallback<JSONObject>() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        OnSuccessFetchSuggestions(response);
+                    }
+
+                    @Override
+                    public void onError(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+        handler.postDelayed(fetchSuggestionsRunnable, 300);
     }
 
     /**
-     * Change le statut True client False Prospect
-     * @param view
+     * Fonction pour créer un client
      */
-    public void changeStatut(View view) {
-        if (aSwitch.isChecked()) {
+    public void creer() {
+        try {
+            JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
+            String url = "client/creer";
+            ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
+                    // Retourner au fragment de liste des clients
+
+                    parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+                    String erreur = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    JSONObject jsonError=null;
+                    try {
+                        jsonError = new JSONObject(erreur);
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Toast.makeText(requireContext(), "Erreur: " + jsonError.optString("message"), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        } catch (JSONException e) {
+            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Fonction pour modifier un client à partir de l'id récupéré dans le bundle
+     */
+    public void modifier() {
+        try {
+            JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
+            ApiRequest.modifierClient(requireContext(), idModif,postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(requireContext(), "Client modifiée avec succès", Toast.LENGTH_SHORT).show();
+                    // Retourner au fragment de liste des clients
+
+                    parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS,true);
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+                    String erreur = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    JSONObject jsonError=null;
+                    try {
+                         jsonError = new JSONObject(erreur);
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Toast.makeText(requireContext(), "Erreur: " + jsonError.optString("message"), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        } catch (JSONException e) {
+            Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    /**
+     * A utilisé lors du succés d'une requête de récupération de suggestions d'adresse.
+     * Met dans un autoCompleteView un adapter avec les suggestions dans
+     * @param response
+     */
+    private void OnSuccessFetchSuggestions(JSONObject response) {
+        try {
+            List<JSONObject> suggestions = new ArrayList<>();
+            JSONArray features = response.getJSONArray("features");
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
+                suggestions.add(properties);
+            }
+
+            /*handler.post(() -> {
+                adapter.clear();
+                adapter.addAll(suggestions);
+                adapter.notifyDataSetChanged();
+            });*/
+            // TODO not clean
+            AdaptateurAdresse adapterAdre = new AdaptateurAdresse(context,
+                    android.R.layout.simple_dropdown_item_1line,
+                    suggestions,
+                    FragmentCreationClient.this::onClickSuggestions);
+            adresse.setAdapter(adapterAdre);
+            adapterAdre.notifyDataSetChanged();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Méthode qui ajoute dans les champs les suggestions récupérées
+     * @param adresse  récupéré lors de l'autocomplete
+     */
+    private void onClickSuggestions(JSONObject adresse) {
+        try {
+            this.adresse.setText(adresse.getString("name"));
+            codePostal.setText(adresse.getString("postcode"));
+            ville.setText(adresse.getString("city"));
+            this.adresse.dismissDropDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Méthode d'appel API pour récupérer "un" client
+     * @param id du client à récupérer
+     * @throws JSONException
+     */
+    private void recupererClient(String id) throws JSONException {
+        ApiRequest.recupererClient(requireContext(), id, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Gson gson = new Gson();
+                Client client = gson.fromJson(response.toString(),Client.class);
+                adresse.setText(client.getAdresse().getLibelle());
+                codePostal.setText(client.getAdresse().getCodePostal());
+                ville.setText(client.getAdresse().getVille());
+                nom.setText(client.getContact().getNom());
+                prenom.setText(client.getContact().getPrenom());
+                numTel.setText(client.getContact().getTel());
+                nomEntreprise.setText(client.getNomEntreprise());
+
+            }
+
+
+            @Override
+            public void onError(VolleyError error) {
+                Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void changeStatut(View view) {
+        if(aSwitch.isChecked()){
             aSwitch.setText("Client");
         } else {
             aSwitch.setText("Prospect");
         }
     }
+
     private JSONObject createClientJson() throws JSONException {
+        JSONObject adresseData = new JSONObject();
+        adresseData.put("libelle" , adresse.getText().toString());
+        adresseData.put("codePostal", codePostal.getText().toString());
+        adresseData.put("ville", ville.getText().toString());
+
+        JSONObject contact = new JSONObject();
+        contact.put("nom", nom.getText().toString());
+        contact.put("prenom", prenom.getText().toString());
+        contact.put("telephone", numTel.getText().toString());
+
         JSONObject clientData = new JSONObject();
-        clientData.put("nom_entreprise", nomEntreprise.getText().toString());
-        clientData.put("adresse", adresse.getText().toString());
-        clientData.put("code_postal", codePostal.getText().toString());
-        clientData.put("ville", ville.getText().toString());
-        clientData.put("nom", nom.getText().toString());
-        clientData.put("prenom", prenom.getText().toString());
-        clientData.put("telephone", numTel.getText().toString());
-        clientData.put("statut", aSwitch.isChecked() ? "Client" : "Prospect");
-        System.out.println(clientData.toString());
+        clientData.put("nomEntreprise", nomEntreprise.getText().toString());
+        clientData.put("adresse", adresseData);
+        clientData.put("contact", contact);
+
         return clientData;
     }
-    /**
-     * Enregistrement du client
-     * @param view
-     */
-    public void enregistrer(View view) {
-        try {
-            JSONObject postData = createClientJson();
-            System.out.print("jaccept");
-            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.PUT,
-                    API_URL,
-                    postData,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Toast.makeText(getContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
-                            // Retourner à la liste des clients ou effectuer une autre action
-                            if (parent != null) {
-                                System.out.println("marche");
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getContext(),
-                                    "Erreur lors de la création du client: " + error.toString(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-            );
-
-            requestQueue.add(jsonObjectRequest);
-
-        } catch (JSONException e) {
-            Toast.makeText(getContext(),
-                    "Erreur lors de la création des données: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+    private void enregistrer(View view) {
+        if(areCorrectFields()) {
+            onEnregistrer.run();
         }
 
+    }
+
+    private boolean areCorrectFields() {
+        boolean correct = true;
+        if(!isCorrectNomEntreprise()) {
+            correct = false;
+        }
+        if(!isCorrectAdress(adresse.getText().toString(),codePostal.getText().toString(),
+                ville.getText().toString())) {
+            correct = false;
+        }
+        /*if(isCorrectContact(nom.getText().toString(),prenom.getText().toString(),numTel.getText().toString())) {
+            correct = false;
+        }*/
+        return correct;
+
+    }
+
+    private boolean isCorrectNomEntreprise() {
+        boolean correct = true;
+        if(nomEntreprise.getText().toString().trim().isEmpty()) {
+            nomEntreprise.setError(getString(R.string.empty_field_error));
+            correct = false;
+        }
+        return correct;
+    }
+    private boolean isCorrectContact(String nomC, String prenomC, String telephone) {
+        boolean correct = true;
+        if(isFilledContact(nomC,prenomC,telephone)) {
+            if(!isFilled(nom.getText().toString())) {
+                nom.setError(getString(R.string.empty_field_error));
+                correct = false;
+            }
+            if(!isFilled(prenom.getText().toString())) {
+                prenom.setError(getString(R.string.empty_field_error));
+                correct =false;
+            }
+            if(!isFilled(numTel.getText().toString())) {
+                numTel.setError(getString(R.string.empty_field_error));
+                correct = false;
+            }
+
+            if(!isCorrectPhoneNumber(telephone)) {
+                numTel.setError(getString(R.string.invalid_field_error,
+                        "il ne correspond pas à un numéro de téléphone"));
+                correct = false;
+            }
+
+        }
+        return correct;
+    }
+    private boolean isCorrectPhoneNumber(String phoneNumber) {
+        boolean correct = true;
+        if(phoneNumber.length() != 10) {
+            correct = false;
+        }
+        return correct;
+    }
+
+    private boolean isFilled(String text) {
+        return !text.trim().isEmpty();
+    }
+    private boolean isFilledContact(String ... values) {
+        boolean filled = false;
+        for(String value: values) {
+            if(!value.trim().isEmpty()) {
+                filled = true;
+            }
+        }
+        return filled;
+    }
+
+
+    private boolean isCorrectAdress(String adresse,String codePostal,String ville) {
+        final boolean[] retour = {true}; // utilisation d'un tableau pour pouvoir modifier la valeur dans une lambda
+        if (adresse.trim().isEmpty()) {
+            this.adresse.setError(getString(R.string.empty_field_error));
+            retour[0] = false;
+        }
+        if (codePostal.trim().isEmpty()) {
+            this.codePostal.setError(getString(R.string.empty_field_error));
+            retour[0] = false;
+        }
+        if (ville.trim().isEmpty()) {
+            this.ville.setError(getString(R.string.empty_field_error));
+            retour[0] = false;
+        }
+        ApiRequest.validationAdresse(parent, adresse, codePostal, ville, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+                    JSONObject jsonObject = ((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties");
+                    if (!jsonObject.getString("name").equals(adresse)
+                            || !jsonObject.getString("city").equals(ville)
+                            || ! jsonObject.getString("postcode").equals(codePostal)) {                  FragmentCreationClient.this.adresse.setError("Adresse non valide");
+                        FragmentCreationClient.this.codePostal.setError("Adresse non valide");
+                        FragmentCreationClient.this.ville.setError("Adresse non valide");
+                        retour[0] = false;
+                    }
+
+                } catch (Exception e) {
+                    FragmentCreationClient.this.adresse.setError("Adresse non valide");
+                    FragmentCreationClient.this.codePostal.setError("Adresse non valide");
+                    FragmentCreationClient.this.ville.setError("Adresse non valide");
+                    retour[0] = false;
+                }
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        });
+        return retour[0];
     }
 }

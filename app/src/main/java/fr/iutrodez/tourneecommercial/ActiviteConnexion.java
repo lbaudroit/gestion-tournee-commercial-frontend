@@ -43,6 +43,13 @@ public class ActiviteConnexion extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activite_connexion);
+        //eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbkBjbC5mciIsImlhdCI6MTczNzY0NjUyNywiZXhwIjoxNzM3NjQ4MzI3LCJqdGkiOiJkRUVrMTdrbVdHR1NUN2ZyZEtnZ05INlZyeEQ3UWFnSmx1ckpDUHdLR1BleFBGL21KVTgrWkNXZGpZK1BCQm5pYWNmV2pJL3NqeWRIMEtjbmZkUCtLUT09In0.JQDJ1iSwfxX4ro57yXKRANvE6lFb0dlohZKYVNtW-QE
+
+        //String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbkBjbC5mciIsImlhdCI6MTczNzY0NjUyNywiZXhwIjoxNzM3NjQ4MzI3LCJqdGkiOiJkRUVrMTdrbVdHR1NUN2ZyZEtnZ05INlZyeEQ3UWFnSmx1ckpDUHdLR1BleFBGL21KVTgrWkNXZGpZK1BCQm5pYWNmV2pJL3NqeWRIMEtjbmZkUCtLUT09In0.JQDJ1iSwfxX4ro57yXKRANvE6lFb0dlohZKYVNtW-Q";
+        // Enregistrement du token dans les SharedPreferences
+        //getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", token).apply();
+
+        //ApiRequest.creationClient(this,"/client/creer/",);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.connexion);
 
         email = findViewById(R.id.field_email);
@@ -105,7 +112,7 @@ public class ActiviteConnexion extends AppCompatActivity {
             }
             System.out.println(postData);
             // Création de la requête
-            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback() {
+            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     // Récupération du token
