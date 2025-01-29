@@ -39,29 +39,7 @@ public class ActivitePrincipale extends AppCompatActivity
     public final static int FRAGMENT_ITINERAIRES = 3;
     public final static int FRAGMENT_PARAMETRES = 4;
     public final static int FRAGMENT_CREATION_CLIENT = 5;
-
-    List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
-
-    {
-        fragments.add(FragmentClients.class);
-        fragments.add(FragmentCarte.class);
-        fragments.add(FragmentHistorique.class);
-        fragments.add(FragmentItineraires.class);
-        fragments.add(FragmentParametres.class);
-        fragments.add(FragmentCreationClient.class);
-    }
-
-    HashMap<Integer, Fragment> cache = new HashMap<>();
-
-    private FragmentManager fm;
-    private NavigationBarView navbar;
-    public final static int FRAGMENT_CLIENTS = 0;
-    public final static int FRAGMENT_CARTE = 1;
-    public final static int FRAGMENT_HISTORIQUE = 2;
-    public final static int FRAGMENT_ITINERAIRES = 3;
-    public final static int FRAGMENT_PARAMETRES = 4;
-    public final static int FRAGMENT_CREATION_CLIENT = 5;
-    public static final int FRAGMENT_CREATION_ITINERAIRE = 6;
+    public final static int FRAGMENT_CREATION_ITINERAIRE = 6;
 
     List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
 
@@ -86,6 +64,7 @@ public class ActivitePrincipale extends AppCompatActivity
         menuId.put(R.id.bottom_bar_itineraires, FRAGMENT_ITINERAIRES);
         menuId.put(R.id.bottom_bar_parametres, FRAGMENT_PARAMETRES);
     }
+
     /**
      * Appelé lors de la création de l'activité.
      *

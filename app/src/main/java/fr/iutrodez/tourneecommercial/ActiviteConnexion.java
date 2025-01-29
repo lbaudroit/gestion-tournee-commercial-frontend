@@ -57,10 +57,9 @@ public class ActiviteConnexion extends AppCompatActivity {
 
         findViewById(R.id.btn_connexion).setOnClickListener(this::onClickEnvoyer);
         findViewById(R.id.btn_inscription).setOnClickListener(this::onClickGoToInscription);
-        //TODO: Supprimer
-        email.setText("en@cl.fr");
-        password.setText("Enzo_123");
-        findViewById(R.id.btn_connexion).performClick();
+        //email.setText("en@cl.fr");
+        //password.setText("Enzo_123");
+        //findViewById(R.id.btn_connexion).performClick();
     }
 
     /**

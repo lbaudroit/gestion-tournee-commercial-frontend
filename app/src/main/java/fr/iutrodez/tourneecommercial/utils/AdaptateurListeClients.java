@@ -1,6 +1,6 @@
 package fr.iutrodez.tourneecommercial.utils;
+
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +9,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.android.volley.VolleyError;
-
-import org.json.JSONObject;
-
 import java.util.List;
 
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 
@@ -53,12 +48,12 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
     private final LayoutInflater inflater;
 
     private final OnClickSupprimerCallback onClickSupprimerCallback;
-    private  final  OnClickModifierCallback onClickModifierCallback;
+    private final OnClickModifierCallback onClickModifierCallback;
 
-    public AdaptateurListeClients(@NonNull Context context, int resource , @NonNull List<Client> client,
+    public AdaptateurListeClients(@NonNull Context context, int resource, @NonNull List<Client> client,
                                   OnClickSupprimerCallback onClickSupprimerCallback,
                                   OnClickModifierCallback onClickModifierCallback) {
-        super(context, resource , client);
+        super(context, resource, client);
         this.identifiantVueItem = resource;
         this.onClickSupprimerCallback = onClickSupprimerCallback;
         this.onClickModifierCallback = onClickModifierCallback;
@@ -78,7 +73,7 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         TextView titre = convertView.findViewById(R.id.list_client_titre);
         TextView sousTitre = convertView.findViewById(R.id.list_client_sous_titre);
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
-        Button boutonModifier = convertView.findViewById(R.id.button);
+        Button boutonModifier = convertView.findViewById(R.id.modifier);
 
         // Récupération de l'objet Client
         final Client clientInfo = getItem(position);
@@ -88,7 +83,7 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         sousTitre.setText(clientInfo.getAdresse().getCodePostal() + " " + clientInfo.getAdresse().getVille());
 
         if (clientInfo != null) {
-            boutonSuppression.setOnClickListener(v-> {
+            boutonSuppression.setOnClickListener(v -> {
                 onClickSupprimerCallback.onClickSupprimerClientItem(clientInfo);
             });
 

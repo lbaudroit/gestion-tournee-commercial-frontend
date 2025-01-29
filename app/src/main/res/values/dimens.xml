@@ -41,7 +41,4 @@
     <dimen name="padding_start_edit_text">12sp</dimen>
     <dimen name="drawable_padding_edit_text">7sp</dimen>
 
-    <!-- -->
-    <dimen name="margin_modification">10dp</dimen>
-
 </resources>

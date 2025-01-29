@@ -311,16 +311,20 @@ public class FragmentCreationItineraire extends Fragment {
      * @param view le bouton cliqué
      */
     private void valider(View view) {
+        System.out.println("uwu");
         // Vérification du nom
         String nomItineraire = nom.getText().toString();
         if (nomItineraire.trim().isEmpty()) {
             nom.setError(getString(R.string.empty_field_error));
+            System.out.println("uwu2");
+
             return;
         }
 
         // Vérification des clients
         if (clientsItineraire.isEmpty()) {
             selectionClient.setError(getString(R.string.aucun_client_saisi_error));
+            System.out.println("uwu3");
             return;
         }
 
@@ -335,6 +339,7 @@ public class FragmentCreationItineraire extends Fragment {
         if (idItineraireModifie.isPresent()) {
             requeteModifierItineraire(onExceptionCallback);
         } else {
+            System.out.println("uwu4");
             requeteCreerItineraire(onExceptionCallback);
         }
     }
@@ -347,6 +352,7 @@ public class FragmentCreationItineraire extends Fragment {
                     new ApiRequest.ApiResponseCallback<JSONObject>() {
                         @Override
                         public void onSuccess(JSONObject response) {
+                            System.out.println("Itinéraire créé");
                             Toast.makeText(getContext(),
                                     "Itinéraire créé avec succès",
                                     Toast.LENGTH_SHORT).show();
@@ -355,6 +361,7 @@ public class FragmentCreationItineraire extends Fragment {
 
                         @Override
                         public void onError(VolleyError error) {
+                            System.out.println("Itinéraire ctréé");
                             onExceptionCallback.accept(error);
                         }
                     });

@@ -77,4 +77,8 @@
     <string name="confirmation_suppression_itineraire">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
     <string name="oui">Oui</string>
     <string name="non">Non\n</string>
+    <string name="description_entreprise">Description (optionnel)</string>
+    <string name="confirmation_suppression_client">Êtes-vous sûr de vouloir supprimer le client \"%s\" ?</string>
+    <string name="client_deleted">Le client a bien été supprimer\n</string>
+    <string name="error_deleting_client">Le client n\'a pas pû etre supprimer\n</string>
 </resources>

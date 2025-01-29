@@ -12,26 +12,18 @@ public class Client {
     private Contact contact;
 
     private boolean clientEffectif;
-      
-    public Client(  String nomEntreprise,Adresse adresse ) {
-        this.adresse = adresse;
+
+    public Client(String nomEntreprise, Adresse adresse) {
         this.nomEntreprise = nomEntreprise;
         this.adresse = adresse;
-        this.descriptif = description;
-        this.coordonnees = new Coordonnees(latitude, longitude);
+    }
+
+    public Client(String _id, String nomEntreprise, Adresse adresse, String descriptif, Coordonnees coordonnees, Contact contact) {
+        this.nomEntreprise = nomEntreprise;
+        this.adresse = adresse;
+        this.descriptif = descriptif;
+        this.coordonnees = coordonnees;
         this.contact = contact;
-    }
-
-    public String get_id() {
-        return _id;
-    }
-
-    public String getNomEntreprise() {
-        return nomEntreprise;
-    }
-
-    public Adresse getAdresse() {
-        return adresse;
     }
 
     @Override
@@ -41,7 +33,8 @@ public class Client {
         }
         return false;
     }
-    public Client(  String _id,String idUtilisateur,String nomEntreprise,Adresse adresse,Contact contact ) {
+
+    public Client(String _id, String idUtilisateur, String nomEntreprise, Adresse adresse, Contact contact) {
         this.adresse = adresse;
         this._id = _id;
         this.contact = contact;
@@ -49,19 +42,24 @@ public class Client {
     }
 
 
-    public String  get_id() {
+    public String get_id() {
         return this._id;
     }
-    public Adresse getAdresse(){
+
+    public Adresse getAdresse() {
         return this.adresse;
     }
 
 
-    public String getNomEntreprise(){
+    public String getNomEntreprise() {
         return this.nomEntreprise;
     }
 
     public Contact getContact() {
         return contact;
+    }
+
+    public String getDescriptif() {
+        return descriptif;
     }
 }

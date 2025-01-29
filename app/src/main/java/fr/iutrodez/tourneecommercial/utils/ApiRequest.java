@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.widget.Toast;
-import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -20,7 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +28,6 @@ import java.util.stream.Collectors;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
-import java.util.HashMap;
-import java.util.Map;
-import fr.iutrodez.tourneecommercial.R;
 
 /**
  * Classe utilitaire pour gérer les requêtes API de l'application.
@@ -45,17 +40,20 @@ public class ApiRequest {
 
     /**
      * Interface de callback pour gérer les réponses des requêtes API.
+     *
      * @param <T> Le type de données attendu dans la réponse (JSONObject ou JSONArray)
      */
     public interface ApiResponseCallback<T> {
         /**
          * Appelé lorsque la requête est réussie.
+         *
          * @param response La réponse du serveur
          */
         void onSuccess(T response);
 
         /**
          * Appelé lorsque la requête échoue.
+         *
          * @param error L'erreur retournée
          */
         void onError(VolleyError error);
@@ -63,8 +61,9 @@ public class ApiRequest {
 
     /**
      * Effectue une requête de connexion au serveur.
-     * @param context Le contexte de l'application
-     * @param url L'URL relative de l'endpoint de connexion
+     *
+     * @param context  Le contexte de l'application
+     * @param url      L'URL relative de l'endpoint de connexion
      * @param postData Les données de connexion (email, mot de passe)
      * @param callback Le callback pour gérer la réponse
      */
@@ -84,8 +83,9 @@ public class ApiRequest {
 
     /**
      * Envoie une requête d'inscription au serveur.
-     * @param context Le contexte de l'application
-     * @param url L'URL relative de l'endpoint d'inscription
+     *
+     * @param context  Le contexte de l'application
+     * @param url      L'URL relative de l'endpoint d'inscription
      * @param postData Les données d'inscription de l'utilisateur
      * @param callback Le callback pour gérer la réponse
      */
@@ -106,17 +106,18 @@ public class ApiRequest {
 
     /**
      * Modifie les informations d'un client existant.
-     * @param context Le contexte de l'application
-     * @param id L'identifiant du client à modifier
+     *
+     * @param context  Le contexte de l'application
+     * @param id       L'identifiant du client à modifier
      * @param postData Les nouvelles données du client
      * @param callback Le callback pour gérer la réponse
      */
-    public static void modifierClient(Context context,String id,JSONObject postData,ApiResponseCallback callback) {
+    public static void modifierClient(Context context, String id, JSONObject postData, ApiResponseCallback callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
-        String url = API_URL + "client/modifier/?id="+id;
+        String url = API_URL + "client/modifier/?id=" + id;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -125,7 +126,7 @@ public class ApiRequest {
                 callback::onError
         ) {
             @Override
-            public Map<String, String> getHeaders()  {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + token);
 
@@ -135,10 +136,12 @@ public class ApiRequest {
 
         requestQueue.add(jsonObjectRequest);
     }
+
     /**
      * Crée un nouveau client dans le système.
-     * @param context Le contexte de l'application
-     * @param url L'URL relative de l'endpoint de création
+     *
+     * @param context  Le contexte de l'application
+     * @param url      L'URL relative de l'endpoint de création
      * @param postData Les données du nouveau client
      * @param callback Le callback pour gérer la réponse
      */
@@ -150,13 +153,13 @@ public class ApiRequest {
         url = API_URL + url;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.PUT,
-                 url,
+                url,
                 postData,
                 callback::onSuccess,
                 callback::onError
         ) {
             @Override
-            public Map<String, String> getHeaders()  {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + token);
                 return headers;
@@ -169,17 +172,18 @@ public class ApiRequest {
 
     /**
      * Récupère les informations d'un client spécifique.
-     * @param context Le contexte de l'application
-     * @param id L'identifiant du client à récupérer
+     *
+     * @param context  Le contexte de l'application
+     * @param id       L'identifiant du client à récupérer
      * @param callback Le callback pour gérer la réponse
      */
-    public static void recupererClient(Context context,String id,ApiResponseCallback callback) {
+    public static void recupererClient(Context context, String id, ApiResponseCallback callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
 
-        String url = API_URL + "client/recuperer/?id="+id;
+        String url = API_URL + "client/recuperer/?id=" + id;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
@@ -199,18 +203,18 @@ public class ApiRequest {
 
     /**
      * Valide une adresse en utilisant l'API gouvernementale française.
-     * @param context Le contexte de l'application
+     *
+     * @param context        Le contexte de l'application
      * @param libelleAdresse L'adresse à valider
-     * @param codePostal Le code postal
-     * @param ville La ville
-     * @param callback Le callback pour gérer la réponse
+     * @param codePostal     Le code postal
+     * @param ville          La ville
+     * @param callback       Le callback pour gérer la réponse
      */
     public static void validationAdresse(Context context, String libelleAdresse, String codePostal, String ville, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
         String url = "https://api-adresse.data.gouv.fr/search/?q=" + libelleAdresse + "&postcode=" + codePostal + "&city=" + ville + "&limit=1" + "&type=housenumber" + "&autocomplete=0";
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
@@ -223,8 +227,9 @@ public class ApiRequest {
 
     /**
      * Récupère des suggestions d'adresses basées sur une recherche.
-     * @param context Le contexte de l'application
-     * @param query Le texte de recherche
+     *
+     * @param context  Le contexte de l'application
+     * @param query    Le texte de recherche
      * @param callback Le callback pour gérer la réponse
      */
     public static void fetchAddressSuggestions(Context context, String query, ApiResponseCallback<JSONObject> callback) {
@@ -245,8 +250,9 @@ public class ApiRequest {
 
     /**
      * Récupère le nombre total d'itinéraires.
-     * @param context Le contexte de l'application
-     * @param url L'URL relative de l'endpoint
+     *
+     * @param context  Le contexte de l'application
+     * @param url      L'URL relative de l'endpoint
      * @param callback Le callback pour gérer la réponse
      */
     public static void fetchNombresItineraires(Context context, String url, ApiResponseCallback<JSONObject> callback) {
@@ -273,8 +279,9 @@ public class ApiRequest {
 
     /**
      * Récupère la liste des itinéraires.
-     * @param context Le contexte de l'application
-     * @param url L'URL relative de l'endpoint
+     *
+     * @param context  Le contexte de l'application
+     * @param url      L'URL relative de l'endpoint
      * @param callback Le callback pour gérer la réponse
      */
     public static void fetchItineraires(Context context, String url, ApiResponseCallback<JSONArray> callback) {
@@ -345,19 +352,21 @@ public class ApiRequest {
         };
         requestQueue.add(jsonObjectRequest);
     }
+
     /**
      * Méthode d'appel API pour supprimer un client
+     *
      * @param context
      * @param idClient client à supprimer
      * @param callback les méthodes de callbacks
      */
-    public static void removeClient(Context context,String idClient,ApiResponseCallback<JSONObject> callback) {
+    public static void removeClient(Context context, String idClient, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
 
-        String url = API_URL + "client/supprimer/?id="+idClient;
+        String url = API_URL + "client/supprimer/?id=" + idClient;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,
@@ -373,6 +382,7 @@ public class ApiRequest {
             }
         };
         requestQueue.add(jsonObjectRequest);
+
     }
 
     public static void getParametres(Context context, ApiResponseCallback<JSONObject> callback) {
@@ -383,38 +393,6 @@ public class ApiRequest {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 API_URL + "utilisateur/",
-                null,
-                callback::onSuccess,
-                callback::onError
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + token);
-                return headers;
-            }
-        };
-        requestQueue.add(jsonObjectRequest);
-    }
-
-    /**
-     * Supprime un itinéraire spécifique.
-     * @param context Le contexte de l'application
-     * @param itineraireId L'identifiant de l'itinéraire à supprimer
-     * @param callback Le callback pour gérer la réponse
-     */
-    public static void deleteItineraire(Context context, long itineraireId, ApiResponseCallback<JSONObject> callback) {
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
-        }
-        String token = getAPI_KEY(context);
-        String url = API_URL + "itineraire/recuperer/?id=" + id;
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.DELETE,
-                API_URL + "itineraire/supprimer/?id=" + itineraireId,
                 null,
                 callback::onSuccess,
                 callback::onError
@@ -481,6 +459,7 @@ public class ApiRequest {
     /**
      * Récupère ou renouvelle le token d'API.
      * Si le token est expiré, effectue une nouvelle connexion pour en obtenir un nouveau.
+     *
      * @param context Le contexte de l'application
      * @return Le token d'API valide
      */
@@ -546,13 +525,25 @@ public class ApiRequest {
                 Request.Method.POST,
                 url,
                 donneesAEnvoyer,
-        return token[0];
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("token", "");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
     }
 
 
     /**
      * Récupère la liste complète des clients.
-     * @param context Le contexte de l'application
+     *
+     * @param context  Le contexte de l'application
      * @param callback Le callback pour gérer la réponse
      */
     public static void getClients(Context context, ApiResponseCallback<JSONArray> callback) {
@@ -579,10 +570,11 @@ public class ApiRequest {
 
     /**
      * Récupère le nombre total de clients.
-     * @param context Le contexte de l'application
+     *
+     * @param context  Le contexte de l'application
      * @param callback Le callback pour gérer la réponse contenant le nombre total de clients
      */
-    public static void getNombreClient(Context context,  ApiResponseCallback<JSONObject> callback) {
+    public static void getNombreClient(Context context, ApiResponseCallback<JSONObject> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
@@ -604,7 +596,7 @@ public class ApiRequest {
         };
         requestQueue.add(jsonArrayRequest);
     }
-          
+
     public static void modificationItineraire(Context context, long id, String nom, List<Client> clients, int distance, ApiResponseCallback<JSONObject> callback) throws JSONException {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
@@ -617,7 +609,6 @@ public class ApiRequest {
                 Request.Method.POST,
                 url,
                 donneesAEnvoyer,
-                null,
                 callback::onSuccess,
                 callback::onError
         ) {
@@ -631,21 +622,22 @@ public class ApiRequest {
         };
         requestQueue.add(jsonObjectRequest);
     }
-          
+
     /**
      * Récupère une page de 30 clients pour le lazy loading.
-     * @param context Le contexte de l'application
-     * @param page Le numéro de la page à récupérer (commence à 0)
+     *
+     * @param context  Le contexte de l'application
+     * @param page     Le numéro de la page à récupérer (commence à 0)
      * @param callback Le callback pour gérer la réponse
      */
-    public static void getClientsBy30(Context context, int page, ApiResponseCallback<JSONArray> callback){
+    public static void getClientsBy30(Context context, int page, ApiResponseCallback<JSONArray> callback) {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
         String token = getAPI_KEY(context);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                API_URL + "client/lazy/?page="+page,
+                API_URL + "client/lazy/?page=" + page,
                 null,
                 callback::onSuccess,
                 callback::onError
@@ -658,7 +650,7 @@ public class ApiRequest {
                 return headers;
             }
         };
-        requestQueue.add(jsonObjectRequest);
+        requestQueue.add(jsonArrayRequest);
     }
 
     public static Client jsonToClient(JSONObject json) {
@@ -679,6 +671,28 @@ public class ApiRequest {
 
         // Convertir le JSON en liste d'objets Client
         return gson.fromJson(json.toString(), dtoType);
-        requestQueue.add(jsonArrayRequest);
+    }
+
+    public static void recupererItineraire(Context context, Long id, ApiResponseCallback<JSONObject> callback) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        String token = getAPI_KEY(context);
+        String url = API_URL + "itineraire/recuperer/?id=" + id;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                callback::onSuccess,
+                callback::onError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 }

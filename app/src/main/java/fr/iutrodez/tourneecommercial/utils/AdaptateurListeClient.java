@@ -85,8 +85,8 @@ public class AdaptateurListeClient extends ArrayAdapter<Client> {
         }
 
         // Récupération des vues à l’intérieur de l’élément de la liste
-        TextView titre = convertView.findViewById(R.id.titre);
-        TextView sousTitre = convertView.findViewById(R.id.sous_titre);
+        TextView titre = convertView.findViewById(R.id.list_client_titre);
+        TextView sousTitre = convertView.findViewById(R.id.list_client_sous_titre);
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
         Button boutonModification = convertView.findViewById(R.id.modifier);
 

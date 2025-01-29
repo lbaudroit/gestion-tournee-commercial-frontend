@@ -72,6 +72,13 @@
         <item name="android:textSize">@dimen/default_font_size</item>
     </style>
 
+    <style name="RoundedEditTextArea">
+        <item name="android:paddingStart">@dimen/padding_start_edit_text</item>
+        <item name="android:background">@drawable/outline_edit_text_area</item>
+        <item name="android:drawablePadding">@dimen/drawable_padding_edit_text</item>
+        <item name="android:textSize">@dimen/default_font_size</item>
+    </style>
+
     <style name="TitreSousPartie">
         <item name="android:textSize">@dimen/titre_partie_font_size</item>
         <item name="android:textStyle">bold</item>

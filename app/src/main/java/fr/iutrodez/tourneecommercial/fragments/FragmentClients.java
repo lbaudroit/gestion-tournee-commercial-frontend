@@ -1,5 +1,6 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,9 +26,7 @@ import java.util.List;
 
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.Contact;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
@@ -35,8 +34,7 @@ import fr.iutrodez.tourneecommercial.utils.ApiRequest;
  * Fragment de la navBar pour afficher la liste des clients
  * et pour soit modifier, créer ou supprimer un client
  *
- * @author
- * Ahmed BRIBACH
+ * @author Ahmed BRIBACH
  * Leila Baudroit
  * Enzo CLUZEL
  * Benjamin NICOL
@@ -104,12 +102,13 @@ public class FragmentClients extends Fragment {
 
     /**
      * Callback lorsque le bouton modifier de l'adaptateur est cliqué
+     *
      * @param client le client appuyé
      */
     public void onClickModifierAdaptateur(Client client) {
         Bundle bundle = new Bundle();
-        bundle.putString("id",client.get_id());
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false,bundle);
+        bundle.putString("id", client.get_id());
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT, false, bundle);
 
         Toast.makeText(getContext(), "Modifier : " + client.getNomEntreprise(), Toast.LENGTH_SHORT).show();
 
@@ -117,21 +116,32 @@ public class FragmentClients extends Fragment {
 
     /**
      * Callback lorsque le bouton supprimer de l'adaptateur est cliqué
+     *
      * @param client le client appuyé
      */
     public void onClickSupprimerAdaptateur(Client client) {
-        ApiRequest.removeClient(requireContext(), client.get_id(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+        String message = getContext().getString(R.string.confirmation_suppression_client, client.getNomEntreprise());
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.suppression_itineraire)
+                .setMessage(message)
+                .setPositiveButton(R.string.oui, (dialog, which) -> deleteClient(client))
+                .setNegativeButton(R.string.non, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void deleteClient(Client client) {
+        ApiRequest.removeClient(getContext(), client.get_id(), new ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 adaptateur.remove(client);
-                Toast.makeText(getContext(), "Le client " + client.getNomEntreprise()+ " a été modifié", Toast.LENGTH_SHORT).show();
+                adaptateur.notifyDataSetChanged();
+                Toast.makeText(getContext(), R.string.client_deleted, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(getContext(), "Le client n'a pas été modifié. \n"+ error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.error_deleting_client, Toast.LENGTH_SHORT).show();
             }
-
         });
     }
 
@@ -191,9 +201,10 @@ public class FragmentClients extends Fragment {
 
     /**
      * Méthode appelée quand le
+     *
      * @param view
      */
     public void ajouter(View view) {
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT,false);
+        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT, false);
     }
 }
