@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="50dp"
     android:orientation="vertical">
 
     <Button
@@ -15,7 +16,7 @@
         android:onClick="creation_client"/>
 
     <ListView
-        android:id="@+id/list_itineraires"
+        android:id="@+id/listitem_client"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/listitem_client" />

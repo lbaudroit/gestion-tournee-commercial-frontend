@@ -225,7 +225,10 @@ public class ActiviteInscription extends AppCompatActivity {
             @Override
             public void onSuccess(JSONObject response) {
                 try {
-                    if (!((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties").getString("name").equals(libelleAdresse)) {
+                    JSONObject jsonObject = ((JSONObject) response.getJSONArray("features").get(0)).getJSONObject("properties");
+                    if (!jsonObject.getString("name").equals(libelleAdresse)
+                            || !jsonObject.getString("city").equals(ville)
+                            || ! jsonObject.getString("postcode").equals(codePostal)) {
                         ActiviteInscription.this.libelleAdresse.setError("Adresse non valide");
                         ActiviteInscription.this.codePostal.setError("Adresse non valide");
                         ActiviteInscription.this.ville.setError("Adresse non valide");

@@ -4,37 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:padding="@dimen/list_item_padding"
+    android:gravity="center_vertical"
     android:clickable="true"
     android:focusable="true"
     android:padding="@dimen/list_item_padding"
     app:layout_constraintWidth="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="2"
         android:orientation="vertical"
         android:paddingTop="@dimen/list_item_top_padding">
 
         <TextView
-            android:id="@+id/titre"
+            android:id="@+id/list_client_titre"
             style="@style/ListTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/placeholder" />
 
         <TextView
-            android:id="@+id/sous_titre"
+            android:id="@+id/list_client_sous_titre"
             style="@style/ListSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/placeholder" />
-
     </LinearLayout>
-
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
 
     <Button
         android:id="@+id/modifier"
@@ -47,12 +45,25 @@
     <Space
         android:layout_width="@dimen/espace_vertical_champs"
         android:layout_height="wrap_content"/>
-
-    <ImageButton
-        android:id="@+id/supprimer"
-        style="@style/ListItemDeleteButton"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/supprimer"
-        android:src="@drawable/baseline_delete_24"
-        app:tint="@color/bg" />
+        android:id="@+id/button"
+        style="@style/BoutonSecondaire"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/modifier"
+        android:layout_marginRight="@dimen/margin_modification"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/supprimer"
+            style="@style/ListItemDeleteButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:contentDescription="@string/supprimer"
+            android:src="@drawable/baseline_delete_24"
+            app:tint="@color/bg" />
+    </LinearLayout>
 </LinearLayout>

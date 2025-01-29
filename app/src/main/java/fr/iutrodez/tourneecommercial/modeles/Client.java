@@ -2,8 +2,8 @@ package fr.iutrodez.tourneecommercial.modeles;
 
 public class Client {
     private String _id;
-    private int idUtilisateur;
 
+    private String idUtilisateur;
     private String nomEntreprise;
 
     private Adresse adresse;
@@ -12,10 +12,9 @@ public class Client {
     private Contact contact;
 
     private boolean clientEffectif;
-
-    public Client(int idUtilisateur, String nomEntreprise, Adresse adresse,
-                  String description, double longitude, double latitude, Contact contact) {
-        this.idUtilisateur = idUtilisateur;
+      
+    public Client(  String nomEntreprise,Adresse adresse ) {
+        this.adresse = adresse;
         this.nomEntreprise = nomEntreprise;
         this.adresse = adresse;
         this.descriptif = description;
@@ -41,5 +40,28 @@ public class Client {
             return ((Client) obj).get_id().equals(this.get_id());
         }
         return false;
+    }
+    public Client(  String _id,String idUtilisateur,String nomEntreprise,Adresse adresse,Contact contact ) {
+        this.adresse = adresse;
+        this._id = _id;
+        this.contact = contact;
+        this.nomEntreprise = nomEntreprise;
+    }
+
+
+    public String  get_id() {
+        return this._id;
+    }
+    public Adresse getAdresse(){
+        return this.adresse;
+    }
+
+
+    public String getNomEntreprise(){
+        return this.nomEntreprise;
+    }
+
+    public Contact getContact() {
+        return contact;
     }
 }

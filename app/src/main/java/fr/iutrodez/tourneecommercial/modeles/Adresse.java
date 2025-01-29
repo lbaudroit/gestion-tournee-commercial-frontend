@@ -1,21 +1,25 @@
 package fr.iutrodez.tourneecommercial.modeles;
 
+import android.view.View;
+
 public class Adresse {
 
     private String libelle;
     private String codePostal;
     private String ville;
 
-    public Adresse(String libelle,String code_postal , String ville){
+    
+    public Adresse(String libelle,String codePostal , String ville) {
+
         this.libelle = libelle;
-        this.codePostal = code_postal;
+        this.codePostal = codePostal;
         this.ville = ville;
     }
 
     public String getLibelle() {
-        return libelle;
+        return this.libelle;
     }
-
+      
     public String getCodePostal() {
         return codePostal;
     }

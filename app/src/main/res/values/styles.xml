@@ -42,6 +42,8 @@
         <item name="android:paddingTop">@dimen/padding_horizontal_btn_ajouter</item>
         <item name="android:paddingBottom">@dimen/padding_horizontal_btn_ajouter</item>
         <item name="android:paddingEnd">@dimen/padding_end_btn_ajouter</item>
+        <item name="android:textSize">@dimen/text_ajouter</item>
+        <item name="android:layout_marginBottom">@dimen/margin_bottom_ajouter</item>
     </style>
 
     <style name="GrandBoutonAjouter">
