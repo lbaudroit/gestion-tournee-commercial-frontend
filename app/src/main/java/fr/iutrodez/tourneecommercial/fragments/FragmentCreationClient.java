@@ -30,6 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +88,7 @@ public class FragmentCreationClient extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activite_creation_client, container, false);
+        View view = inflater.inflate(R.layout.fragment_creation_client, container, false);
 
         // Initialisation des vues
         aSwitch = view.findViewById(R.id.statut);

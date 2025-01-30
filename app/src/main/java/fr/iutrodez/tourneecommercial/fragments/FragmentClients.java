@@ -67,7 +67,7 @@ public class FragmentClients extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View frag = inflater.inflate(R.layout.activite_liste_client, container, false);
+        View frag = inflater.inflate(R.layout.fragment_liste_client, container, false);
         liste = frag.findViewById(R.id.listitem_client);
         frag.findViewById(R.id.ajouter).setOnClickListener(this::ajouter);
 

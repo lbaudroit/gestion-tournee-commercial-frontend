@@ -25,7 +25,7 @@ public class ActiviteCreationClient extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activite_creation_client);
+        setContentView(R.layout.fragment_creation_client);
         ActionBar actionBar = getSupportActionBar();
         aSwitch = findViewById(R.id.statut);
         nomEntreprise = findViewById(R.id.nomEntreprise);
