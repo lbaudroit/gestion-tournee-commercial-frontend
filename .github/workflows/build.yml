@@ -5,12 +5,19 @@ on:
     branches:
       - main
       - develop
+      - actions
   pull_request:
     branches:
       - main
       - develop
+      - actions
     types: [opened, synchronize, reopened]
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to run the workflow on"
+        required: true
+        default: "main"
 jobs:
   build:
     runs-on: ubuntu-latest
