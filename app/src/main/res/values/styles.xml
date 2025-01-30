@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Separator" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/one</item>
@@ -41,10 +42,18 @@
         <item name="android:paddingTop">@dimen/padding_horizontal_btn_ajouter</item>
         <item name="android:paddingBottom">@dimen/padding_horizontal_btn_ajouter</item>
         <item name="android:paddingEnd">@dimen/padding_end_btn_ajouter</item>
+        <item name="android:textSize">@dimen/text_ajouter</item>
+        <item name="android:layout_marginBottom">@dimen/margin_bottom_ajouter</item>
+    </style>
+
+    <style name="GrandBoutonAjouter">
+        <item name="android:backgroundTint">@color/ajouter</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="BoutonPrincipal">
         <item name="android:backgroundTint">@color/neutral_blue</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="BoutonSecondaire">
@@ -55,10 +64,17 @@
         <item name="strokeColor">@color/neutral_blue</item>
         <item name="strokeWidth">@dimen/one</item>
     </style>
-    
+
     <style name="RoundedEditText">
         <item name="android:paddingStart">@dimen/padding_start_edit_text</item>
         <item name="android:background">@drawable/outline_edit_text</item>
+        <item name="android:drawablePadding">@dimen/drawable_padding_edit_text</item>
+        <item name="android:textSize">@dimen/default_font_size</item>
+    </style>
+
+    <style name="RoundedEditTextArea">
+        <item name="android:paddingStart">@dimen/padding_start_edit_text</item>
+        <item name="android:background">@drawable/outline_edit_text_area</item>
         <item name="android:drawablePadding">@dimen/drawable_padding_edit_text</item>
         <item name="android:textSize">@dimen/default_font_size</item>
     </style>
