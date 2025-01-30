@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:paddingBottom="50dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_page_margin">
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/informations"
+                style="@style/TitreSousPartie" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <EditText
+                android:id="@+id/nomEntreprise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditText"
+                android:hint="@string/nom_entreprise"
+                android:inputType="text"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <TextView
+                android:id="@+id/adresse_view"
+                android:layout_span="2"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditText"
+                android:hint="@string/adresse"
+                android:drawableStart="@drawable/location_city"
+                android:drawableEnd="@drawable/baseline_expand_more_24" />
+        </TableRow>
+
+
+        <TableRow>
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditTextArea"
+                android:hint="@string/description_entreprise"
+                android:inputType="textMultiLine"
+                android:lines="4"
+                android:gravity="top"
+                android:layout_weight="1"
+                android:layout_span="2" />
+        </TableRow>
+
+        <View style="@style/Separator" />
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/contact"
+                style="@style/TitreSousPartie" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <EditText
+                android:id="@+id/nom"
+                android:layout_width="@dimen/zero"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/RoundedEditText"
+                android:drawableStart="@drawable/person"
+                android:hint="@string/nom"
+                android:layout_marginEnd="@dimen/demi_espace_horizontal_champs"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/prenom"
+                android:layout_width="@dimen/zero"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/RoundedEditText"
+                android:drawableStart="@drawable/person"
+                android:hint="@string/prenom"
+                android:layout_marginStart="@dimen/demi_espace_horizontal_champs"
+                android:inputType="text" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <EditText
+                android:id="@+id/num_tel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditText"
+                android:hint="@string/numero_telephone"
+                android:drawableStart="@drawable/call"
+                android:layout_weight="1"
+                android:maxLength="10"
+                android:inputType="phone" />
+        </TableRow>
+
+        <View style="@style/Separator" />
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/statut"
+                style="@style/TitreSousPartie" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+
+            <Switch
+                android:id="@+id/statut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:onClick="changeStatut"
+                android:text="@string/client"
+                android:textSize="@dimen/default_font_size" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/enregistrer"
+                android:layout_span="2"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:text="@string/enregistrer"
+                android:onClick="enregistrer"
+                style="@style/BoutonPrincipal" />
+        </TableRow>
+    </TableLayout>
+</ScrollView>
