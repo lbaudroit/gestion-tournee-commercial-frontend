@@ -27,6 +27,7 @@
         <TextView
             android:id="@+id/list_client_sous_titre"
             style="@style/ListSubtitle"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/placeholder" />
@@ -34,10 +35,9 @@
 
     <Button
         android:id="@+id/modifier"
-        style="@style/BoutonPrincipal"
-        android:layout_width="wrap_content"
+        style="@style/BoutonSecondaire"
+        android:layout_width="@dimen/modification_button_width"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/modifier" />
 
     <Space

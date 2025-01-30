@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.VolleyError;
@@ -110,10 +108,10 @@ public class FragmentCreationItineraire extends Fragment {
         listeClientsAjoutes.setAdapter(adaptateurClientsItineraire);
 
         // Modification du titre dans l'action bar
-        ActionBar actionBar = ((AppCompatActivity) this.getActivity()).getSupportActionBar();
+        /*ActionBar actionBar = ((AppCompatActivity) this.getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getString(R.string.creation_itineraire));
-        }
+        }*/
 
         // Blocage des boutons
         disableView(btnGenererItineraire);
