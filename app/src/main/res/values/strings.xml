@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Tournée de commercial</string>
-    
+
     <!-- Mots-clés généralistes -->
+    <string name="modifier">Modifier</string>
+    <string name="valider">Valider</string>
     <string name="enregistrer">Enregistrer</string>
     <string name="ajouter">Ajouter</string>
     <string name="supprimer">Supprimer</string>
@@ -15,8 +17,6 @@
     <string name="todo">TODO</string>
     <string name="placeholder">placeholder</string>
 
-
-    
     <!-- Barre de navigation en bas -->
     <string name="bottom_bar_clients">Clients</string>
     <string name="bottom_bar_carte">Carte</string>
@@ -37,7 +37,7 @@
     <string name="password_again">Resaisir le mot de passe</string>
     <string name="connexion">Se connecter</string>
     <string name="inscription">S\'inscrire</string>
-    
+
     <string name="empty_fields_error">Veuillez remplir tous les champs</string>
     <string name="invalid_email_error">Adresse e-mail invalide</string>
     <string name="password_length_error">Le mot de passe doit contenir au moins 8 caractères</string>
@@ -47,6 +47,12 @@
 
     <!-- Itinéraires -->
     <string name="affichage_nombre_km">%d km</string>
+    <string name="itineraire_deleted">Itinéraire supprimé avec succès</string>
+    <string name="error_deleting_itineraire">Erreur lors de la suppression de l\'itinéraire</string>
+    <string name="nom_itineraire">Nom de l\'itinéraire</string>
+    <string name="entreprises_a_visiter">Entreprises à visiter</string>
+    <string name="generer">Générer</string>
+    <string name="aucun_client_saisi_error">Aucun client n\'a été saisi</string>
 
     <!-- Client -->
     <string name="adresse_entreprise">Adresse de l\'entreprise</string>
@@ -55,9 +61,25 @@
     <string name="contact">Contact</string>
     <string name="numero_telephone">Numéro de téléphone</string>
     <string name="statut">Statut</string>
+
     <string name="prospect">Prospect</string>
     <string name="client">Client</string>
-    <string name="modifier">Modifier</string>
+    <string name="error_fetching_params">Nous n\'avons pas pû récupéré vos informations</string>
+    <string name="params_updated">Mise à jour de l\'utilisateur réussite</string>
+    <string name="error_updating_params">Mise à jour impossible</string>
 
-
+    <!-- Action bar -->
+    <string name="creation_itineraire">Création d\'un itinéraire</string>
+    <string name="rechercher_entreprise">Recherche une entreprise</string>
+    <string name="sectionner_un_client">Séléctionner un client</string>
+    <string name="rechercher">Rechercher...</string>
+    <string name="suppression_itineraire">Suppresion de l\'itinéraire</string>
+    <string name="confirmation_suppression_itineraire">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
+    <string name="oui">Oui</string>
+    <string name="non">Non\n</string>
+    <string name="description_entreprise">Description (optionnel)</string>
+    <string name="confirmation_suppression_client">Êtes-vous sûr de vouloir supprimer le client \"%s\" ?</string>
+    <string name="client_deleted">Le client a bien été supprimer\n</string>
+    <string name="error_deleting_client">Le client n\'a pas pû etre supprimer\n</string>
+    <string name="recherche_adresse">Recherche d\'adresse</string>
 </resources>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:clickable="true"
     android:focusable="true"
-    android:padding="@dimen/default_page_margin"
+    android:padding="@dimen/list_item_padding"
     app:layout_constraintWidth="wrap_content">
 
     <LinearLayout
@@ -36,11 +35,27 @@
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 
-    <ImageButton
-        android:id="@+id/supprimer"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/supprimer"
-        android:src="@drawable/baseline_delete_24"
-        app:tint="@color/bg"
-        style="@style/ListItemDeleteButton" />
+    <Button
+        android:id="@+id/modifier"
+        style="@style/BoutonSecondaire"
+        android:layout_width="@dimen/modification_button_width"
+        android:layout_height="match_parent"
+        android:text="@string/modifier"
+        android:layout_marginEnd="@dimen/margin_modification" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/supprimer"
+            style="@style/ListItemDeleteButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:contentDescription="@string/supprimer"
+            android:src="@drawable/baseline_delete_24"
+            app:tint="@color/bg" />
+    </LinearLayout>
 </LinearLayout>

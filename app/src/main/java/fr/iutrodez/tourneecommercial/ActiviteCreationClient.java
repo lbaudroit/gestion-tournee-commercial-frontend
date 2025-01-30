@@ -29,9 +29,6 @@ public class ActiviteCreationClient extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         aSwitch = findViewById(R.id.statut);
         nomEntreprise = findViewById(R.id.nomEntreprise);
-        adresse = findViewById(R.id.adresse);
-        codePostal = findViewById(R.id.code_postal);
-        ville = findViewById(R.id.ville);
         nom = findViewById(R.id.nom);
         prenom = findViewById(R.id.prenom);
         numTel = findViewById(R.id.num_tel);
@@ -86,8 +83,9 @@ public class ActiviteCreationClient extends AppCompatActivity {
     public void enregistrer(View view) {
         try {
             JSONObject postData = createClientJson();
+            System.out.println(postData.toString());
             String url = "client/creer";
-            ApiRequest.creationClient(this, url, postData, new ApiRequest.ApiResponseCallback() {
+            ApiRequest.creationClient(this, url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Toast.makeText(ActiviteCreationClient.this, "Client créé avec succès", Toast.LENGTH_SHORT).show();
