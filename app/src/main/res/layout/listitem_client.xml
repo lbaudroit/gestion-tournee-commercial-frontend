@@ -41,7 +41,7 @@
         android:text="@string/modifier" />
 
     <Space
-        android:layout_width="@dimen/espace_vertical_champs"
+        android:layout_width="@dimen/vertical_space"
         android:layout_height="wrap_content" />
 
     <LinearLayout

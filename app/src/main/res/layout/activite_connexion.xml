@@ -12,7 +12,7 @@
         style="@style/RoundedEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/espace_vertical_champs"
+        android:layout_marginBottom="@dimen/vertical_space"
         android:hint="@string/email"
         android:inputType="textEmailAddress" />
 
@@ -21,7 +21,7 @@
         style="@style/RoundedEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/espace_vertical_champs"
+        android:layout_marginBottom="@dimen/vertical_space"
         android:hint="@string/password"
         android:inputType="textPassword" />
 
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         style="@style/BoutonPrincipal"
         android:text="@string/connexion"
-        android:layout_marginBottom="@dimen/espace_vertical_champs"/>
+        android:layout_marginBottom="@dimen/vertical_space"/>
 
     <Button
         android:id="@+id/btn_inscription"

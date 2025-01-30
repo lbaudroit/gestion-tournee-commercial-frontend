@@ -2,9 +2,9 @@
 <resources>
     <!-- commun -->
     <dimen name="default_page_margin">10dp</dimen>
-    <dimen name="espace_vertical_champs">8dp</dimen>
-    <dimen name="espace_horizontal_champs">6dp</dimen>
-    <dimen name="demi_espace_horizontal_champs">3dp</dimen>
+    <dimen name="vertical_space">8dp</dimen>
+    <dimen name="horizontal_space">6dp</dimen>
+    <dimen name="half_horizontal_space">3dp</dimen>
     <dimen name="one">1dp</dimen>
     <dimen name="zero">0dp</dimen>
     <dimen name="icon_size_24">24dp</dimen>
