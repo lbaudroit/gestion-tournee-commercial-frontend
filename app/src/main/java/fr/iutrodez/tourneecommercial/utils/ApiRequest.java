@@ -35,10 +35,6 @@ public class ApiRequest {
 
     private static final String API_URL = "http://10.0.2.2:9090/";
 
-    public static ApiRequest getInstance() {
-        return null;
-    }
-
     /**
      * Interface de callback pour gérer les réponses des requêtes API.
      *
@@ -199,30 +195,6 @@ public class ApiRequest {
                 return headers;
             }
         };
-        requestQueue.add(jsonObjectRequest);
-    }
-
-    /**
-     * Valide une adresse en utilisant l'API gouvernementale française.
-     *
-     * @param context        Le contexte de l'application
-     * @param libelleAdresse L'adresse à valider
-     * @param codePostal     Le code postal
-     * @param ville          La ville
-     * @param callback       Le callback pour gérer la réponse
-     */
-    public static void validationAdresse(Context context, String libelleAdresse, String codePostal, String ville, ApiResponseCallback<JSONObject> callback) {
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
-        }
-        String url = "https://api-adresse.data.gouv.fr/search/?q=" + libelleAdresse + "&postcode=" + codePostal + "&city=" + ville + "&limit=1" + "&type=housenumber" + "&autocomplete=0";
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null,
-                callback::onSuccess,
-                callback::onError
-        );
         requestQueue.add(jsonObjectRequest);
     }
 

@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         //TODO : Supprimer les lignes suivantes
         email.setText("en@cl.fr");
         password.setText("Enzo_123");
-        findViewById(R.id.button_login).performClick();
+        //findViewById(R.id.button_login).performClick();
     }
 
     /**
@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param view Vue qui a déclenché l'événement.
      */
     private void onClickGoToInscription(View view) {
-        startActivity(new Intent(this, ActiviteInscription.class));
+        startActivity(new Intent(this, SigninActivity.class));
     }
 
     private void setSharedPreferences(JwtToken jwtToken, long expirationTime) {

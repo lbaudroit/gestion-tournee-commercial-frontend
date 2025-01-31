@@ -10,37 +10,25 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-
+import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.utils.AdressAdapter;
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 /**
  * Fragment pour afficher l'interface de création client ou de modification client
@@ -52,7 +40,7 @@ import fr.iutrodez.tourneecommercial.utils.ApiRequest;
  */
 public class FragmentCreationClient extends Fragment {
     private List<Adresse> adressesProposes;
-    private AdaptateurAdresse adaptateurAdresse;
+    private AdressAdapter adaptateurAdresse;
 
     private Adresse selectedAdresse;
     private Dialog dialog;
@@ -93,7 +81,7 @@ public class FragmentCreationClient extends Fragment {
         // Initialisation des vues
         aSwitch = view.findViewById(R.id.statut);
         nomEntreprise = view.findViewById(R.id.nomEntreprise);
-        adresse_view = view.findViewById(R.id.adresse_view);
+        adresse_view = view.findViewById(R.id.textView_adress);
         nom = view.findViewById(R.id.nom);
         prenom = view.findViewById(R.id.prenom);
         numTel = view.findViewById(R.id.num_tel);
@@ -138,13 +126,13 @@ public class FragmentCreationClient extends Fragment {
                 dialog.show();
 
                 // Récupérer les éléments du dialog
-                EditText editText = dialog.findViewById(R.id.edit_text);
-                ListView listView = dialog.findViewById(R.id.list_view);
-                TextView titre = dialog.findViewById(R.id.titre);
-                titre.setText(R.string.recherche_adresse);
+                EditText editText = dialog.findViewById(R.id.editText_research);
+                ListView listView = dialog.findViewById(R.id.listView_list);
+                TextView titre = dialog.findViewById(R.id.title);
+                titre.setText(R.string.adress_research_title);
 
                 // Initialiser l'adapter
-                adaptateurAdresse = new AdaptateurAdresse(
+                adaptateurAdresse = new AdressAdapter(
                         context,
                         android.R.layout.simple_list_item_1,
                         adressesProposes);
@@ -241,7 +229,7 @@ public class FragmentCreationClient extends Fragment {
                 });
 
             } catch (JSONException e) {
-                Toast.makeText(requireContext(), R.string.error_default_msg+ e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), R.string.error_default_msg + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -309,7 +297,7 @@ public class FragmentCreationClient extends Fragment {
             @Override
             public void onError(VolleyError error) {
                 Toast.makeText(requireContext(), R.string.error_default_msg
-                                                + error.toString(), Toast.LENGTH_LONG).show();
+                        + error.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }

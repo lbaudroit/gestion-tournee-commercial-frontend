@@ -6,23 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import fr.iutrodez.tourneecommercial.modeles.Adresse;
 
 import java.util.List;
 
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
-
-public class AdaptateurAdresse extends ArrayAdapter<Adresse> {
-    private final int identifiantVueItem;
+public class AdressAdapter extends ArrayAdapter<Adresse> {
+    private final int viewIdentifier;
     private final LayoutInflater inflater;
 
-    public AdaptateurAdresse(@NonNull Context contexte,
-                             int resource,
-                             @NonNull List<Adresse> objects) {
-        super(contexte, resource, objects);
-        this.identifiantVueItem = resource;
+    public AdressAdapter(@NonNull Context context,
+                         int resource,
+                         @NonNull List<Adresse> objects) {
+        super(context, resource, objects);
+        this.viewIdentifier = resource;
         inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -31,12 +29,12 @@ public class AdaptateurAdresse extends ArrayAdapter<Adresse> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(identifiantVueItem, parent, false);
+            convertView = inflater.inflate(viewIdentifier, parent, false);
         }
-        TextView titre = convertView.findViewById(android.R.id.text1);
-        final Adresse adresse = getItem(position);
-        assert adresse != null;
-        titre.setText(adresse.toString());
+        TextView title = convertView.findViewById(android.R.id.text1);
+        final Adresse address = getItem(position);
+        assert address != null;
+        title.setText(address.toString());
         return convertView;
     }
 }

@@ -7,7 +7,7 @@
               android:orientation="vertical">
 
     <EditText
-            android:id="@+id/field_nom"
+            android:id="@+id/editText_name"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             android:layout_height="@dimen/vertical_space"/>
 
     <EditText
-            android:id="@+id/field_prenom"
+            android:id="@+id/editText_firstname"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

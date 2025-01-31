@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
-    android:clickable="true"
-    android:focusable="true"
-    android:padding="@dimen/list_item_padding"
-    app:layout_constraintWidth="wrap_content">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_height"
+              android:clickable="true"
+              android:focusable="true"
+              android:padding="@dimen/list_item_padding"
+              app:layout_constraintWidth="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/list_item_top_padding">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/list_item_top_padding">
 
         <TextView
-            android:id="@+id/titre"
-            style="@style/ListTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder" />
+                android:id="@+id/title"
+                style="@style/ListTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder"/>
 
         <TextView
-            android:id="@+id/sous_titre"
-            style="@style/ListSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder" />
+                android:id="@+id/sous_titre"
+                style="@style/ListSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder"/>
 
     </LinearLayout>
 
     <Space
-        android:layout_width="@dimen/zero"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+            android:layout_width="@dimen/zero"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
 
     <Button
-        android:id="@+id/modifier"
-        style="@style/BoutonSecondaire"
-        android:layout_width="@dimen/modification_button_width"
-        android:layout_height="match_parent"
-        android:text="@string/modifier"
-        android:layout_marginEnd="@dimen/margin_modification" />
+            android:id="@+id/modifier"
+            style="@style/BoutonSecondaire"
+            android:layout_width="@dimen/modification_button_width"
+            android:layout_height="match_parent"
+            android:text="@string/modifier"
+            android:layout_marginEnd="@dimen/margin_modification"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
         <ImageButton
-            android:id="@+id/supprimer"
-            style="@style/ListItemDeleteButton"
-            android:layout_width="@dimen/zero"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:contentDescription="@string/supprimer"
-            android:src="@drawable/baseline_delete_24"
-            app:tint="@color/bg" />
+                android:id="@+id/supprimer"
+                style="@style/ListItemDeleteButton"
+                android:layout_width="@dimen/zero"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:contentDescription="@string/supprimer"
+                android:src="@drawable/baseline_delete_24"
+                app:tint="@color/bg"/>
     </LinearLayout>
 </LinearLayout>

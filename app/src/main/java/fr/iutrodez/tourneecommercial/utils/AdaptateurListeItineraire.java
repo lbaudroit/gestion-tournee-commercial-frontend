@@ -1,29 +1,17 @@
 package fr.iutrodez.tourneecommercial.utils;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.android.volley.VolleyError;
-
-import org.json.JSONObject;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 
 public class AdaptateurListeItineraire extends ArrayAdapter<Itineraire> {
 
@@ -60,7 +48,7 @@ public class AdaptateurListeItineraire extends ArrayAdapter<Itineraire> {
         if (convertView == null) {
             convertView = inflater.inflate(identifiantVueItem, parent, false);
         }
-        TextView titre = convertView.findViewById(R.id.titre);
+        TextView titre = convertView.findViewById(R.id.title);
         TextView sousTitre = convertView.findViewById(R.id.sous_titre);
         ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
         Button boutonModification = convertView.findViewById(R.id.modifier);

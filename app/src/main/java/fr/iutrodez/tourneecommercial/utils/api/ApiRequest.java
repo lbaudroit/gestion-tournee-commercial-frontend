@@ -11,6 +11,7 @@ public class ApiRequest {
     public ItineraireApiRequest itineraire;
     public ParcoursApiRequest parcours;
     public UtilisateurApiRequest utilisateur;
+    public BanApiRequest ban;
 
 
     // Déclaration du singleton
@@ -30,8 +31,9 @@ public class ApiRequest {
         this.auth = new AuthApiRequest(requestQueue);
         /*this.client = new ClientApiRequest(requestQueue);
         this.itineraire = new ItineraireApiRequest(requestQueue);
-        this.parcours = new ParcoursApiRequest(requestQueue);
-        this.utilisateur = new UtilisateurApiRequest(requestQueue);*/
+        this.parcours = new ParcoursApiRequest(requestQueue);*/
+        this.utilisateur = new UtilisateurApiRequest(requestQueue);
+        this.ban = new BanApiRequest(requestQueue);
     }
 
 

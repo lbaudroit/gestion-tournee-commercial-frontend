@@ -10,18 +10,17 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.android.volley.VolleyError;
-
+import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClient;
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,13 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClient;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class FragmentCreationItineraire extends Fragment {
 
@@ -169,8 +161,8 @@ public class FragmentCreationItineraire extends Fragment {
                 dialog.show();
 
                 // Récupérer les éléments du dialog
-                EditText editText = dialog.findViewById(R.id.edit_text);
-                ListView listView = dialog.findViewById(R.id.list_view);
+                EditText editText = dialog.findViewById(R.id.editText_research);
+                ListView listView = dialog.findViewById(R.id.listView_list);
 
                 // Initialiser l'adapter
                 adaptateurClientsDisponibles = new AdaptateurListeClient(

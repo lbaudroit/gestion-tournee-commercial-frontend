@@ -57,8 +57,8 @@ public class FragmentParametres extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Récupérer les parametres de l'utilisateur
-        nom = view.findViewById(R.id.field_nom);
-        prenom = view.findViewById(R.id.field_prenom);
+        nom = view.findViewById(R.id.editText_name);
+        prenom = view.findViewById(R.id.editText_firstname);
         email = view.findViewById(R.id.editText_email);
         view.findViewById(R.id.btn_modification).setOnClickListener(this::modifier);
 

@@ -84,7 +84,7 @@
     <string name="confirmation_suppression_client">Êtes-vous sûr de vouloir supprimer le client \"%s\" ?</string>
     <string name="client_deleted">Le client a bien été supprimer\n</string>
     <string name="error_deleting_client">Le client n\'a pas pû etre supprimer\n</string>
-    <string name="recherche_adresse">Recherche d\'adresse</string>
+    <string name="adress_research_title">Recherche d\'adresse</string>
 
     <!-- Switch -->
     <string name="switch_item_client">Client</string>

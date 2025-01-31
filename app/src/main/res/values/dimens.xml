@@ -11,7 +11,7 @@
 
     <!-- texte -->
     <dimen name="title">24sp</dimen>
-    <dimen name="default_font_size">16sp</dimen>
+    <dimen name="default_font_size">18sp</dimen>
 
     <!-- element de liste -->
     <dimen name="list_item_height">65dp</dimen>
@@ -47,5 +47,6 @@
     <!-- -->
     <dimen name="list_title_text">15sp</dimen>
     <dimen name="list_subtitle_text">12sp</dimen>
+    <dimen name="size_edit_text">48sp</dimen>
 
 </resources>

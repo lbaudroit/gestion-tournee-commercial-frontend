@@ -7,10 +7,10 @@
               android:orientation="vertical">
 
     <EditText
-            android:id="@+id/field_nom"
+            android:id="@+id/editText_name"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:autofillHints="name"
             android:inputType="text"
             android:maxLength="50"
             android:hint="@string/nom"/>
@@ -20,10 +20,10 @@
             android:layout_height="@dimen/vertical_space"/>
 
     <EditText
-            android:id="@+id/field_prenom"
+            android:id="@+id/editText_firstname"
+            android:autofillHints="name"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLength="50"
             android:hint="@string/prenom"/>
@@ -34,9 +34,9 @@
 
     <EditText
             android:id="@+id/editText_email"
+            android:autofillHints="emailAddress"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:maxLength="300"
             android:hint="@string/email"/>
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"/>
 
     <TextView
-            android:id="@+id/adresse_view"
+            android:id="@+id/textView_adress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/RoundedEditText"
@@ -60,9 +60,9 @@
 
     <EditText
             android:id="@+id/editText_password"
+            android:autofillHints="password"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:maxLength="50"
             android:hint="@string/password"/>
@@ -72,10 +72,10 @@
             android:layout_height="@dimen/vertical_space"/>
 
     <EditText
-            android:id="@+id/field_password_again"
+            android:id="@+id/editText_passwordConfirmation"
+            android:autofillHints="password"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:maxLength="50"
             android:hint="@string/password_again"/>
