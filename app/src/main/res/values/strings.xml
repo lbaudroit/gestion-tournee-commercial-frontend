@@ -82,4 +82,30 @@
     <string name="client_deleted">Le client a bien été supprimer\n</string>
     <string name="error_deleting_client">Le client n\'a pas pû etre supprimer\n</string>
     <string name="recherche_adresse">Recherche d\'adresse</string>
+
+    <!-- Switch -->
+    <string name="switch_item_client">Client</string>
+    <string name="switch_item_prospect">Prospect</string>
+
+    <!-- Toast Error Message -->
+    <string name="error_default_msg">Erreur : </string>
+    <string name="error_get_itineraire">Erreur : impossible de récupérer l\'itinéraire</string>
+    <string name="error_get_nb_client">"Erreur lors de la récupération du nombre de clients"</string>
+    <string name="error_get_client">"Erreur lors de la récupération des clients"</string>
+    <string name="impossible_generate_itineraire">Erreur : impossible de générer l\'itinéraire</string>
+    <string name="impossible_create_itineraire">Erreur : impossible de créer l\'itinéraire</string>
+    <string name="error_failed_fetch_itineraire">erreur lors de la récupérations des itineraries</string>
+
+    <!-- Toast Success Message -->
+    <string name="add_client">Ajout d\'un client</string>
+    <string name="success_create_itineraire">Itinéraire créé avec succès</string>
+    <string name="success_update_itineraire">Itinéraire modifié avec succès</string>
+    <string name="inscription_reussie">Inscription réussie</string>
+    <string name="sucess_create_client"> Client créé avec succès</string>
+    <string name="sucess_update_client"> Client modifiée avec succès</string>
+
+    <!-- Alert Dialog Builder -->
+    <string name="quit">Quitter l\'application</string>
+    <string name="ask_quit">Voulez-vous vraiment quitter l\'application ?</string>
+
 </resources>

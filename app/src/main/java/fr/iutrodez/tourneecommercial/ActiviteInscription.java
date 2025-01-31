@@ -171,13 +171,13 @@ public class ActiviteInscription extends AppCompatActivity {
             ApiRequest.inscription(this, "auth/creer", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
-                    Toast.makeText(ActiviteInscription.this, "Inscription réussie", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActiviteInscription.this, R.string.inscription_reussie, Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(ActiviteInscription.this, ActiviteConnexion.class));
                 }
 
                 @Override
                 public void onError(VolleyError error) {
-                    Toast.makeText(ActiviteInscription.this, "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ActiviteInscription.this, R.string.error_default_msg + error.toString(), Toast.LENGTH_LONG).show();
                 }
             });
         }

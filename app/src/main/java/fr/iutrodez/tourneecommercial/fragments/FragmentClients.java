@@ -158,7 +158,7 @@ public class FragmentClients extends Fragment {
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(parent, "Erreur lors de la récupération du nombre de clients",
+                Toast.makeText(parent, R.string.error_get_nb_client,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -192,7 +192,7 @@ public class FragmentClients extends Fragment {
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(parent, "Erreur lors de la récupération des clients",
+                Toast.makeText(parent, R.string.error_get_client,
                         Toast.LENGTH_SHORT).show();
                 isLoading = false;
             }

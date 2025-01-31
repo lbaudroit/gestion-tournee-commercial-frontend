@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:paddingBottom="50dp">
+    android:paddingBottom="@dimen/default_page_margin">
 
     <TableLayout
         android:layout_width="match_parent"

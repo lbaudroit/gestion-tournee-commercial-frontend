@@ -91,8 +91,8 @@ public class ActivitePrincipale extends AppCompatActivity
                     fm.popBackStack();
                 } else {
                     new AlertDialog.Builder(ActivitePrincipale.this)
-                            .setTitle("Quitter l'application")
-                            .setMessage("Voulez-vous vraiment quitter l'application ?")
+                            .setTitle(R.string.quit)
+                            .setMessage(R.string.ask_quit)
                             .setPositiveButton("Oui", (dialog, which) -> finish())
                             .setNegativeButton("Non", null)
                             .show();

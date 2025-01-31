@@ -33,7 +33,7 @@ public class FragmentCarte extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.fragment_test, container, false);
         TextView text = frag.findViewById(R.id.nom_frag);
-        text.setText("Carte");
+        text.setText(R.string.bottom_bar_carte);
         return frag;
     }
 
