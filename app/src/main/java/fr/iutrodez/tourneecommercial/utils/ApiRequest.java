@@ -1,10 +1,7 @@
 package fr.iutrodez.tourneecommercial.utils;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,7 +11,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Classe utilitaire pour gérer les requêtes API de l'application.
@@ -37,6 +34,10 @@ public class ApiRequest {
     private static RequestQueue requestQueue;
 
     private static final String API_URL = "http://10.0.2.2:9090/";
+
+    public static ApiRequest getInstance() {
+        return null;
+    }
 
     /**
      * Interface de callback pour gérer les réponses des requêtes API.

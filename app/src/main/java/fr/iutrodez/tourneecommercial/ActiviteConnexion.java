@@ -5,18 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.android.volley.VolleyError;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.Objects;
-
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 /**
  * Activité de connexion pour l'application Tournée Commerciale.
@@ -28,7 +22,7 @@ import fr.iutrodez.tourneecommercial.utils.ApiRequest;
  * Ahmed BRIBACH
  */
 public class ActiviteConnexion extends AppCompatActivity {
-
+    private static ApiRequest apiRequest;
     private EditText email;
 
     private EditText password;
@@ -43,13 +37,6 @@ public class ActiviteConnexion extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activite_connexion);
-        //eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbkBjbC5mciIsImlhdCI6MTczNzY0NjUyNywiZXhwIjoxNzM3NjQ4MzI3LCJqdGkiOiJkRUVrMTdrbVdHR1NUN2ZyZEtnZ05INlZyeEQ3UWFnSmx1ckpDUHdLR1BleFBGL21KVTgrWkNXZGpZK1BCQm5pYWNmV2pJL3NqeWRIMEtjbmZkUCtLUT09In0.JQDJ1iSwfxX4ro57yXKRANvE6lFb0dlohZKYVNtW-QE
-
-        //String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbkBjbC5mciIsImlhdCI6MTczNzY0NjUyNywiZXhwIjoxNzM3NjQ4MzI3LCJqdGkiOiJkRUVrMTdrbVdHR1NUN2ZyZEtnZ05INlZyeEQ3UWFnSmx1ckpDUHdLR1BleFBGL21KVTgrWkNXZGpZK1BCQm5pYWNmV2pJL3NqeWRIMEtjbmZkUCtLUT09In0.JQDJ1iSwfxX4ro57yXKRANvE6lFb0dlohZKYVNtW-Q";
-        // Enregistrement du token dans les SharedPreferences
-        //getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", token).apply();
-
-        //ApiRequest.creationClient(this,"/client/creer/",);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.connexion);
 
         email = findViewById(R.id.field_email);
@@ -57,9 +44,11 @@ public class ActiviteConnexion extends AppCompatActivity {
 
         findViewById(R.id.btn_connexion).setOnClickListener(this::onClickEnvoyer);
         findViewById(R.id.btn_inscription).setOnClickListener(this::onClickGoToInscription);
-        //email.setText("en@cl.fr");
-        //password.setText("Enzo_123");
-        //findViewById(R.id.btn_connexion).performClick();
+        apiRequest = ApiRequest.buildInstance(this);
+        //TODO : Supprimer les lignes suivantes
+        email.setText("en@cl.fr");
+        password.setText("Enzo_123");
+        findViewById(R.id.btn_connexion).performClick();
     }
 
     /**
@@ -69,78 +58,43 @@ public class ActiviteConnexion extends AppCompatActivity {
      * @param view Vue qui a déclenché l'événement.
      */
     private void onClickEnvoyer(View view) {
-
-        // Prévérification de la validité des champs
         boolean auth = true;
+        String extracted_email = this.email.getText().toString();
+        String extracted_password = this.password.getText().toString();
 
-        // On vérifie que les champs ne sont pas vides
-        if (email.getText().toString().isEmpty()) {
+        if (extracted_email.isEmpty()) {
             email.setError(getString(R.string.empty_fields_error));
             auth = false;
-        } else if (password.getText().toString().isEmpty()) {
+        } else if (extracted_password.isEmpty()) {
             password.setError(getString(R.string.empty_fields_error));
             auth = false;
         }
 
-        // On vérifie que l'email est valide
         String emailPattern = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
-        if (!email.getText().toString().matches(emailPattern)) {
+        if (!extracted_email.matches(emailPattern)) {
             email.setError(getString(R.string.invalid_email_error));
             auth = false;
         }
 
-        // On vérifie que le mot de passe fait au moins 8 caractères
-        if (password.getText().toString().length() < 8) {
+        if (extracted_password.length() < 8) {
             password.setError(getString(R.string.password_length_error));
             auth = false;
         }
 
-        // On vérifie que le mot de passe contient au moins une majuscule, une minuscule et un chiffre
         String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=_]).+$";
-        if (!password.getText().toString().matches(passwordPattern)) {
+        if (!extracted_password.matches(passwordPattern)) {
             password.setError(getString(R.string.password_pattern_error));
             auth = false;
         }
-
-        // Si l'authentification est réussie, on redirige vers l'activité principale
         if (auth) {
-            // Utilisation de Volley pour envoyer les données à l'API et récupérer le token
-            // Création de l'objet JSON
-            JSONObject postData = new JSONObject();
-            try {
-                postData.put("email", email.getText().toString());
-                postData.put("motDePasse", password.getText().toString());
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-            // Création de la requête
-            ApiRequest.connexion(this, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    // Récupération du token
-                    try {
-                        System.out.println(response);
-                        String token = response.getString("token");
-                        // Current time in milliseconde
-                        long expirationTime = System.currentTimeMillis() + response.getLong("expiration");
-                        // Enregistrement du token dans les SharedPreferences
-                        getSharedPreferences("user", MODE_PRIVATE).edit().putLong("expiration", expirationTime).apply();
-                        getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", token).apply();
-                        getSharedPreferences("user", MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
-                        getSharedPreferences("user", MODE_PRIVATE).edit().putString("password", password.getText().toString()).apply();
-                        // Si l'authentification est réussie, on enregistre le token dans les SharedPreferences et on redirige vers l'activité principale
-                        Intent intent = new Intent(ActiviteConnexion.this, ActivitePrincipale.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onError(VolleyError error) {
-                    Toast.makeText(ActiviteConnexion.this, R.string.invalid_params_connexion_error, Toast.LENGTH_LONG).show();
-                }
+            apiRequest.auth.login(extracted_email, extracted_password, (jwtToken) -> {
+                long expirationTime = System.currentTimeMillis() + jwtToken.getExpiration();
+                setSharedPreferences(jwtToken, expirationTime);
+                Intent intent = new Intent(ActiviteConnexion.this, ActivitePrincipale.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }, error -> {
+                Toast.makeText(ActiviteConnexion.this, R.string.invalid_params_connexion_error, Toast.LENGTH_LONG).show();
             });
         }
     }
@@ -153,6 +107,12 @@ public class ActiviteConnexion extends AppCompatActivity {
      */
     private void onClickGoToInscription(View view) {
         startActivity(new Intent(this, ActiviteInscription.class));
-        Toast.makeText(this, R.string.todo, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setSharedPreferences(JwtToken jwtToken, long expirationTime) {
+        getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", jwtToken.getToken()).apply();
+        getSharedPreferences("user", MODE_PRIVATE).edit().putLong("expiration", expirationTime).apply();
+        getSharedPreferences("user", MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
+        getSharedPreferences("user", MODE_PRIVATE).edit().putString("password", password.getText().toString()).apply();
     }
 }
