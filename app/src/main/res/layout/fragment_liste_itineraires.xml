@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:paddingBottom="50dp"
+    android:paddingBottom="@dimen/default_page_margin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -15,7 +15,7 @@
         style="@style/BoutonAjouter" />
 
     <Space
-        android:layout_width="@dimen/espace_vertical_champs"
+        android:layout_width="@dimen/vertical_space"
         android:layout_height="wrap_content" />
 
     <ListView

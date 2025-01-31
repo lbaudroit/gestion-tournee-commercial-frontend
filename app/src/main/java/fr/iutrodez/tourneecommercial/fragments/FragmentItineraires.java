@@ -117,7 +117,8 @@ public class FragmentItineraires extends Fragment {
             @Override
             public void onError(VolleyError error) {
                 // Handle error
-                Toast.makeText(parent, "Failed to fetch itineraries", Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent, R.string.error_failed_fetch_itineraire
+                                    , Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -146,7 +147,8 @@ public class FragmentItineraires extends Fragment {
             @Override
             public void onError(VolleyError error) {
                 // Handle error
-                Toast.makeText(parent, "Failed to fetch itineraries", Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent, R.string.error_failed_fetch_itineraire
+                        , Toast.LENGTH_SHORT).show();
             }
         });
         currentPage++;

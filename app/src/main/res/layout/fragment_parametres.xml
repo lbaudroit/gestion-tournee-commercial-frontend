@@ -17,7 +17,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="@dimen/espace_vertical_champs" />
+        android:layout_height="@dimen/vertical_space" />
 
     <EditText
         android:id="@+id/field_prenom"
@@ -30,7 +30,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="@dimen/espace_vertical_champs" />
+        android:layout_height="@dimen/vertical_space" />
 
     <EditText
         android:id="@+id/field_email"

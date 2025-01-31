@@ -14,11 +14,11 @@
     </style>
 
     <style name="ListTitle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/list_title_text</item>
     </style>
 
     <style name="ListSubtitle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/list_subtitle_text</item>
         <item name="android:alpha">0.8</item>
 
     </style>
@@ -36,13 +36,13 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/ajouter</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">@dimen/zero</item>
+        <item name="android:minHeight">@dimen/zero</item>
         <item name="android:paddingStart">@dimen/padding_start_btn_ajouter</item>
         <item name="android:paddingTop">@dimen/padding_horizontal_btn_ajouter</item>
         <item name="android:paddingBottom">@dimen/padding_horizontal_btn_ajouter</item>
         <item name="android:paddingEnd">@dimen/padding_end_btn_ajouter</item>
-        <item name="android:textSize">@dimen/text_ajouter</item>
+        <item name="android:textSize">@dimen/text_add</item>
         <item name="android:layout_marginBottom">@dimen/margin_bottom_ajouter</item>
     </style>
 
@@ -80,7 +80,7 @@
     </style>
 
     <style name="TitreSousPartie">
-        <item name="android:textSize">@dimen/titre_partie_font_size</item>
+        <item name="android:textSize">@dimen/title</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
     </style>

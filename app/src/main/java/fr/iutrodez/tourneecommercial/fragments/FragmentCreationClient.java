@@ -30,6 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +88,7 @@ public class FragmentCreationClient extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activite_creation_client, container, false);
+        View view = inflater.inflate(R.layout.fragment_creation_client, container, false);
 
         // Initialisation des vues
         aSwitch = view.findViewById(R.id.statut);
@@ -218,7 +220,7 @@ public class FragmentCreationClient extends Fragment {
                 ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        Toast.makeText(requireContext(), "Client créé avec succès", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.sucess_create_client, Toast.LENGTH_SHORT).show();
                         // Retourner au fragment de liste des clients
 
                         parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS, true);
@@ -234,12 +236,12 @@ public class FragmentCreationClient extends Fragment {
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        Toast.makeText(requireContext(), "Erreur: " + jsonError.optString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(), R.string.error_default_msg + jsonError.optString("message"), Toast.LENGTH_LONG).show();
                     }
                 });
 
             } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), R.string.error_default_msg+ e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -255,7 +257,7 @@ public class FragmentCreationClient extends Fragment {
                 ApiRequest.modifierClient(requireContext(), idModif, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        Toast.makeText(requireContext(), "Client modifiée avec succès", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.sucess_update_client, Toast.LENGTH_SHORT).show();
                         // Retourner au fragment de liste des clients
                         parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS, true);
                     }
@@ -294,7 +296,7 @@ public class FragmentCreationClient extends Fragment {
                 System.out.println(response.toString());
                 Client client = gson.fromJson(response.toString(), Client.class);
                 aSwitch.setChecked(client.isClientEffectif());
-                aSwitch.setText(client.isClientEffectif() ? "Client" : "Prospect");
+                aSwitch.setText(client.isClientEffectif() ? R.string.switch_item_client : R.string.switch_item_prospect);
                 nom.setText(client.getContact().getNom());
                 prenom.setText(client.getContact().getPrenom());
                 selectedAdresse = client.getAdresse();
@@ -306,16 +308,17 @@ public class FragmentCreationClient extends Fragment {
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(requireContext(), "Erreur: " + error.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), R.string.error_default_msg
+                                                + error.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void changeStatut(View view) {
         if (aSwitch.isChecked()) {
-            aSwitch.setText("Client");
+            aSwitch.setText(R.string.switch_item_client);
         } else {
-            aSwitch.setText("Prospect");
+            aSwitch.setText(R.string.switch_item_prospect);
         }
     }
 

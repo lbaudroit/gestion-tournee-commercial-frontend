@@ -2,15 +2,15 @@
 <resources>
     <!-- commun -->
     <dimen name="default_page_margin">10dp</dimen>
-    <dimen name="espace_vertical_champs">8dp</dimen>
-    <dimen name="espace_horizontal_champs">6dp</dimen>
-    <dimen name="demi_espace_horizontal_champs">3dp</dimen>
+    <dimen name="vertical_space">8dp</dimen>
+    <dimen name="horizontal_space">6dp</dimen>
+    <dimen name="half_horizontal_space">3dp</dimen>
     <dimen name="one">1dp</dimen>
     <dimen name="zero">0dp</dimen>
     <dimen name="icon_size_24">24dp</dimen>
 
     <!-- texte -->
-    <dimen name="titre_partie_font_size">24sp</dimen>
+    <dimen name="title">24sp</dimen>
     <dimen name="default_font_size">16sp</dimen>
 
     <!-- element de liste -->
@@ -29,7 +29,7 @@
     <dimen name="padding_start_btn_ajouter">10dp</dimen>
     <dimen name="padding_end_btn_ajouter">30dp</dimen>
     <dimen name="padding_horizontal_btn_ajouter">3dp</dimen>
-    <dimen name="text_ajouter">20sp</dimen>
+    <dimen name="text_add">20sp</dimen>
     <dimen name="margin_bottom_ajouter">20dp</dimen>
 
     <!-- separator -->
@@ -40,5 +40,12 @@
     <dimen name="drawable_edit_text">8dp</dimen>
     <dimen name="padding_start_edit_text">12sp</dimen>
     <dimen name="drawable_padding_edit_text">7sp</dimen>
+
+    <!-- searchable spinner -->
+    <dimen name="searchable_spinner_padding">16dp</dimen>
+
+    <!-- -->
+    <dimen name="list_title_text">15sp</dimen>
+    <dimen name="list_subtitle_text">12sp</dimen>
 
 </resources>

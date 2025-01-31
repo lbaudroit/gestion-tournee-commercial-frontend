@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:paddingBottom="50dp">
+    android:paddingBottom="@dimen/default_page_margin">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_page_margin">
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <TextView
                 android:id="@+id/textView2"
@@ -20,7 +20,7 @@
                 style="@style/TitreSousPartie" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <EditText
                 android:id="@+id/nomEntreprise"
@@ -33,7 +33,7 @@
                 android:drawableStart="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <TextView
                 android:id="@+id/adresse_view"
@@ -65,7 +65,7 @@
 
         <View style="@style/Separator" />
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <TextView
                 android:id="@+id/textView3"
@@ -75,7 +75,7 @@
                 style="@style/TitreSousPartie" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <EditText
                 android:id="@+id/nom"
@@ -85,7 +85,7 @@
                 style="@style/RoundedEditText"
                 android:drawableStart="@drawable/person"
                 android:hint="@string/nom"
-                android:layout_marginEnd="@dimen/demi_espace_horizontal_champs"
+                android:layout_marginEnd="@dimen/half_horizontal_space"
                 android:inputType="text" />
 
             <EditText
@@ -96,11 +96,11 @@
                 style="@style/RoundedEditText"
                 android:drawableStart="@drawable/person"
                 android:hint="@string/prenom"
-                android:layout_marginStart="@dimen/demi_espace_horizontal_champs"
+                android:layout_marginStart="@dimen/half_horizontal_space"
                 android:inputType="text" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <EditText
                 android:id="@+id/num_tel"
@@ -116,7 +116,7 @@
 
         <View style="@style/Separator" />
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <TextView
                 android:id="@+id/textView4"
@@ -126,7 +126,7 @@
                 style="@style/TitreSousPartie" />
         </TableRow>
 
-        <TableRow android:layout_marginBottom="@dimen/espace_vertical_champs">
+        <TableRow android:layout_marginBottom="@dimen/vertical_space">
 
             <Switch
                 android:id="@+id/statut"
