@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/default_page_margin"
-    android:gravity="center"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="@dimen/default_page_margin"
+              android:gravity="center"
+              android:orientation="vertical">
 
     <EditText
-        android:id="@+id/field_nom"
-        style="@style/RoundedEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:maxLength="50"
-        android:hint="@string/nom" />
+            android:id="@+id/field_nom"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLength="50"
+            android:hint="@string/nom"/>
 
     <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/vertical_space" />
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/vertical_space"/>
 
     <EditText
-        android:id="@+id/field_prenom"
-        style="@style/RoundedEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:maxLength="50"
-        android:hint="@string/prenom" />
+            android:id="@+id/field_prenom"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLength="50"
+            android:hint="@string/prenom"/>
 
     <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/vertical_space" />
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/vertical_space"/>
 
     <EditText
-        android:id="@+id/field_email"
-        style="@style/RoundedEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:maxLength="300"
-        android:hint="@string/email" />
+            android:id="@+id/editText_email"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:maxLength="300"
+            android:hint="@string/email"/>
 
     <View
-        android:id="@+id/view2"
-        style="@style/Separator"
-        android:layout_width="match_parent" />
+            android:id="@+id/view2"
+            style="@style/Separator"
+            android:layout_width="match_parent"/>
 
     <Button
-        android:id="@+id/btn_modification"
-        style="@style/BoutonPrincipal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/modifier" />
+            android:id="@+id/btn_modification"
+            style="@style/BoutonPrincipal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/modifier"/>
 </LinearLayout>

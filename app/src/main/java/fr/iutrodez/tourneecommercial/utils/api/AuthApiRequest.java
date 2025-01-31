@@ -14,7 +14,7 @@ public class AuthApiRequest extends ApiRessource {
     }
 
     public void login(String user, String password, SuccessCallback<JwtToken> successCallback, ErrorCallback errorCallback) {
-        String url = RESOURCE_NAME + "/authentifier";
+        String url = RESOURCE_NAME + "/";
 
         JSONObject body = new JSONObject();
         try {

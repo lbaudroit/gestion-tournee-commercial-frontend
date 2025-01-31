@@ -8,28 +8,19 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.VolleyError;
-
+import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
+import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurAdresse;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 public class ActiviteInscription extends AppCompatActivity {
 
@@ -52,18 +43,18 @@ public class ActiviteInscription extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activite_inscription);
-        getSupportActionBar().setTitle(R.string.inscription);
+        getSupportActionBar().setTitle(R.string.signin);
 
         nom = findViewById(R.id.field_nom);
         prenom = findViewById(R.id.field_prenom);
-        email = findViewById(R.id.field_email);
+        email = findViewById(R.id.editText_email);
         adresse_view = findViewById(R.id.adresse_view);
-        password = findViewById(R.id.field_password);
+        password = findViewById(R.id.editText_password);
         passwordConfirmation = findViewById(R.id.field_password_again);
-        btnInscription = findViewById(R.id.btn_inscription);
+        btnInscription = findViewById(R.id.button_signin);
 
         btnInscription.setOnClickListener(this::onClickEnvoyer);
-        findViewById(R.id.btn_connexion).setOnClickListener(this::onClickGoToConnexion);
+        findViewById(R.id.button_login).setOnClickListener(this::onClickGoToConnexion);
         adressesProposes = new ArrayList<>();
         setupAdresse();
     }
@@ -172,7 +163,7 @@ public class ActiviteInscription extends AppCompatActivity {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Toast.makeText(ActiviteInscription.this, R.string.inscription_reussie, Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(ActiviteInscription.this, ActiviteConnexion.class));
+                    startActivity(new Intent(ActiviteInscription.this, LoginActivity.class));
                 }
 
                 @Override
@@ -184,7 +175,7 @@ public class ActiviteInscription extends AppCompatActivity {
     }
 
     private void onClickGoToConnexion(View view) {
-        startActivity(new Intent(this, ActiviteConnexion.class));
+        startActivity(new Intent(this, LoginActivity.class));
         Toast.makeText(this, R.string.todo, Toast.LENGTH_SHORT).show();
     }
 

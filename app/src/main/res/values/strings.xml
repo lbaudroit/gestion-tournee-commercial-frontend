@@ -35,13 +35,15 @@
     <!-- Création de compte et connexion -->
     <string name="password">Mot de passe</string>
     <string name="password_again">Resaisir le mot de passe</string>
-    <string name="connexion">Se connecter</string>
-    <string name="inscription">S\'inscrire</string>
+    <string name="login">Se connecter</string>
+    <string name="signin">S\'inscrire</string>
 
     <string name="empty_fields_error">Veuillez remplir tous les champs</string>
     <string name="invalid_email_error">Adresse e-mail invalide</string>
     <string name="password_length_error">Le mot de passe doit contenir au moins 8 caractères</string>
-    <string name="password_pattern_error">Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre</string>
+    <string name="password_pattern_error">Le mot de passe doit contenir au moins une lettre majuscule, une lettre
+        minuscule et un chiffre
+    </string>
     <string name="invalid_params_connexion_error">Adresse e-mail ou mot de passe incorrect</string>
     <string name="password_confirmation_error">Les mots de passe ne correspondent pas</string>
 
@@ -74,7 +76,8 @@
     <string name="sectionner_un_client">Séléctionner un client</string>
     <string name="rechercher">Rechercher...</string>
     <string name="suppression_itineraire">Suppresion de l\'itinéraire</string>
-    <string name="confirmation_suppression_itineraire">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
+    <string name="confirmation_suppression_itineraire">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?
+    </string>
     <string name="oui">Oui</string>
     <string name="non">Non\n</string>
     <string name="description_entreprise">Description (optionnel)</string>
@@ -88,7 +91,7 @@
     <string name="switch_item_prospect">Prospect</string>
 
     <!-- Toast Error Message -->
-    <string name="error_default_msg">Erreur : </string>
+    <string name="error_default_msg">Erreur :</string>
     <string name="error_get_itineraire">Erreur : impossible de récupérer l\'itinéraire</string>
     <string name="error_get_nb_client">"Erreur lors de la récupération du nombre de clients"</string>
     <string name="error_get_client">"Erreur lors de la récupération des clients"</string>
@@ -101,8 +104,8 @@
     <string name="success_create_itineraire">Itinéraire créé avec succès</string>
     <string name="success_update_itineraire">Itinéraire modifié avec succès</string>
     <string name="inscription_reussie">Inscription réussie</string>
-    <string name="sucess_create_client"> Client créé avec succès</string>
-    <string name="sucess_update_client"> Client modifiée avec succès</string>
+    <string name="sucess_create_client">Client créé avec succès</string>
+    <string name="sucess_update_client">Client modifiée avec succès</string>
 
     <!-- Alert Dialog Builder -->
     <string name="quit">Quitter l\'application</string>

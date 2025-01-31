@@ -7,19 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.android.volley.VolleyError;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import fr.iutrodez.tourneecommercial.ActivitePrincipale;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.ApiRequest;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FragmentParametres extends Fragment {
 
@@ -63,7 +59,7 @@ public class FragmentParametres extends Fragment {
         // Récupérer les parametres de l'utilisateur
         nom = view.findViewById(R.id.field_nom);
         prenom = view.findViewById(R.id.field_prenom);
-        email = view.findViewById(R.id.field_email);
+        email = view.findViewById(R.id.editText_email);
         view.findViewById(R.id.btn_modification).setOnClickListener(this::modifier);
 
         ApiRequest.getParametres(getContext(), new ApiRequest.ApiResponseCallback<JSONObject>() {
