@@ -10,10 +10,10 @@ public class ClientCreation {
     Contact contact;
     boolean clientEffectif;
 
-    public ClientCreation(String businessname, Adresse adress, String description,
+    public ClientCreation(String businessname, Adresse address, String description,
                           Contact contact, boolean isClient) {
         this.nomEntreprise = businessname;
-        this.adresse = adress;
+        this.adresse = address;
         this.descriptif = description;
         this.contact = contact;
         this.clientEffectif = isClient;
