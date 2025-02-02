@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="@dimen/margin_default"
+              android:gravity="center"
+              android:orientation="vertical">
+
+    <EditText
+            android:id="@+id/editText_name"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:autofillHints="name"
+            android:inputType="text"
+            android:maxLength="50"
+            android:hint="@string/last_name"/>
+
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_vertical"/>
+
+    <EditText
+            android:id="@+id/editText_firstname"
+            android:autofillHints="name"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:inputType="text"
+            android:maxLength="50"
+            android:hint="@string/first_name"/>
+
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_vertical"/>
+
+    <EditText
+            android:id="@+id/editText_email"
+            android:autofillHints="emailAddress"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:inputType="textEmailAddress"
+            android:maxLength="300"
+            android:hint="@string/email"/>
+
+    <View
+            style="@style/Separator"
+            android:layout_width="match_parent"/>
+
+    <TextView
+            android:id="@+id/textView_address"
+            android:layout_width="match_parent"
+            style="@style/RoundedEditText"
+            android:hint="@string/address"
+            android:drawableEnd="@drawable/baseline_expand_more_24"/>
+
+    <View
+            style="@style/Separator"
+            android:layout_width="match_parent"/>
+
+    <EditText
+            android:id="@+id/editText_password"
+            android:autofillHints="password"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:maxLength="50"
+            android:hint="@string/password"/>
+
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_vertical"/>
+
+    <EditText
+            android:id="@+id/editText_passwordConfirmation"
+            android:autofillHints="password"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:maxLength="50"
+            android:hint="@string/confirm_password"/>
+
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_vertical"/>
+
+    <Button
+            android:id="@+id/button_signup"
+            style="@style/PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/signup"/>
+
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_vertical"/>
+
+    <Button
+            android:id="@+id/button_login"
+            style="@style/SecondaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login"/>
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/bottom_bar_client"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/outline_people_24"
+            android:title="@string/bottom_bar_clients"/>
+    <item
+            android:id="@+id/bottom_bar_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/outline_map_24"
+            android:title="@string/bottom_bar_map"/>
+    <item
+            android:id="@+id/bottom_bar_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/baseline_history_24"
+            android:title="@string/bottom_bar_history"/>
+    <item
+            android:id="@+id/bottom_bar_itinerary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/outline_route_24"
+            android:title="@string/bottom_bar_itinerary"/>
+    <item
+            android:id="@+id/bottom_bar_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/outline_settings_24"
+            android:title="@string/bottom_bar_settings"/>
+
+</menu>

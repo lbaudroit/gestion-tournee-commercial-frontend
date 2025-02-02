@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:stretchColumns="*"
+             xmlns:tools="http://schemas.android.com/tools">
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <EditText
+                android:id="@+id/editText_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditText"
+                android:autofillHints="name"
+                android:hint="@string/itinerary_name"
+                android:inputType="text"
+                android:layout_span="2"
+                android:drawableStart="@drawable/domain_24dp_5f6368_fill0_wght400_grad0_opsz24"/>
+    </TableRow>
+
+    <View style="@style/Separator"/>
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/companies_to_visit"
+                style="@style/SubPartTitle"
+                android:layout_span="2"/>
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <ListView
+                android:id="@+id/listView_client"
+                android:layout_span="2"
+                android:layout_marginBottom="@dimen/space_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/list_of_client_items"/>
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <TextView
+                android:id="@+id/textView_clientSelector"
+                android:layout_width="match_parent"
+                android:layout_span="2"
+                android:layout_height="wrap_content"
+                style="@style/RoundedEditText"
+                android:hint="@string/search_company"
+                android:drawableEnd="@drawable/baseline_expand_more_24"/>
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <Button
+                android:id="@+id/button_add"
+                style="@style/BigAddButton"
+                android:layout_span="2"
+                android:text="@string/add"/>
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <Button
+                android:id="@+id/button_gereateItinerary"
+                android:text="@string/generate"
+                style="@style/PrimaryButton"
+                android:layout_marginEnd="@dimen/space_half_horizontal"/>
+
+        <Button
+                android:id="@+id/button_generateItinerary"
+                android:layout_column="1"
+                android:layout_width="match_parent"
+                style="@style/PrimaryButton"
+                android:text="@string/validate"
+                android:layout_marginStart="@dimen/space_half_horizontal"/>
+    </TableRow>
+</TableLayout>

@@ -3,7 +3,7 @@
 
     <style name="Separator" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/one</item>
+        <item name="android:layout_height">@dimen/size_one</item>
         <item name="android:background">?android:attr/listDivider</item>
 
         <item name="android:layout_marginLeft">@dimen/separator_margin_horizontal</item>
@@ -14,73 +14,74 @@
     </style>
 
     <style name="ListTitle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/text_size_list_title</item>
     </style>
 
     <style name="ListSubtitle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_size_list_subtitle</item>
         <item name="android:alpha">0.8</item>
 
     </style>
 
     <style name="ListItemDeleteButton">
-        <item name="android:layout_width">@dimen/taille_btn_supprimer</item>
-        <item name="android:layout_height">@dimen/taille_btn_supprimer</item>
+        <item name="android:layout_width">@dimen/button_size_delete</item>
+        <item name="android:layout_height">@dimen/button_size_delete</item>
         <item name="android:adjustViewBounds">true</item>
-        <item name="android:background">@drawable/arrondi_supprimer</item>
-        <item name="android:padding">@dimen/padding_icone_btn_supprimer</item>
+        <item name="android:background">@drawable/rounded_delete</item>
+        <item name="android:padding">@dimen/passing_icon_delete_button</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
 
-    <style name="BoutonAjouter">
+    <style name="AddButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:backgroundTint">@color/ajouter</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:paddingStart">@dimen/padding_start_btn_ajouter</item>
-        <item name="android:paddingTop">@dimen/padding_horizontal_btn_ajouter</item>
-        <item name="android:paddingBottom">@dimen/padding_horizontal_btn_ajouter</item>
-        <item name="android:paddingEnd">@dimen/padding_end_btn_ajouter</item>
-        <item name="android:textSize">@dimen/text_ajouter</item>
-        <item name="android:layout_marginBottom">@dimen/margin_bottom_ajouter</item>
+        <item name="android:backgroundTint">@color/add</item>
+        <item name="android:minWidth">@dimen/size_zero</item>
+        <item name="android:minHeight">@dimen/size_zero</item>
+        <item name="android:paddingStart">@dimen/padding_start_add_button</item>
+        <item name="android:paddingTop">@dimen/padding_horizontal_add_button</item>
+        <item name="android:paddingBottom">@dimen/padding_horizontal_add_button</item>
+        <item name="android:paddingEnd">@dimen/padding_end_add_button</item>
+        <item name="android:layout_marginBottom">@dimen/margin_add_bottom</item>
     </style>
 
-    <style name="GrandBoutonAjouter">
-        <item name="android:backgroundTint">@color/ajouter</item>
+    <style name="BigAddButton">
+        <item name="android:backgroundTint">@color/add</item>
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="BoutonPrincipal">
+    <style name="PrimaryButton">
         <item name="android:backgroundTint">@color/neutral_blue</item>
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="BoutonSecondaire">
+    <style name="SecondaryButton">
         <item name="android:backgroundTint">@color/transparent</item>
         <item name="android:textColor">@color/neutral_blue</item>
         <item name="android:strokeColor">@color/neutral_blue</item>
-        <item name="android:strokeWidth">@dimen/one</item>
+        <item name="android:strokeWidth">@dimen/size_one</item>
         <item name="strokeColor">@color/neutral_blue</item>
-        <item name="strokeWidth">@dimen/one</item>
+        <item name="strokeWidth">@dimen/size_one</item>
     </style>
 
     <style name="RoundedEditText">
+        <item name="android:layout_height">@dimen/text_size_edit</item>
         <item name="android:paddingStart">@dimen/padding_start_edit_text</item>
         <item name="android:background">@drawable/outline_edit_text</item>
         <item name="android:drawablePadding">@dimen/drawable_padding_edit_text</item>
-        <item name="android:textSize">@dimen/default_font_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_default</item>
     </style>
 
     <style name="RoundedEditTextArea">
         <item name="android:paddingStart">@dimen/padding_start_edit_text</item>
         <item name="android:background">@drawable/outline_edit_text_area</item>
         <item name="android:drawablePadding">@dimen/drawable_padding_edit_text</item>
-        <item name="android:textSize">@dimen/default_font_size</item>
+        <item name="android:textSize">@dimen/text_size_default</item>
     </style>
 
-    <style name="TitreSousPartie">
-        <item name="android:textSize">@dimen/titre_partie_font_size</item>
+    <style name="SubPartTitle">
+        <item name="android:textSize">@dimen/text_size_title</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
     </style>

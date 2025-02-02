@@ -1,8 +1,8 @@
 package fr.iutrodez.tourneecommercial.modeles.dto;
 
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.modeles.Client;
+
+import java.util.List;
 
 public class ItineraireDTO {
     private long id;
@@ -13,6 +13,11 @@ public class ItineraireDTO {
     public ItineraireDTO(long id, String nom, List<Client> clients, int distance) {
         this.id = id;
         this.nom = nom;
+        this.clients = clients;
+        this.distance = distance;
+    }
+
+    public ItineraireDTO(List<Client> clients, int distance) {
         this.clients = clients;
         this.distance = distance;
     }
