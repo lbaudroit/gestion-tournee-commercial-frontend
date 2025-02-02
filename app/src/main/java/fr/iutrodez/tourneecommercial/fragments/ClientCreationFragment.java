@@ -16,12 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.AdressAdapter;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.Deprecated_ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,14 +38,14 @@ import java.util.List;
  * Enzo CLUZEL
  * Benjamin NICOL
  */
-public class FragmentCreationClient extends Fragment {
+public class ClientCreationFragment extends Fragment {
     private List<Adresse> adressesProposes;
     private AdressAdapter adaptateurAdresse;
 
     private Adresse selectedAdresse;
     private Dialog dialog;
     private TextView adresse_view;
-    private ActivitePrincipale parent;
+    private MainActivity parent;
     private Switch aSwitch;
     private EditText nomEntreprise, nom, prenom, numTel, description;
 
@@ -56,8 +56,8 @@ public class FragmentCreationClient extends Fragment {
      */
     private Runnable onEnregistrer;
 
-    public static FragmentCreationClient newInstance() {
-        return new FragmentCreationClient();
+    public static ClientCreationFragment newInstance() {
+        return new ClientCreationFragment();
     }
 
     private Context context;
@@ -66,8 +66,8 @@ public class FragmentCreationClient extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        if (context instanceof ActivitePrincipale) {
-            parent = (ActivitePrincipale) context;
+        if (context instanceof MainActivity) {
+            parent = (MainActivity) context;
         } else {
             throw new ClassCastException("Le contexte doit être une instance d'ActivitePrincipale.");
         }
@@ -146,8 +146,8 @@ public class FragmentCreationClient extends Fragment {
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        ApiRequest.fetchAddressSuggestions(context, s.toString(),
-                                new ApiRequest.ApiResponseCallback<JSONObject>() {
+                        Deprecated_ApiRequest.fetchAddressSuggestions(context, s.toString(),
+                                new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                                     @Override
                                     public void onSuccess(JSONObject response) {
                                         try {
@@ -205,13 +205,13 @@ public class FragmentCreationClient extends Fragment {
             try {
                 JSONObject postData = createClientJson();
                 String url = "client/creer";
-                ApiRequest.creationClient(requireContext(), url, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+                Deprecated_ApiRequest.creationClient(requireContext(), url, postData, new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
                     public void onSuccess(JSONObject response) {
                         Toast.makeText(requireContext(), R.string.sucess_create_client, Toast.LENGTH_SHORT).show();
                         // Retourner au fragment de liste des clients
 
-                        parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS, true);
+                        parent.navigateToNavbarItem(MainActivity.CLIENT_FRAGMENT, true);
                     }
 
                     @Override
@@ -242,12 +242,12 @@ public class FragmentCreationClient extends Fragment {
             System.out.println("Modification");
             try {
                 JSONObject postData = createClientJson();
-                ApiRequest.modifierClient(requireContext(), idModif, postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+                Deprecated_ApiRequest.modifierClient(requireContext(), idModif, postData, new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
                     public void onSuccess(JSONObject response) {
                         Toast.makeText(requireContext(), R.string.sucess_update_client, Toast.LENGTH_SHORT).show();
                         // Retourner au fragment de liste des clients
-                        parent.navigateToNavbarItem(ActivitePrincipale.FRAGMENT_CLIENTS, true);
+                        parent.navigateToNavbarItem(MainActivity.CLIENT_FRAGMENT, true);
                     }
 
                     @Override
@@ -277,7 +277,7 @@ public class FragmentCreationClient extends Fragment {
      * @throws JSONException
      */
     private void recupererClient(String id) throws JSONException {
-        ApiRequest.recupererClient(requireContext(), id, new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.recupererClient(requireContext(), id, new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 Gson gson = new Gson();

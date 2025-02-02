@@ -1,6 +1,12 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
-public class ClientApiRequest {
+import com.android.volley.RequestQueue;
+
+public class ClientApiRequest extends ApiRessource {
+    public ClientApiRequest(RequestQueue requestQueue) {
+        super(requestQueue);
+    }
+
     public void getAll() {
         System.out.println("NOT IMPLEMETED");
     }

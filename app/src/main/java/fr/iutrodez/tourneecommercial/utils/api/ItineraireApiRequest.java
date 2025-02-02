@@ -1,6 +1,12 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
-public class ItineraireApiRequest {
+import com.android.volley.RequestQueue;
+
+public class ItineraireApiRequest extends ApiRessource {
+    public ItineraireApiRequest(RequestQueue requestQueue) {
+        super(requestQueue);
+    }
+
     public void create() {
         System.out.println("NOT IMPLEMETED");
     }

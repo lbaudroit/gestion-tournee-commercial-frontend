@@ -15,12 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.android.volley.VolleyError;
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
 import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClient;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.Deprecated_ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class FragmentCreationItineraire extends Fragment {
+public class ItineraryCreationFragment extends Fragment {
 
 
     //Elements de la vue
@@ -40,7 +40,7 @@ public class FragmentCreationItineraire extends Fragment {
     private Button btnAjouterClient;
     private Button btnGenererItineraire;
     private Button btnValiderItineraire;
-    public ActivitePrincipale parent;
+    public MainActivity parent;
 
     //Listes
     private List<Client> clientsItineraire;
@@ -58,14 +58,14 @@ public class FragmentCreationItineraire extends Fragment {
     private Optional<Long> idItineraireModifie = Optional.empty();
 
     //Méthodes principales
-    public static FragmentCreationItineraire newInstance() {
-        return new FragmentCreationItineraire();
+    public static ItineraryCreationFragment newInstance() {
+        return new ItineraryCreationFragment();
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        parent = (ActivitePrincipale) context;
+        parent = (MainActivity) context;
     }
 
     @Override
@@ -131,12 +131,12 @@ public class FragmentCreationItineraire extends Fragment {
 
     //Fonction outils
     private void recuperationDesClients() {
-        ApiRequest.recupererClients(getContext(), new ApiRequest.ApiResponseCallback<JSONArray>() {
+        Deprecated_ApiRequest.recupererClients(getContext(), new Deprecated_ApiRequest.ApiResponseCallback<JSONArray>() {
             @Override
             public void onSuccess(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.optJSONObject(i);
-                    tousClients.add(ApiRequest.jsonToClient(obj));
+                    tousClients.add(Deprecated_ApiRequest.jsonToClient(obj));
                 }
             }
 
@@ -257,8 +257,8 @@ public class FragmentCreationItineraire extends Fragment {
     }
 
     private void generer(View view) {
-        ApiRequest.genererItineraire(getContext(), clientsItineraire,
-                new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.genererItineraire(getContext(), clientsItineraire,
+                new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                     @Override
                     public void onSuccess(JSONObject response) {
                         try {
@@ -270,7 +270,7 @@ public class FragmentCreationItineraire extends Fragment {
                             clientsItineraire.clear();
                             for (int i = 0; i < nouveauxClients.length(); i++) {
                                 JSONObject obj = nouveauxClients.optJSONObject(i);
-                                clientsItineraire.add(ApiRequest.jsonToClient(obj));
+                                clientsItineraire.add(Deprecated_ApiRequest.jsonToClient(obj));
                             }
                             adaptateurClientsItineraire.notifyDataSetChanged();
 
@@ -334,14 +334,14 @@ public class FragmentCreationItineraire extends Fragment {
 
         String nomItineraire = nom.getText().toString();
         try {
-            ApiRequest.creationItineraire(getContext(), nomItineraire, clientsItineraire, distance,
-                    new ApiRequest.ApiResponseCallback<JSONObject>() {
+            Deprecated_ApiRequest.creationItineraire(getContext(), nomItineraire, clientsItineraire, distance,
+                    new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                         @Override
                         public void onSuccess(JSONObject response) {
                             Toast.makeText(getContext(),
                                     R.string.success_create_itineraire,
                                     Toast.LENGTH_SHORT).show();
-                            parent.navigateToFragment(ActivitePrincipale.FRAGMENT_ITINERAIRES, false);
+                            parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
                         }
 
                         @Override
@@ -358,14 +358,14 @@ public class FragmentCreationItineraire extends Fragment {
         if (idItineraireModifie.isPresent()) {
             String nomItineraire = nom.getText().toString();
             try {
-                ApiRequest.modificationItineraire(parent, idItineraireModifie.get(), nomItineraire, clientsItineraire, distance,
-                        new ApiRequest.ApiResponseCallback<JSONObject>() {
+                Deprecated_ApiRequest.modificationItineraire(parent, idItineraireModifie.get(), nomItineraire, clientsItineraire, distance,
+                        new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                             @Override
                             public void onSuccess(JSONObject response) {
                                 Toast.makeText(getContext(),
                                         R.string.success_update_itineraire,
                                         Toast.LENGTH_SHORT).show();
-                                parent.navigateToFragment(ActivitePrincipale.FRAGMENT_ITINERAIRES, false);
+                                parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
                             }
 
                             @Override
@@ -390,12 +390,12 @@ public class FragmentCreationItineraire extends Fragment {
      * @param idItineraire l'identifiant de l'itinéraire à modifier
      */
     private void preparerPourModification(Long idItineraire) {
-        ApiRequest.recupererItineraire(getContext(), idItineraire, new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.recupererItineraire(getContext(), idItineraire, new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 System.out.println("Itinéraire récupéré");
                 // Réordonner les clients
-                ItineraireDTO itineraireExistant = ApiRequest.itineraireDTOToClient(response);
+                ItineraireDTO itineraireExistant = Deprecated_ApiRequest.itineraireDTOToClient(response);
                 List<Client> clientsExistants = itineraireExistant.getClients();
                 clientsItineraire.clear();
                 clientsItineraire.addAll(clientsExistants);

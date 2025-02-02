@@ -10,13 +10,15 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.android.volley.VolleyError;
-
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Itineraire;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurListeItineraire;
+import fr.iutrodez.tourneecommercial.utils.Deprecated_ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,19 +26,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurListeItineraire;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
+public class ItineraryFragment extends Fragment {
 
-public class FragmentItineraires extends Fragment {
-
-    public static FragmentItineraires newInstance() {
-        return new FragmentItineraires();
+    public static ItineraryFragment newInstance() {
+        return new ItineraryFragment();
     }
 
-    public ActivitePrincipale parent;
+    public MainActivity parent;
 
     private ListView liste;
     private Button ajouter;
@@ -49,7 +45,7 @@ public class FragmentItineraires extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        parent = (ActivitePrincipale) context;
+        parent = (MainActivity) context;
     }
 
     @Override
@@ -95,11 +91,11 @@ public class FragmentItineraires extends Fragment {
 
 
     private void onClickAjouter(View view) {
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_ITINERAIRE, false);
+        parent.navigateToFragment(MainActivity.ITINERARY_CREATION_FRAGMENT, false);
     }
 
     private void fetchNombreItineraires() {
-        ApiRequest.fetchNombresItineraires(parent, "itineraire/nombre/", new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.fetchNombresItineraires(parent, "itineraire/nombre/", new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 // Parse the response and update the itineraires list
@@ -118,13 +114,13 @@ public class FragmentItineraires extends Fragment {
             public void onError(VolleyError error) {
                 // Handle error
                 Toast.makeText(parent, R.string.error_failed_fetch_itineraire
-                                    , Toast.LENGTH_SHORT).show();
+                        , Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void fetcheItinerairesPage() {
-        ApiRequest.fetchItineraires(parent, "itineraire/lazy/?page=" + currentPage, new ApiRequest.ApiResponseCallback<JSONArray>() {
+        Deprecated_ApiRequest.fetchItineraires(parent, "itineraire/lazy/?page=" + currentPage, new Deprecated_ApiRequest.ApiResponseCallback<JSONArray>() {
             @Override
             public void onSuccess(JSONArray response) {
                 // Parse the response and update the itineraires list
@@ -172,7 +168,7 @@ public class FragmentItineraires extends Fragment {
     }
 
     private void deleteItineraire(Itineraire itineraire) {
-        ApiRequest.deleteItineraire(getContext(), itineraire.getId(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.deleteItineraire(getContext(), itineraire.getId(), new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 adaptateur.remove(itineraire);
@@ -193,6 +189,6 @@ public class FragmentItineraires extends Fragment {
         bundle.putLong("idItineraire", itineraire.getId());
         System.out.println("Navigating to FragmentCreationItineraire with id: " + itineraire.getId());
 
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_ITINERAIRE, false, bundle);
+        parent.navigateToFragment(MainActivity.ITINERARY_CREATION_FRAGMENT, false, bundle);
     }
 }

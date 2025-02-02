@@ -30,7 +30,7 @@ import static android.content.Context.MODE_PRIVATE;
  * Classe utilitaire pour gérer les requêtes API de l'application.
  * Fournit des méthodes pour interagir avec le backend et des API externes.
  */
-public class ApiRequest {
+public class Deprecated_ApiRequest {
     private static RequestQueue requestQueue;
 
     private static final String API_URL = "http://10.0.2.2:9090/";
@@ -447,7 +447,7 @@ public class ApiRequest {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            ApiRequest.connexion(context, "auth/authentifier", postData, new ApiRequest.ApiResponseCallback<JSONObject>() {
+            Deprecated_ApiRequest.connexion(context, "auth/authentifier", postData, new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     // Récupération du token

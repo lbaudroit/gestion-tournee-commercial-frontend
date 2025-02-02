@@ -9,26 +9,22 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
+import fr.iutrodez.tourneecommercial.utils.Deprecated_ApiRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
-import fr.iutrodez.tourneecommercial.utils.ApiRequest;
 
 /**
  * Fragment de la navBar pour afficher la liste des clients
@@ -39,13 +35,13 @@ import fr.iutrodez.tourneecommercial.utils.ApiRequest;
  * Enzo CLUZEL
  * Benjamin NICOL
  */
-public class FragmentClients extends Fragment {
+public class ClientFragment extends Fragment {
 
-    public static FragmentClients newInstance() {
-        return new FragmentClients();
+    public static ClientFragment newInstance() {
+        return new ClientFragment();
     }
 
-    public ActivitePrincipale parent;
+    public MainActivity parent;
     private ListView liste;
     private AdaptateurListeClients adaptateur;
 
@@ -57,8 +53,8 @@ public class FragmentClients extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof ActivitePrincipale) {
-            parent = (ActivitePrincipale) context;
+        if (context instanceof MainActivity) {
+            parent = (MainActivity) context;
         } else {
             throw new ClassCastException("Le contexte doit être une instance d'ActivitePrincipale.");
         }
@@ -108,7 +104,7 @@ public class FragmentClients extends Fragment {
     public void onClickModifierAdaptateur(Client client) {
         Bundle bundle = new Bundle();
         bundle.putString("id", client.get_id());
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT, false, bundle);
+        parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false, bundle);
 
         Toast.makeText(getContext(), "Modifier : " + client.getNomEntreprise(), Toast.LENGTH_SHORT).show();
 
@@ -130,7 +126,7 @@ public class FragmentClients extends Fragment {
     }
 
     private void deleteClient(Client client) {
-        ApiRequest.removeClient(getContext(), client.get_id(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.removeClient(getContext(), client.get_id(), new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 adaptateur.remove(client);
@@ -146,7 +142,7 @@ public class FragmentClients extends Fragment {
     }
 
     private void fetchNombreClients() {
-        ApiRequest.getNombreClient(requireContext(), new ApiRequest.ApiResponseCallback<JSONObject>() {
+        Deprecated_ApiRequest.getNombreClient(requireContext(), new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject response) {
                 try {
@@ -166,7 +162,7 @@ public class FragmentClients extends Fragment {
 
     private void fetchClientsPage() {
         isLoading = true;
-        ApiRequest.getClientsBy30(requireContext(), currentPage, new ApiRequest.ApiResponseCallback<JSONArray>() {
+        Deprecated_ApiRequest.getClientsBy30(requireContext(), currentPage, new Deprecated_ApiRequest.ApiResponseCallback<JSONArray>() {
             @Override
             public void onSuccess(JSONArray response) {
                 try {
@@ -205,6 +201,6 @@ public class FragmentClients extends Fragment {
      * @param view
      */
     public void ajouter(View view) {
-        parent.navigateToFragment(ActivitePrincipale.FRAGMENT_CREATION_CLIENT, false);
+        parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
     }
 }

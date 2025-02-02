@@ -6,26 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import fr.iutrodez.tourneecommercial.ActivitePrincipale;
+import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 
-public class FragmentHistorique extends Fragment {
+public class HistoryFragment extends Fragment {
 
-    public static FragmentHistorique newInstance() {
-        return new FragmentHistorique();
+    public static HistoryFragment newInstance() {
+        return new HistoryFragment();
     }
 
-    public ActivitePrincipale parent;
+    public MainActivity parent;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        parent = (ActivitePrincipale) context;
+        parent = (MainActivity) context;
     }
 
     @Nullable

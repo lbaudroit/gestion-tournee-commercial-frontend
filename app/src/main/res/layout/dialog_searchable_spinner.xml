@@ -9,24 +9,24 @@
               android:background="@android:color/white">
 
     <!-- Text view to show the text Select course-->
+    <!-- Text view to show the text Select course-->
     <TextView
             android:id="@+id/title"
             style="@style/TitreSousPartie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sectionner_un_client"
-            android:layout_margin="@dimen/vertical_space"/>
+            android:layout_margin="@dimen/vertical_space"
+            android:text="@string/sectionner_un_client"/>
 
     <!-- Edit text to allow user to type name
            of item he/she wants to search-->
     <EditText
-            style="@style/RoundedEditText"
-            android:inputType="text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/editText_research"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
             android:autofillHints="postalAddress"
             android:hint="@string/rechercher"
+            android:inputType="text"
             android:singleLine="true"/>
 
     <!-- List view to insert list of items-->

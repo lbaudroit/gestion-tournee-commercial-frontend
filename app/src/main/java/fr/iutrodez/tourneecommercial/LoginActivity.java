@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         //TODO : Supprimer les lignes suivantes
         email.setText("en@cl.fr");
         password.setText("Enzo_123");
-        //findViewById(R.id.button_login).performClick();
+        findViewById(R.id.button_login).performClick();
     }
 
     /**
@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             apiRequest.auth.login(extracted_email, extracted_password, (jwtToken) -> {
                 long expirationTime = System.currentTimeMillis() + jwtToken.getExpiration();
                 setSharedPreferences(jwtToken, expirationTime);
-                Intent intent = new Intent(LoginActivity.this, ActivitePrincipale.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }, error -> Toast.makeText(LoginActivity.this, R.string.invalid_params_connexion_error, Toast.LENGTH_LONG).show());

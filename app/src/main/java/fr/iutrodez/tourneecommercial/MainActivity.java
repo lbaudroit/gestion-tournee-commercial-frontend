@@ -3,54 +3,41 @@ package fr.iutrodez.tourneecommercial;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.MenuItem;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import com.google.android.material.navigation.NavigationBarView;
+import fr.iutrodez.tourneecommercial.fragments.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import fr.iutrodez.tourneecommercial.fragments.FragmentCarte;
-import fr.iutrodez.tourneecommercial.fragments.FragmentClients;
-import fr.iutrodez.tourneecommercial.fragments.FragmentCreationClient;
-import fr.iutrodez.tourneecommercial.fragments.FragmentCreationItineraire;
-import fr.iutrodez.tourneecommercial.fragments.FragmentHistorique;
-import fr.iutrodez.tourneecommercial.fragments.FragmentItineraires;
-import fr.iutrodez.tourneecommercial.fragments.FragmentParametres;
+import java.util.*;
 
 /**
  * Classe principale de l'activité qui gère la navigation entre différents fragments.
  */
-public class ActivitePrincipale extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationBarView.OnItemSelectedListener {
-    private FragmentManager fm;
-    private NavigationBarView navbar;
-    public final static int FRAGMENT_CLIENTS = 0;
-    public final static int FRAGMENT_CARTE = 1;
-    public final static int FRAGMENT_HISTORIQUE = 2;
-    public final static int FRAGMENT_ITINERAIRES = 3;
-    public final static int FRAGMENT_PARAMETRES = 4;
-    public final static int FRAGMENT_CREATION_CLIENT = 5;
-    public final static int FRAGMENT_CREATION_ITINERAIRE = 6;
+    private FragmentManager fragmentManager;
+    private NavigationBarView navigationBar;
+    public final static int CLIENT_FRAGMENT = 0;
+    public final static int MAP_FRAGMENT = 1;
+    public final static int HISTORY_FRAGMENT = 2;
+    public final static int ITINERARY_FRAGMENT = 3;
+    public final static int SETTING_FRAGMENT = 4;
+    public final static int CLIENT_CREATION_FRAGMENT = 5;
+    public final static int ITINERARY_CREATION_FRAGMENT = 6;
 
     List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
 
     {
-        fragments.add(FragmentClients.class);
-        fragments.add(FragmentCarte.class);
-        fragments.add(FragmentHistorique.class);
-        fragments.add(FragmentItineraires.class);
-        fragments.add(FragmentParametres.class);
-        fragments.add(FragmentCreationClient.class);
-        fragments.add(FragmentCreationItineraire.class);
+        fragments.add(ClientFragment.class);
+        fragments.add(MapFragment.class);
+        fragments.add(HistoryFragment.class);
+        fragments.add(ItineraryFragment.class);
+        fragments.add(SettingFragment.class);
+        fragments.add(ClientCreationFragment.class);
+        fragments.add(ItineraryCreationFragment.class);
     }
 
     HashMap<Integer, Fragment> cache = new HashMap<>();
@@ -58,11 +45,11 @@ public class ActivitePrincipale extends AppCompatActivity
     HashMap<Integer, Integer> menuId = new HashMap<>();
 
     {
-        menuId.put(R.id.bottom_bar_clients, FRAGMENT_CLIENTS);
-        menuId.put(R.id.bottom_bar_carte, FRAGMENT_CARTE);
-        menuId.put(R.id.bottom_bar_historique, FRAGMENT_HISTORIQUE);
-        menuId.put(R.id.bottom_bar_itineraires, FRAGMENT_ITINERAIRES);
-        menuId.put(R.id.bottom_bar_parametres, FRAGMENT_PARAMETRES);
+        menuId.put(R.id.bottom_bar_client, CLIENT_FRAGMENT);
+        menuId.put(R.id.bottom_bar_map, MAP_FRAGMENT);
+        menuId.put(R.id.bottom_bar_history, HISTORY_FRAGMENT);
+        menuId.put(R.id.bottom_bar_itinerary, ITINERARY_FRAGMENT);
+        menuId.put(R.id.bottom_bar_setting, SETTING_FRAGMENT);
     }
 
     /**
@@ -73,28 +60,26 @@ public class ActivitePrincipale extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activite_principale);
-        navbar = findViewById(R.id.bottom_bar);
-        navbar.setOnItemSelectedListener(this);
-        fm = getSupportFragmentManager();
-        navigateToFragment(FRAGMENT_CLIENTS, false);
-        System.out.println(fm.getBackStackEntryCount());
+        setContentView(R.layout.main_activity);
+        navigationBar = findViewById(R.id.bottom_bar);
+        navigationBar.setOnItemSelectedListener(this);
+        fragmentManager = getSupportFragmentManager();
+        navigateToFragment(CLIENT_FRAGMENT, false);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 // Handle the back button press
 
-                if (fm.getBackStackEntryCount() > 1) {
-                    int id = Integer.parseInt(Objects.requireNonNull(fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName()));
-                    System.out.println(id);
-                    navbar.setSelectedItemId(id);
-                    fm.popBackStack();
+                if (fragmentManager.getBackStackEntryCount() > 1) {
+                    int id = Integer.parseInt(Objects.requireNonNull(fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName()));
+                    navigationBar.setSelectedItemId(id);
+                    fragmentManager.popBackStack();
                 } else {
-                    new AlertDialog.Builder(ActivitePrincipale.this)
+                    new AlertDialog.Builder(MainActivity.this)
                             .setTitle(R.string.quit)
                             .setMessage(R.string.ask_quit)
-                            .setPositiveButton("Oui", (dialog, which) -> finish())
-                            .setNegativeButton("Non", null)
+                            .setPositiveButton(R.string.yes, (dialog, which) -> finish())
+                            .setNegativeButton(R.string.no, null)
                             .show();
 
                 }
@@ -115,7 +100,7 @@ public class ActivitePrincipale extends AppCompatActivity
         if (id == null) {
             return false;
         }
-        if (id == FRAGMENT_CARTE) {
+        if (id == MAP_FRAGMENT) {
             cache = true;
         }
         navigateToFragment(id, cache);
@@ -131,7 +116,7 @@ public class ActivitePrincipale extends AppCompatActivity
      */
     public void navigateToNavbarItem(int id, boolean cached) {
         navigateToFragment(id, cached);
-        navbar.setSelectedItemId(getNavbarItemId(id));
+        navigationBar.setSelectedItemId(getNavbarItemId(id));
     }
 
     /**
@@ -144,7 +129,7 @@ public class ActivitePrincipale extends AppCompatActivity
      */
     public void navigateToNavbarItem(int id, boolean cached, Bundle bundle) {
         navigateToFragment(id, cached, bundle);
-        navbar.setSelectedItemId(getNavbarItemId(id));
+        navigationBar.setSelectedItemId(getNavbarItemId(id));
     }
 
     /**
@@ -155,9 +140,9 @@ public class ActivitePrincipale extends AppCompatActivity
      */
     public void navigateToFragment(int id, boolean cached) {
         Fragment fragment = cached ? getCachedFragment(id) : getNotCachedFragment(id);
-        fm.beginTransaction()
+        fragmentManager.beginTransaction()
                 .replace(R.id.replaceable, fragment)
-                .addToBackStack(String.valueOf(navbar.getSelectedItemId()))
+                .addToBackStack(String.valueOf(navigationBar.getSelectedItemId()))
                 .commit();
     }
 
@@ -171,7 +156,7 @@ public class ActivitePrincipale extends AppCompatActivity
     public void navigateToFragment(int id, boolean cached, Bundle bundle) {
         Fragment fragment = cached ? getCachedFragment(id) : getNotCachedFragment(id);
         fragment.setArguments(bundle);
-        fm.beginTransaction()
+        fragmentManager.beginTransaction()
                 .replace(R.id.replaceable, fragment)
                 .addToBackStack(String.valueOf(getNavbarItemId(id)))
                 .commit();
@@ -219,13 +204,13 @@ public class ActivitePrincipale extends AppCompatActivity
      * @return L'ID de l'élément de la barre de navigation.
      */
     private int getNavbarItemId(int id) {
-        int id_found = -1;
+        int idFound = -1;
         for (Map.Entry<Integer, Integer> set : menuId.entrySet()) {
             if (set.getValue() == id) {
-                id_found = set.getKey();
+                idFound = set.getKey();
                 break;
             }
         }
-        return id_found;
+        return idFound;
     }
 }

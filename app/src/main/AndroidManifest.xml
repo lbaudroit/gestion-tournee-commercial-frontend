@@ -31,7 +31,7 @@
                 android:exported="true">
         </activity>
         <activity
-                android:name=".ActivitePrincipale"
+                android:name=".MainActivity"
                 android:exported="true">
         </activity>
 
