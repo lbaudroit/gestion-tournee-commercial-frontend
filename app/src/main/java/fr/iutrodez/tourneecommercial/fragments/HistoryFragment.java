@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
+import org.jetbrains.annotations.NotNull;
 
 public class HistoryFragment extends Fragment {
 
@@ -21,7 +22,7 @@ public class HistoryFragment extends Fragment {
     public MainActivity parent;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         parent = (MainActivity) context;
     }
