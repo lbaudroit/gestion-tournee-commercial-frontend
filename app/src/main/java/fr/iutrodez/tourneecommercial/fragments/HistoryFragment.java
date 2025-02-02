@@ -30,7 +30,7 @@ public class HistoryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View frag = inflater.inflate(R.layout.fragment_test, container, false);
+        View frag = inflater.inflate(R.layout.test_fragment, container, false);
         TextView text = frag.findViewById(R.id.nom_frag);
         //FIX: CECI EST JUSTE UN TEST, CA DOIT PAS RESTER
         // Get le tocken depuis les SharedPreferences

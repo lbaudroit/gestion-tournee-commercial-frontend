@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_margin="@dimen/default_page_margin"
+              android:layout_margin="@dimen/margin_default"
               android:gravity="center"
               android:orientation="vertical">
 
@@ -13,11 +13,11 @@
             android:autofillHints="name"
             android:inputType="text"
             android:maxLength="50"
-            android:hint="@string/nom"/>
+            android:hint="@string/last_name"/>
 
     <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_space"/>
+            android:layout_height="@dimen/space_vertical"/>
 
     <EditText
             android:id="@+id/editText_firstname"
@@ -26,11 +26,11 @@
             android:layout_width="match_parent"
             android:inputType="text"
             android:maxLength="50"
-            android:hint="@string/prenom"/>
+            android:hint="@string/first_name"/>
 
     <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_space"/>
+            android:layout_height="@dimen/space_vertical"/>
 
     <EditText
             android:id="@+id/editText_email"
@@ -46,10 +46,10 @@
             android:layout_width="match_parent"/>
 
     <TextView
-            android:id="@+id/textView_adress"
+            android:id="@+id/textView_address"
             android:layout_width="match_parent"
             style="@style/RoundedEditText"
-            android:hint="@string/adresse"
+            android:hint="@string/address"
             android:drawableEnd="@drawable/baseline_expand_more_24"/>
 
     <View
@@ -67,7 +67,7 @@
 
     <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_space"/>
+            android:layout_height="@dimen/space_vertical"/>
 
     <EditText
             android:id="@+id/editText_passwordConfirmation"
@@ -76,26 +76,26 @@
             android:layout_width="match_parent"
             android:inputType="textPassword"
             android:maxLength="50"
-            android:hint="@string/password_again"/>
+            android:hint="@string/confirm_password"/>
 
     <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_space"/>
+            android:layout_height="@dimen/space_vertical"/>
 
     <Button
-            android:id="@+id/button_signin"
-            style="@style/BoutonPrincipal"
+            android:id="@+id/button_signup"
+            style="@style/PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/signin"/>
+            android:text="@string/signup"/>
 
     <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_space"/>
+            android:layout_height="@dimen/space_vertical"/>
 
     <Button
             android:id="@+id/button_login"
-            style="@style/BoutonSecondaire"
+            style="@style/SecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login"/>

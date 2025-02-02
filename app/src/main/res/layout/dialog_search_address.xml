@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Linear layout as parent layout-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              android:padding="@dimen/searchable_spinner_padding"
+              android:padding="@dimen/padding_searchable_spinner"
               android:background="@android:color/white">
 
-    <!-- Text view to show the text Select course-->
-    <!-- Text view to show the text Select course-->
     <TextView
             android:id="@+id/textView_title"
-            style="@style/TitreSousPartie"
+            style="@style/SubPartTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/vertical_space"
-            android:text="@string/sectionner_un_client"/>
+            android:layout_margin="@dimen/space_vertical"
+            android:text="@string/select_client"/>
 
-    <!-- Edit text to allow user to type name
-           of item he/she wants to search-->
     <EditText
             android:id="@+id/editText_research"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
             android:autofillHints="postalAddress"
-            android:hint="@string/rechercher"
+            android:hint="@string/search"
             android:inputType="text"
             android:singleLine="true"/>
 
-    <!-- List view to insert list of items-->
     <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

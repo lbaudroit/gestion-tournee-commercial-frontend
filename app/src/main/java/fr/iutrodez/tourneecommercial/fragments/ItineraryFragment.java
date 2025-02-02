@@ -85,7 +85,7 @@ public class ItineraryFragment extends Fragment {
      */
     private void fetchNumberOfItinerarypages() {
         API_REQUEST.itineraire.getNumberOfPages(requireContext(), response -> totalPages = response,
-                error -> Toast.makeText(getContext(), R.string.error_fetching_itineraries, Toast.LENGTH_SHORT).show());
+                error -> Toast.makeText(getContext(), R.string.fetch_routes_error, Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -96,7 +96,7 @@ public class ItineraryFragment extends Fragment {
             itineraries.addAll(response);
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
-        }, error -> Toast.makeText(getContext(), R.string.error_fetching_itineraries, Toast.LENGTH_SHORT).show());
+        }, error -> Toast.makeText(getContext(), R.string.fetch_routes_error, Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -106,12 +106,12 @@ public class ItineraryFragment extends Fragment {
      * @param position  la position de l'itinéraire dans la liste
      */
     private void onClickDelete(Itineraire itinerary, int position) {
-        String message = parent.getString(R.string.confirmation_suppression_itineraire, itinerary.getNom());
+        String message = parent.getString(R.string.confirm_delete_route, itinerary.getNom());
         new AlertDialog.Builder(getContext())
-                .setTitle(R.string.suppression_itineraire)
+                .setTitle(R.string.delete_route)
                 .setMessage(message)
-                .setPositiveButton(R.string.oui, (dialog, which) -> deleteItinerary(itinerary))
-                .setNegativeButton(R.string.non, (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteItinerary(itinerary))
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -124,8 +124,8 @@ public class ItineraryFragment extends Fragment {
         API_REQUEST.itineraire.delete(parent, itinerary.getId(), response -> {
             itineraries.remove(itinerary);
             itineraryListAdapter.notifyDataSetChanged();
-            Toast.makeText(getContext(), R.string.itineraire_deleted, Toast.LENGTH_SHORT).show();
-        }, error -> Toast.makeText(getContext(), R.string.error_deleting_itineraire, Toast.LENGTH_SHORT).show());
+            Toast.makeText(getContext(), R.string.itinerary_deleted_success, Toast.LENGTH_SHORT).show();
+        }, error -> Toast.makeText(getContext(), R.string.itinerary_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
     /**

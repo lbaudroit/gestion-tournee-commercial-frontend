@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.utils.AdressAdapter;
+import fr.iutrodez.tourneecommercial.utils.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.ArrayList;
@@ -22,58 +22,58 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SigninActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity {
 
     private final static ApiRequest API_REQUEST = ApiRequest.getInstance();
     private final static String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=_]).+$";
     private final static String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
 
-    private List<Adresse> suggestedAdress;
+    private List<Adresse> suggestedAddress;
 
     private Dialog dialog;
     private EditText name;
     private EditText firstname;
     private EditText email;
-    private TextView adress;
+    private TextView address;
     private EditText password;
     private EditText passwordConfirmation;
 
-    private AdressAdapter adressAdapter;
+    private AddressAdapter addressAdapter;
 
-    private Adresse selectedAdress;
+    private Adresse selectedAddress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signin_activity);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.signin);
+        setContentView(R.layout.signup_activity);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.signup);
 
         name = findViewById(R.id.editText_name);
         firstname = findViewById(R.id.editText_firstname);
         email = findViewById(R.id.editText_email);
-        adress = findViewById(R.id.textView_adress);
+        address = findViewById(R.id.textView_address);
         password = findViewById(R.id.editText_password);
         passwordConfirmation = findViewById(R.id.editText_passwordConfirmation);
-        Button signin = findViewById(R.id.button_signin);
+        Button signup = findViewById(R.id.button_signup);
 
-        signin.setOnClickListener(this::onClickSignin);
+        signup.setOnClickListener(this::onClickSignup);
         findViewById(R.id.button_login).setOnClickListener(this::onClickLogin);
-        suggestedAdress = new ArrayList<>();
-        setupAdress();
+        suggestedAddress = new ArrayList<>();
+        setupAddress();
     }
 
-    private void setupAdress() {
-        adress.setOnClickListener(this::onClickAdress);
+    private void setupAddress() {
+        address.setOnClickListener(this::onClickAddress);
     }
 
-    private void onClickSignin(View view) {
+    private void onClickSignup(View view) {
         if (checkFields()) {
             String name = this.name.getText().toString();
             String firstname = this.firstname.getText().toString();
             String email = this.email.getText().toString();
-            String address = selectedAdress.getLibelle();
-            String postalCode = selectedAdress.getCodePostal();
-            String city = selectedAdress.getVille();
+            String address = selectedAddress.getLibelle();
+            String postalCode = selectedAddress.getCodePostal();
+            String city = selectedAddress.getVille();
             String password = this.password.getText().toString();
             API_REQUEST.utilisateur.create(name, firstname, email, address, postalCode, city, password,
                     response -> {
@@ -82,7 +82,7 @@ public class SigninActivity extends AppCompatActivity {
                     },
                     error -> {
                         Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
-                        Log.e("SigninActivity", "Error during sign-in", error);
+                        Log.e("SignupActivity", "Error during sign-in", error);
                     }
             );
         }
@@ -108,11 +108,11 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private boolean checkAddress() {
-        if (selectedAdress == null) {
-            adress.setError(getString(R.string.empty_field_error));
+        if (selectedAddress == null) {
+            address.setError(getString(R.string.empty_field_error));
             return false;
         } else {
-            adress.setError(null);
+            address.setError(null);
             return true;
         }
     }
@@ -173,10 +173,10 @@ public class SigninActivity extends AppCompatActivity {
         return true;
     }
 
-    private void onClickAdress(View v) {
+    private void onClickAddress(View v) {
         // Préparer le dialog
-        dialog = new Dialog(SigninActivity.this);
-        dialog.setContentView(R.layout.dialog_search_adress);
+        dialog = new Dialog(SignupActivity.this);
+        dialog.setContentView(R.layout.dialog_search_address);
         dialog.getWindow().setLayout(650, 800);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
@@ -185,14 +185,14 @@ public class SigninActivity extends AppCompatActivity {
         EditText research = dialog.findViewById(R.id.editText_research);
         ListView list = dialog.findViewById(R.id.listView_list);
         TextView title = dialog.findViewById(R.id.textView_title);
-        title.setText(R.string.adress_research_title);
+        title.setText(R.string.address_search_title);
 
         // Initialiser l'adapter
-        adressAdapter = new AdressAdapter(
-                SigninActivity.this,
+        addressAdapter = new AddressAdapter(
+                SignupActivity.this,
                 android.R.layout.simple_list_item_1,
-                suggestedAdress);
-        list.setAdapter(adressAdapter);
+                suggestedAddress);
+        list.setAdapter(addressAdapter);
 
         // Ajout de l'écouteur sur le champ de recherche
         research.addTextChangedListener(new TextWatcher() {
@@ -203,9 +203,9 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 API_REQUEST.ban.getSuggestions(s.toString(), response -> {
-                    suggestedAdress.clear();
-                    suggestedAdress.addAll(Arrays.asList(response));
-                    adressAdapter.notifyDataSetChanged();
+                    suggestedAddress.clear();
+                    suggestedAddress.addAll(Arrays.asList(response));
+                    addressAdapter.notifyDataSetChanged();
                 }, VolleyError::printStackTrace);
             }
 
@@ -213,13 +213,13 @@ public class SigninActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
-        if (selectedAdress != null) {
-            research.setText(selectedAdress.toString());
+        if (selectedAddress != null) {
+            research.setText(selectedAddress.toString());
         }
 
         list.setOnItemClickListener((adapterView, view, i, l) -> {
-            selectedAdress = adressAdapter.getItem(i);
-            adress.setText(selectedAdress.toString());
+            selectedAddress = addressAdapter.getItem(i);
+            address.setText(selectedAddress.toString());
             dialog.dismiss();
         });
     }

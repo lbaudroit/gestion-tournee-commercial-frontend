@@ -12,24 +12,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/outline_map_24"
-            android:title="@string/bottom_bar_carte"/>
+            android:title="@string/bottom_bar_map"/>
     <item
             android:id="@+id/bottom_bar_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/baseline_history_24"
-            android:title="@string/bottom_bar_historique"/>
+            android:title="@string/bottom_bar_history"/>
     <item
             android:id="@+id/bottom_bar_itinerary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/outline_route_24"
-            android:title="@string/bottom_bar_itineraires"/>
+            android:title="@string/bottom_bar_itinerary"/>
     <item
             android:id="@+id/bottom_bar_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/outline_settings_24"
-            android:title="@string/bottom_bar_parametres"/>
+            android:title="@string/bottom_bar_settings"/>
 
 </menu>

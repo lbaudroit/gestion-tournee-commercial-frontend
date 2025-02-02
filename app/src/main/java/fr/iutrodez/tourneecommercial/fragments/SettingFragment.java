@@ -72,7 +72,7 @@ public class SettingFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_parametres, container, false);
+        return inflater.inflate(R.layout.setting_fragment, container, false);
     }
 
     /**
@@ -93,7 +93,7 @@ public class SettingFragment extends Fragment {
             name.setText(response.getNom());
             firstname.setText(response.getPrenom());
             email.setText(response.getEmail());
-        }, error -> Toast.makeText(getContext(), R.string.error_fetching_params, Toast.LENGTH_LONG).show());
+        }, error -> Toast.makeText(getContext(), R.string.fetching_params_error, Toast.LENGTH_LONG).show());
     }
 
     /**
@@ -106,7 +106,7 @@ public class SettingFragment extends Fragment {
             API_REQUEST.utilisateur.updateSelf(getContext(), name.getText().toString(), firstname.getText().toString(), email.getText().toString(), response -> {
                 Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
                 Objects.requireNonNull(getContext()).getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
-            }, error -> Toast.makeText(getContext(), R.string.error_saving_params, Toast.LENGTH_LONG).show());
+            }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
         }
     }
 

@@ -84,11 +84,11 @@ public class ItineraryCreationFragment extends Fragment {
         getAllClients();
 
         // Création, association de l'adaptateur et association de la liste à l'adaptateur
-        ListView addedClientsList = view.findViewById(R.id.list_clients);
+        ListView addedClientsList = view.findViewById(R.id.listView_client);
         itineraryClients = new ArrayList<>();
         itineraryClientsAdapter = new ClientListAdapter(
                 parent,
-                R.layout.listitem_client,
+                R.layout.list_of_client_items,
                 itineraryClients,
                 null,
                 this::deleteClientFromList);
@@ -115,7 +115,7 @@ public class ItineraryCreationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_creation_itineraire, container, false);
+        return inflater.inflate(R.layout.itinerary_creation_fragment, container, false);
     }
 
     private void getAllClients() {
@@ -123,7 +123,7 @@ public class ItineraryCreationFragment extends Fragment {
             allClients = response;
         }, error -> {
             Toast.makeText(getContext(),
-                    R.string.couldnt_get_clients,
+                    R.string.fetch_clients_error,
                     Toast.LENGTH_SHORT).show();
         });
     }
@@ -132,7 +132,7 @@ public class ItineraryCreationFragment extends Fragment {
         clientSelector.setOnClickListener(v -> {
             // Préparer le dialog
             dialog = new Dialog(parent);
-            dialog.setContentView(R.layout.dialog_search_adress);
+            dialog.setContentView(R.layout.dialog_search_address);
             dialog.getWindow().setLayout(650, 800);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.show();
@@ -141,12 +141,12 @@ public class ItineraryCreationFragment extends Fragment {
             EditText research = dialog.findViewById(R.id.editText_research);
             ListView list = dialog.findViewById(R.id.listView_list);
             TextView title = dialog.findViewById(R.id.textView_title);
-            title.setText(R.string.clients_research_title);
+            title.setText(R.string.clients_search_title);
 
             // Initialiser l'adapter
             freeClientsAdapter = new ClientListAdapter(
                     parent,
-                    R.layout.listitem_client,
+                    R.layout.list_of_client_items,
                     getFreeClients(),
                     null,
                     null);
@@ -243,7 +243,7 @@ public class ItineraryCreationFragment extends Fragment {
             enableView(validateItineraryButton);
         }, error -> {
             Toast.makeText(getContext(),
-                    R.string.impossible_generate_itineraire,
+                    R.string.generate_itinerary_error,
                     Toast.LENGTH_SHORT).show();
         });
     }
@@ -268,14 +268,14 @@ public class ItineraryCreationFragment extends Fragment {
 
         // Vérification des clients
         if (itineraryClients.isEmpty()) {
-            clientSelector.setError(getString(R.string.aucun_client_saisi_error));
+            clientSelector.setError(getString(R.string.no_clients_error));
             return;
         }
 
         // Envoie de la requête au back-end
         Consumer<Exception> onExceptionCallback = (e) -> {
             Toast.makeText(getContext(),
-                    R.string.impossible_create_itineraire,
+                    R.string.create_itinerary_error,
                     Toast.LENGTH_SHORT).show();
             Log.e("ItineraryCreationFragment", "Error during itinerary creation", e);
         };
@@ -292,7 +292,7 @@ public class ItineraryCreationFragment extends Fragment {
         String itineraryName = name.getText().toString();
         API_REQUEST.itineraire.create(getContext(), itineraryName, distance, itineraryClients, response -> {
             Toast.makeText(getContext(),
-                    R.string.success_create_itineraire,
+                    R.string.create_route_success,
                     Toast.LENGTH_SHORT).show();
             parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
         }, onExceptionCallback::accept);
@@ -303,7 +303,7 @@ public class ItineraryCreationFragment extends Fragment {
             String itineraryName = name.getText().toString();
             API_REQUEST.itineraire.update(getContext(), modifiedItineraryId, itineraryName, distance, itineraryClients, response -> {
                 Toast.makeText(getContext(),
-                        R.string.success_update_itineraire,
+                        R.string.update_itinerary_success,
                         Toast.LENGTH_SHORT).show();
                 parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
             }, onExceptionCallback::accept);
@@ -341,7 +341,7 @@ public class ItineraryCreationFragment extends Fragment {
                 disableView(clientSelector);
             }
             // On active le bouton de validation et on change son texte en "Modifier"
-            validateItineraryButton.setText(R.string.modifier);
+            validateItineraryButton.setText(R.string.edit);
 
             // On rajoute un TextWatcher pour vérifier si le nom change
             name.addTextChangedListener(new TextWatcher() {
@@ -361,7 +361,7 @@ public class ItineraryCreationFragment extends Fragment {
         }, error -> {
             Log.e("ItineraryCreationFragment", "Error during itinerary modification preparation", error);
             Toast.makeText(getContext(),
-                    R.string.error_get_itineraire,
+                    R.string.fetch_route_error,
                     Toast.LENGTH_SHORT).show();
         });
     }

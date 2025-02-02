@@ -29,9 +29,9 @@ public class MapFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View frag = inflater.inflate(R.layout.fragment_test, container, false);
+        View frag = inflater.inflate(R.layout.test_fragment, container, false);
         TextView text = frag.findViewById(R.id.nom_frag);
-        text.setText(R.string.bottom_bar_carte);
+        text.setText(R.string.bottom_bar_map);
         return frag;
     }
 

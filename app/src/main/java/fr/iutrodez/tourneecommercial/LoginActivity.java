@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editText_password);
 
         findViewById(R.id.button_login).setOnClickListener(this::onClickEnvoyer);
-        findViewById(R.id.button_signin).setOnClickListener(this::onClickGoToInscription);
+        findViewById(R.id.button_signup).setOnClickListener(this::onClickGoToInscription);
         apiRequest = ApiRequest.buildInstance(this);
         //TODO : Supprimer les lignes suivantes
         email.setText("en@cl.fr");
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-            }, error -> Toast.makeText(LoginActivity.this, R.string.invalid_params_connexion_error, Toast.LENGTH_LONG).show());
+            }, error -> Toast.makeText(LoginActivity.this, R.string.invalid_login_params_error, Toast.LENGTH_LONG).show());
         }
     }
 
@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param view Vue qui a déclenché l'événement.
      */
     private void onClickGoToInscription(View view) {
-        startActivity(new Intent(this, SigninActivity.class));
+        startActivity(new Intent(this, SignupActivity.class));
     }
 
     private void setSharedPreferences(JwtToken jwtToken, long expirationTime) {

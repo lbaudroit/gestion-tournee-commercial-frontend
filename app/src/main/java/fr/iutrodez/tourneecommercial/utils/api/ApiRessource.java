@@ -57,7 +57,7 @@ public class ApiRessource {
             apiRequest.auth.login(email, password, jwtToken -> {
                 context.getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", jwtToken.getToken()).apply();
                 context.getSharedPreferences("user", MODE_PRIVATE).edit().putLong("expiration", jwtToken.getExpiration()).apply();
-            }, error -> Toast.makeText(context, R.string.invalid_params_connexion_error, Toast.LENGTH_LONG).show());
+            }, error -> Toast.makeText(context, R.string.invalid_login_params_error, Toast.LENGTH_LONG).show());
         }
         return context.getSharedPreferences("user", MODE_PRIVATE).getString("token", "");
     }

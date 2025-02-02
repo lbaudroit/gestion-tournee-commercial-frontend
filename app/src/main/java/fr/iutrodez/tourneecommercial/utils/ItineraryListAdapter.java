@@ -57,7 +57,7 @@ public class ItineraryListAdapter extends ArrayAdapter<Itineraire> {
         assert itineraryInfos != null;
 
         title.setText(itineraryInfos.getNom());
-        String distanceText = getContext().getString(R.string.affichage_nombre_km);
+        String distanceText = getContext().getString(R.string.display_distance_km);
         subTitle.setText(String.format(distanceText, itineraryInfos.getKilometres()));
         convertView.findViewById(R.id.imageButton_delete).setOnClickListener(v -> this.onClickButtonDelete.accept(itineraryInfos, position));
         convertView.findViewById(R.id.button_modify).setOnClickListener(v -> this.onClickButtonModify.accept(itineraryInfos, position));

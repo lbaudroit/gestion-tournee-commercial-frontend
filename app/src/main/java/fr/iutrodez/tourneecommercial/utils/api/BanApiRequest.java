@@ -21,7 +21,7 @@ public class BanApiRequest {
                 url,
                 null,
                 response -> {
-                    Adresse[] adresses = extractAdresses(response);
+                    Adresse[] adresses = extractAddresses(response);
                     successCallback.onSuccess(adresses);
                 },
                 errorCallback::onError
@@ -30,7 +30,7 @@ public class BanApiRequest {
 
     }
 
-    private Adresse[] extractAdresses(JSONObject json) {
+    private Adresse[] extractAddresses(JSONObject json) {
         try {
             JSONArray features = json.getJSONArray("features");
             Adresse[] adresses = new Adresse[features.length()];

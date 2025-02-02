@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity
                     fragmentManager.popBackStack();
                 } else {
                     new AlertDialog.Builder(MainActivity.this)
-                            .setTitle(R.string.quit)
-                            .setMessage(R.string.ask_quit)
+                            .setTitle(R.string.quit_app)
+                            .setMessage(R.string.confirm_quit_app)
                             .setPositiveButton(R.string.yes, (dialog, which) -> finish())
                             .setNegativeButton(R.string.no, null)
                             .show();

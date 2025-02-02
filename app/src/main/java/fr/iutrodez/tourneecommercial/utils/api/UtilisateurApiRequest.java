@@ -25,7 +25,7 @@ public class UtilisateurApiRequest extends ApiRessource {
     }
 
     public void create(String name, String firstName, String email,
-                       String adress, String postalCode, String city,
+                       String address, String postalCode, String city,
                        String password,
                        SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
         String url = RESOURCE_NAME + "/";
@@ -34,7 +34,7 @@ public class UtilisateurApiRequest extends ApiRessource {
             body.put("nom", name);
             body.put("prenom", firstName);
             body.put("email", email);
-            body.put("libelleAdresse", adress);
+            body.put("libelleAdresse", address);
             body.put("codePostal", postalCode);
             body.put("ville", city);
             body.put("motDePasse", password);

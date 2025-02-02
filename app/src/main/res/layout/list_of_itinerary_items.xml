@@ -12,7 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingTop="@dimen/list_item_top_padding">
+            android:paddingTop="@dimen/list_item_padding_top">
 
         <TextView
                 android:id="@+id/textView_title"
@@ -31,17 +31,17 @@
     </LinearLayout>
 
     <Space
-            android:layout_width="@dimen/zero"
+            android:layout_width="@dimen/size_zero"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
     <Button
             android:id="@+id/button_modify"
-            style="@style/BoutonSecondaire"
-            android:layout_width="@dimen/modification_button_width"
+            style="@style/SecondaryButton"
+            android:layout_width="@dimen/button_width_modify"
             android:layout_height="match_parent"
-            android:text="@string/modifier"
-            android:layout_marginEnd="@dimen/margin_modification"/>
+            android:text="@string/edit"
+            android:layout_marginEnd="@dimen/margin_modify"/>
 
     <LinearLayout
             android:layout_width="wrap_content"
@@ -50,12 +50,12 @@
         <ImageButton
                 android:id="@+id/imageButton_delete"
                 style="@style/ListItemDeleteButton"
-                android:layout_width="@dimen/zero"
+                android:layout_width="@dimen/size_zero"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_gravity="center"
-                android:contentDescription="@string/supprimer"
+                android:contentDescription="@string/delete"
                 android:src="@drawable/baseline_delete_24"
-                app:tint="@color/bg"/>
+                app:tint="@color/background"/>
     </LinearLayout>
 </LinearLayout>

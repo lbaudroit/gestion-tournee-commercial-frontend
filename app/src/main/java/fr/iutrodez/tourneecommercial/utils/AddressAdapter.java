@@ -12,13 +12,13 @@ import fr.iutrodez.tourneecommercial.modeles.Adresse;
 
 import java.util.List;
 
-public class AdressAdapter extends ArrayAdapter<Adresse> {
+public class AddressAdapter extends ArrayAdapter<Adresse> {
     private final int viewIdentifier;
     private final LayoutInflater inflater;
 
-    public AdressAdapter(@NonNull Context context,
-                         int resource,
-                         @NonNull List<Adresse> objects) {
+    public AddressAdapter(@NonNull Context context,
+                          int resource,
+                          @NonNull List<Adresse> objects) {
         super(context, resource, objects);
         this.viewIdentifier = resource;
         inflater = (LayoutInflater) getContext()

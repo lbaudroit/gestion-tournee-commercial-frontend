@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_margin="@dimen/default_page_margin"
+              android:layout_margin="@dimen/margin_default"
               android:gravity="center"
               android:orientation="vertical">
 
@@ -10,7 +10,7 @@
             android:id="@+id/editText_email"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/vertical_space"
+            android:layout_marginBottom="@dimen/space_vertical"
             android:hint="@string/email"
             android:autofillHints="emailAddress"
             android:inputType="textEmailAddress"/>
@@ -19,7 +19,7 @@
             android:id="@+id/editText_password"
             style="@style/RoundedEditText"
             android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/vertical_space"
+            android:layout_marginBottom="@dimen/space_vertical"
             android:hint="@string/password"
             android:autofillHints="password"
             android:inputType="textPassword"/>
@@ -28,17 +28,17 @@
             android:id="@+id/button_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BoutonPrincipal"
+            style="@style/PrimaryButton"
             android:text="@string/login"
-            android:layout_marginBottom="@dimen/vertical_space"/>
+            android:layout_marginBottom="@dimen/space_vertical"/>
 
     <Button
-            android:id="@+id/button_signin"
-            style="@style/BoutonSecondaire"
+            android:id="@+id/button_signup"
+            style="@style/SecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:text="@string/signin"/>
+            android:text="@string/signup"/>
 </LinearLayout>

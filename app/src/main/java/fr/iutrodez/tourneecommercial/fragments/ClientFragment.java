@@ -12,19 +12,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClients;
-import fr.iutrodez.tourneecommercial.utils.Deprecated_ApiRequest;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Fragment de la navBar pour afficher la liste des clients
@@ -37,21 +34,22 @@ import java.util.List;
  */
 public class ClientFragment extends Fragment {
 
+    private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
+
     public static ClientFragment newInstance() {
         return new ClientFragment();
     }
 
     public MainActivity parent;
-    private ListView liste;
-    private AdaptateurListeClients adaptateur;
+    private ClientListAdapter clientListAdapter;
 
     private boolean isLoading = false;
     private int currentPage = 0;
-    private int totalPages = 0;
-    private List<Client> clients = new ArrayList<>();
+    private int numberOfPages = 0;
+    private final List<Client> clients = new ArrayList<>();
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         if (context instanceof MainActivity) {
             parent = (MainActivity) context;
@@ -63,30 +61,30 @@ public class ClientFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View frag = inflater.inflate(R.layout.fragment_liste_client, container, false);
-        liste = frag.findViewById(R.id.listitem_client);
-        frag.findViewById(R.id.button_add).setOnClickListener(this::ajouter);
+        View frag = inflater.inflate(R.layout.list_of_client_fragment, container, false);
+        ListView list = frag.findViewById(R.id.listitem_client);
+        frag.findViewById(R.id.button_add).setOnClickListener(this::add);
 
         // Initialize adapter
-        adaptateur = new AdaptateurListeClients(
+        clientListAdapter = new ClientListAdapter(
                 this.parent,
-                R.layout.listitem_client,
-                clients, this::onClickSupprimerAdaptateur, this::onClickModifierAdaptateur);
-        liste.setAdapter(adaptateur);
+                R.layout.list_of_client_items,
+                clients, this::modify, this::delete);
+        list.setAdapter(clientListAdapter);
 
         // Initial data loading
+        fetchNumberOfClients();
         fetchClientsPage();
-        fetchNombreClients();
 
         // Scroll listener for pagination
-        liste.setOnScrollListener(new AbsListView.OnScrollListener() {
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < totalPages && totalItemCount > 0) {
+                if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < numberOfPages && totalItemCount > 0) {
                     isLoading = true;
                     fetchClientsPage();
                     isLoading = false;
@@ -101,12 +99,10 @@ public class ClientFragment extends Fragment {
      *
      * @param client le client appuyé
      */
-    public void onClickModifierAdaptateur(Client client) {
+    public void modify(Client client) {
         Bundle bundle = new Bundle();
         bundle.putString("id", client.get_id());
         parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false, bundle);
-
-        Toast.makeText(getContext(), "Modifier : " + client.getNomEntreprise(), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -115,92 +111,46 @@ public class ClientFragment extends Fragment {
      *
      * @param client le client appuyé
      */
-    public void onClickSupprimerAdaptateur(Client client) {
-        String message = getContext().getString(R.string.confirmation_suppression_client, client.getNomEntreprise());
+    public void delete(Client client) {
+        String message = Objects.requireNonNull(getContext()).getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(getContext())
-                .setTitle(R.string.suppression_itineraire)
+                .setTitle(R.string.delete_route)
                 .setMessage(message)
-                .setPositiveButton(R.string.oui, (dialog, which) -> deleteClient(client))
-                .setNegativeButton(R.string.non, (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteClient(client))
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
     private void deleteClient(Client client) {
-        Deprecated_ApiRequest.removeClient(getContext(), client.get_id(), new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                adaptateur.remove(client);
-                adaptateur.notifyDataSetChanged();
-                Toast.makeText(getContext(), R.string.client_deleted, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                Toast.makeText(getContext(), R.string.error_deleting_client, Toast.LENGTH_SHORT).show();
-            }
-        });
+        API_REQUEST.client.delete(getContext(), client.get_id(), response -> {
+            clients.remove(client);
+            clientListAdapter.notifyDataSetChanged();
+            Toast.makeText(getContext(), R.string.client_deleted_success, Toast.LENGTH_SHORT).show();
+        }, error -> Toast.makeText(getContext(), R.string.client_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
-    private void fetchNombreClients() {
-        Deprecated_ApiRequest.getNombreClient(requireContext(), new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                try {
-                    totalPages = response.getInt("nombre");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                Toast.makeText(parent, R.string.error_get_nb_client,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void fetchNumberOfClients() {
+        API_REQUEST.client.getNumberOfPages(requireContext(), numberOfPages -> this.numberOfPages = numberOfPages, error -> Toast.makeText(parent, R.string.fetch_clients_count_error,
+                Toast.LENGTH_SHORT).show());
     }
 
     private void fetchClientsPage() {
         isLoading = true;
-        Deprecated_ApiRequest.getClientsBy30(requireContext(), currentPage, new Deprecated_ApiRequest.ApiResponseCallback<JSONArray>() {
-            @Override
-            public void onSuccess(JSONArray response) {
-                try {
-                    int len = response.length();
-                    List<Client> newClients = new ArrayList<>();
-                    for (int i = 0; i < len; i++) {
-                        Gson gson = new Gson();
-                        Client client = gson.fromJson(response.getJSONObject(i).toString(), Client.class);
-                        newClients.add(client);
-                    }
-
-                    clients.addAll(newClients);
-
-                    // Notifier l'adaptateur
-                    adaptateur.notifyDataSetChanged();
-                    currentPage++;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    isLoading = false;
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                Toast.makeText(parent, R.string.error_get_client,
-                        Toast.LENGTH_SHORT).show();
-                isLoading = false;
-            }
-        });
+        API_REQUEST.client.getPage(requireContext(), currentPage, clients -> {
+            this.clients.addAll(clients);
+            clientListAdapter.notifyDataSetChanged();
+            currentPage++;
+        }, error -> Toast.makeText(parent, R.string.fetch_client_error,
+                Toast.LENGTH_SHORT).show());
+        isLoading = false;
     }
 
     /**
      * Méthode appelée quand le
      *
-     * @param view
+     * @param view La vue qui a été cliquée.
      */
-    public void ajouter(View view) {
+    public void add(View view) {
         parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
     }
 }
