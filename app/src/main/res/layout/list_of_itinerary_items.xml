@@ -15,14 +15,14 @@
             android:paddingTop="@dimen/list_item_top_padding">
 
         <TextView
-                android:id="@+id/title"
+                android:id="@+id/textView_title"
                 style="@style/ListTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder"/>
 
         <TextView
-                android:id="@+id/sous_titre"
+                android:id="@+id/textView_subTitle"
                 style="@style/ListSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:layout_weight="1"/>
 
     <Button
-            android:id="@+id/modifier"
+            android:id="@+id/button_modify"
             style="@style/BoutonSecondaire"
             android:layout_width="@dimen/modification_button_width"
             android:layout_height="match_parent"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content">
 
         <ImageButton
-                android:id="@+id/supprimer"
+                android:id="@+id/imageButton_delete"
                 style="@style/ListItemDeleteButton"
                 android:layout_width="@dimen/zero"
                 android:layout_height="match_parent"

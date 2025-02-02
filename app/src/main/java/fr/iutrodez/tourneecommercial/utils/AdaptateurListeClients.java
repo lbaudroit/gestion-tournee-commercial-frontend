@@ -4,19 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
+
+import java.util.List;
 
 
 public class AdaptateurListeClients extends ArrayAdapter<Client> {
@@ -70,10 +64,10 @@ public class AdaptateurListeClients extends ArrayAdapter<Client> {
         }
 
         // Récupération des vues
-        TextView titre = convertView.findViewById(R.id.list_client_titre);
-        TextView sousTitre = convertView.findViewById(R.id.list_client_sous_titre);
-        ImageButton boutonSuppression = convertView.findViewById(R.id.supprimer);
-        Button boutonModifier = convertView.findViewById(R.id.modifier);
+        TextView titre = convertView.findViewById(R.id.textView_title);
+        TextView sousTitre = convertView.findViewById(R.id.textView_subTitle);
+        ImageButton boutonSuppression = convertView.findViewById(R.id.imageButton_delete);
+        Button boutonModifier = convertView.findViewById(R.id.button_modify);
 
         // Récupération de l'objet Client
         final Client clientInfo = getItem(position);

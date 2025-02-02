@@ -1,29 +1,24 @@
 package fr.iutrodez.tourneecommercial.modeles;
 
 public class Client {
-    private String _id;
+    private final String _id;
+    private final String idUtilisateur;
+    private final String nomEntreprise;
+    private final Adresse adresse;
+    private final String descriptif;
+    private final Coordonnees coordonnees;
+    private final Contact contact;
+    private final boolean clientEffectif;
 
-    private String idUtilisateur;
-    private String nomEntreprise;
-
-    private Adresse adresse;
-    private String descriptif;
-    private Coordonnees coordonnees;
-    private Contact contact;
-
-    private boolean clientEffectif;
-
-    public Client(String nomEntreprise, Adresse adresse) {
-        this.nomEntreprise = nomEntreprise;
-        this.adresse = adresse;
-    }
-
-    public Client(String _id, String nomEntreprise, Adresse adresse, String descriptif, Coordonnees coordonnees, Contact contact) {
+    public Client(String _id, String idUtilisateur, String nomEntreprise, Adresse adresse, String descriptif, Coordonnees coordonnees, Contact contact, boolean clientEffectif) {
+        this._id = _id;
+        this.idUtilisateur = idUtilisateur;
         this.nomEntreprise = nomEntreprise;
         this.adresse = adresse;
         this.descriptif = descriptif;
         this.coordonnees = coordonnees;
         this.contact = contact;
+        this.clientEffectif = clientEffectif;
     }
 
     @Override
@@ -34,22 +29,18 @@ public class Client {
         return false;
     }
 
-    public Client(String _id, String idUtilisateur, String nomEntreprise, Adresse adresse, Contact contact) {
-        this.adresse = adresse;
-        this._id = _id;
-        this.contact = contact;
-        this.nomEntreprise = nomEntreprise;
-    }
-
 
     public String get_id() {
         return this._id;
     }
 
+    public String getIdUtilisateur() {
+        return this.idUtilisateur;
+    }
+
     public Adresse getAdresse() {
         return this.adresse;
     }
-
 
     public String getNomEntreprise() {
         return this.nomEntreprise;
@@ -61,6 +52,10 @@ public class Client {
 
     public String getDescriptif() {
         return descriptif;
+    }
+
+    public Coordonnees getCoordonnees() {
+        return coordonnees;
     }
 
     public boolean isClientEffectif() {

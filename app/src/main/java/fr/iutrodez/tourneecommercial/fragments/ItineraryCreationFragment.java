@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,50 +15,44 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.dto.ItineraireDTO;
-import fr.iutrodez.tourneecommercial.utils.AdaptateurListeClient;
-import fr.iutrodez.tourneecommercial.utils.Deprecated_ApiRequest;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ItineraryCreationFragment extends Fragment {
 
+    private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
 
     //Elements de la vue
-    private EditText nom;
-    private TextView selectionClient;
-    private Button btnAjouterClient;
-    private Button btnGenererItineraire;
-    private Button btnValiderItineraire;
+    private EditText name;
+    private TextView clientSelector;
+    private Button addClientButton;
+    private Button generateItineraryButton;
+    private Button validateItineraryButton;
     public MainActivity parent;
 
     //Listes
-    private List<Client> clientsItineraire;
-    private List<Client> tousClients;
+    private List<Client> itineraryClients;
+    private List<Client> allClients;
 
     //Elements secondaires de la vue
-    private AdaptateurListeClient adaptateurClientsItineraire;
-    private AdaptateurListeClient adaptateurClientsDisponibles;
+    private ClientListAdapter itineraryClientsAdapter;
+    private ClientListAdapter freeClientsAdapter;
     private Dialog dialog;
 
     //Autres variables
     private final static int MAX_CLIENTS = 8;
     private Integer distance;
-    private Client clientSelectionne;
-    private Optional<Long> idItineraireModifie = Optional.empty();
+    private Client selectedClient;
+    private Long modifiedItineraryId = null;
 
-    //Méthodes principales
     public static ItineraryCreationFragment newInstance() {
         return new ItineraryCreationFragment();
     }
@@ -73,52 +68,46 @@ public class ItineraryCreationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Récupération des éléments de la vue
-        nom = view.findViewById(R.id.nom_itineraire);
-        selectionClient = view.findViewById(R.id.client_selectionne);
-        btnAjouterClient = view.findViewById(R.id.ajouter);
-        btnGenererItineraire = view.findViewById(R.id.generer);
-        btnValiderItineraire = view.findViewById(R.id.valider);
+        name = view.findViewById(R.id.editText_name);
+        clientSelector = view.findViewById(R.id.textView_clientSelector);
+        addClientButton = view.findViewById(R.id.button_add);
+        generateItineraryButton = view.findViewById(R.id.button_gereateItinerary);
+        validateItineraryButton = view.findViewById(R.id.button_generateItinerary);
 
         // Ajouter les écouteurs sur les boutons
-        btnAjouterClient.setOnClickListener(this::ajouter);
-        btnGenererItineraire.setOnClickListener(this::generer);
-        btnValiderItineraire.setOnClickListener(this::valider);
+        addClientButton.setOnClickListener(this::add);
+        generateItineraryButton.setOnClickListener(this::generate);
+        validateItineraryButton.setOnClickListener(this::valdiate);
 
         // Remplir la liste des clients disponibles
-        tousClients = new ArrayList<>();
-        recuperationDesClients();
+        allClients = new ArrayList<>();
+        getAllClients();
 
         // Création, association de l'adaptateur et association de la liste à l'adaptateur
-        ListView listeClientsAjoutes = view.findViewById(R.id.list_clients);
-        clientsItineraire = new ArrayList<>();
-        adaptateurClientsItineraire = new AdaptateurListeClient(
-                getContext(),
+        ListView addedClientsList = view.findViewById(R.id.list_clients);
+        itineraryClients = new ArrayList<>();
+        itineraryClientsAdapter = new ClientListAdapter(
+                parent,
                 R.layout.listitem_client,
-                clientsItineraire,
+                itineraryClients,
                 null,
-                this::supprimerClientListe);
-        listeClientsAjoutes.setAdapter(adaptateurClientsItineraire);
-
-        // Modification du titre dans l'action bar
-        /*ActionBar actionBar = ((AppCompatActivity) this.getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(getString(R.string.creation_itineraire));
-        }*/
+                this::deleteClientFromList);
+        addedClientsList.setAdapter(itineraryClientsAdapter);
 
         // Blocage des boutons
-        disableView(btnGenererItineraire);
-        disableView(btnValiderItineraire);
-        disableView(btnAjouterClient);
+        disableView(generateItineraryButton);
+        disableView(validateItineraryButton);
+        disableView(addClientButton);
 
         // Gestion du champ de recherche des clients
-        creationRechercheClient();
+        createClientResearch();
 
         //Récupération du bundle si on est en modification
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            Long idItineraire = bundle.getLong("idItineraire");
-            System.out.println("Modification de l'itinéraire " + idItineraire);
-            preparerPourModification(idItineraire);
+            Long itineraryId = bundle.getLong("idItineraire");
+            System.out.println("Modification de l'itinéraire " + itineraryId);
+            prepareForModification(itineraryId);
         }
     }
 
@@ -129,121 +118,109 @@ public class ItineraryCreationFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_creation_itineraire, container, false);
     }
 
-    //Fonction outils
-    private void recuperationDesClients() {
-        Deprecated_ApiRequest.recupererClients(getContext(), new Deprecated_ApiRequest.ApiResponseCallback<JSONArray>() {
-            @Override
-            public void onSuccess(JSONArray response) {
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject obj = response.optJSONObject(i);
-                    tousClients.add(Deprecated_ApiRequest.jsonToClient(obj));
+    private void getAllClients() {
+        API_REQUEST.client.getAll(getContext(), response -> {
+            allClients = response;
+        }, error -> {
+            Toast.makeText(getContext(),
+                    R.string.couldnt_get_clients,
+                    Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void createClientResearch() {
+        clientSelector.setOnClickListener(v -> {
+            // Préparer le dialog
+            dialog = new Dialog(parent);
+            dialog.setContentView(R.layout.dialog_search_adress);
+            dialog.getWindow().setLayout(650, 800);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+
+            // Récupérer les éléments du dialog
+            EditText research = dialog.findViewById(R.id.editText_research);
+            ListView list = dialog.findViewById(R.id.listView_list);
+            TextView title = dialog.findViewById(R.id.textView_title);
+            title.setText(R.string.clients_research_title);
+
+            // Initialiser l'adapter
+            freeClientsAdapter = new ClientListAdapter(
+                    parent,
+                    R.layout.listitem_client,
+                    getFreeClients(),
+                    null,
+                    null);
+            list.setAdapter(freeClientsAdapter);
+
+            // Ajout de l'écouteur sur le champ de recherche
+            research.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
-            }
 
-            @Override
-            public void onError(VolleyError error) {
-                Toast.makeText(getContext(),
-                        "Erreur : impossible de récupérer les clients disponibles",
-                        Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    freeClientsAdapter.getFilter().filter(s);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+
+            list.setOnItemClickListener((parent, view, position, id) -> {
+                clientSelector.setText(Objects.requireNonNull(freeClientsAdapter.getItem(position)).getNomEntreprise());
+                selectedClient = freeClientsAdapter.getItem(position);
+                enableView(addClientButton);
+                dialog.dismiss();
+            });
         });
     }
 
-    private void creationRechercheClient() {
-        selectionClient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Préparer le dialog
-                dialog = new Dialog(requireContext());
-                dialog.setContentView(R.layout.dialog_searchable_spinner);
-                dialog.getWindow().setLayout(650, 800);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.show();
-
-                // Récupérer les éléments du dialog
-                EditText editText = dialog.findViewById(R.id.editText_research);
-                ListView listView = dialog.findViewById(R.id.listView_list);
-
-                // Initialiser l'adapter
-                adaptateurClientsDisponibles = new AdaptateurListeClient(
-                        requireContext(),
-                        R.layout.listitem_client,
-                        getClientsDisponibles(),
-                        null,
-                        null);
-                listView.setAdapter(adaptateurClientsDisponibles);
-
-                // Ajout de l'écouteur sur le champ de recherche
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        adaptateurClientsDisponibles.getFilter().filter(s);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
-
-                listView.setOnItemClickListener((parent, view, position, id) -> {
-                    selectionClient.setText(Objects.requireNonNull(adaptateurClientsDisponibles.getItem(position)).getNomEntreprise());
-                    clientSelectionne = adaptateurClientsDisponibles.getItem(position);
-                    enableView(btnAjouterClient);
-                    dialog.dismiss();
-                });
-            }
-        });
-    }
-
-    private void supprimerClientListe(Client client) {
-        clientsItineraire.remove(client);
-        adaptateurClientsItineraire.notifyDataSetChanged();
+    private void deleteClientFromList(Client client) {
+        itineraryClients.remove(client);
+        itineraryClientsAdapter.notifyDataSetChanged();
 
         // On réactive les boutons d'ajout s'il y a moins de 8 clients
-        if (clientsItineraire.size() < MAX_CLIENTS) {
-            enableView(selectionClient);
+        if (itineraryClients.size() < MAX_CLIENTS) {
+            enableView(clientSelector);
         }
-        if (clientsItineraire.isEmpty()) {
-            disableView(btnGenererItineraire);
+        if (itineraryClients.isEmpty()) {
+            disableView(generateItineraryButton);
         } else {
-            enableView(btnGenererItineraire);
+            enableView(generateItineraryButton);
         }
-        disableView(btnValiderItineraire);
+        disableView(validateItineraryButton);
     }
 
-    private List<Client> getClientsDisponibles() {
-        List<Client> disponibles = new ArrayList<>(tousClients);
-        System.out.println("Clients itinéraire : " + clientsItineraire);
-        disponibles.removeAll(clientsItineraire);
-        return disponibles;
+    private List<Client> getFreeClients() {
+        List<Client> free = new ArrayList<>(allClients);
+        free.removeAll(itineraryClients);
+        return free;
     }
 
-    private void ajouter(View view) {
+    private void add(View view) {
         Toast.makeText(getContext(),
                 R.string.add_client,
                 Toast.LENGTH_SHORT).show();
 
-        adaptateurClientsItineraire.add(clientSelectionne);
-        clientSelectionne = null;
+        itineraryClientsAdapter.add(selectedClient);
+        selectedClient = null;
 
         // On ré-active le bouton de génération
-        enableView(btnGenererItineraire);
+        enableView(generateItineraryButton);
 
         // On désactive les boutons d'ajout s'il y a 8 clients
-        if (clientsItineraire.size() == MAX_CLIENTS) {
-            disableView(selectionClient);
+        if (itineraryClients.size() == MAX_CLIENTS) {
+            disableView(clientSelector);
         }
 
         // On vide le champ et on rebloque le bouton ajouter
-        selectionClient.setText("");
-        disableView(btnAjouterClient);
+        clientSelector.setText("");
+        disableView(addClientButton);
 
         // On désactive le bouton de validation tant qu'il n'y a pas de génération
-        disableView(btnValiderItineraire);
+        disableView(validateItineraryButton);
     }
 
     private void disableView(View view) {
@@ -256,39 +233,19 @@ public class ItineraryCreationFragment extends Fragment {
         view.setAlpha(1f);
     }
 
-    private void generer(View view) {
-        Deprecated_ApiRequest.genererItineraire(getContext(), clientsItineraire,
-                new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        try {
-                            distance = response.getInt("kilometres");
-
-                            // Réordonner les clients
-                            JSONArray nouveauxClients = (JSONArray) response.get("clients");
-
-                            clientsItineraire.clear();
-                            for (int i = 0; i < nouveauxClients.length(); i++) {
-                                JSONObject obj = nouveauxClients.optJSONObject(i);
-                                clientsItineraire.add(Deprecated_ApiRequest.jsonToClient(obj));
-                            }
-                            adaptateurClientsItineraire.notifyDataSetChanged();
-
-                            // On désactive la génération et on propose l'option de validation
-                            disableView(btnGenererItineraire);
-                            enableView(btnValiderItineraire);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(VolleyError error) {
-                        Toast.makeText(getContext(),
-                                R.string.impossible_generate_itineraire,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void generate(View view) {
+        API_REQUEST.itineraire.generate(getContext(), itineraryClients, response -> {
+            distance = response.getDistance();
+            itineraryClients.clear();
+            itineraryClients.addAll(response.getClients());
+            itineraryClientsAdapter.notifyDataSetChanged();
+            disableView(generateItineraryButton);
+            enableView(validateItineraryButton);
+        }, error -> {
+            Toast.makeText(getContext(),
+                    R.string.impossible_generate_itineraire,
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 
     /**
@@ -300,18 +257,18 @@ public class ItineraryCreationFragment extends Fragment {
      *
      * @param view le bouton cliqué
      */
-    private void valider(View view) {
+    private void valdiate(View view) {
         // Vérification du nom
-        String nomItineraire = nom.getText().toString();
+        String nomItineraire = name.getText().toString();
         if (nomItineraire.trim().isEmpty()) {
-            nom.setError(getString(R.string.empty_field_error));
+            name.setError(getString(R.string.empty_field_error));
 
             return;
         }
 
         // Vérification des clients
-        if (clientsItineraire.isEmpty()) {
-            selectionClient.setError(getString(R.string.aucun_client_saisi_error));
+        if (itineraryClients.isEmpty()) {
+            clientSelector.setError(getString(R.string.aucun_client_saisi_error));
             return;
         }
 
@@ -320,62 +277,36 @@ public class ItineraryCreationFragment extends Fragment {
             Toast.makeText(getContext(),
                     R.string.impossible_create_itineraire,
                     Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            Log.e("ItineraryCreationFragment", "Error during itinerary creation", e);
         };
 
-        if (idItineraireModifie.isPresent()) {
-            requeteModifierItineraire(onExceptionCallback);
+        if (modifiedItineraryId != null) {
+            modifyItinerary(onExceptionCallback);
         } else {
-            requeteCreerItineraire(onExceptionCallback);
+            createItinerary(onExceptionCallback);
         }
     }
 
-    private void requeteCreerItineraire(Consumer<Exception> onExceptionCallback) {
+    private void createItinerary(Consumer<Exception> onExceptionCallback) {
 
-        String nomItineraire = nom.getText().toString();
-        try {
-            Deprecated_ApiRequest.creationItineraire(getContext(), nomItineraire, clientsItineraire, distance,
-                    new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
-                        @Override
-                        public void onSuccess(JSONObject response) {
-                            Toast.makeText(getContext(),
-                                    R.string.success_create_itineraire,
-                                    Toast.LENGTH_SHORT).show();
-                            parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
-                        }
-
-                        @Override
-                        public void onError(VolleyError error) {
-                            onExceptionCallback.accept(error);
-                        }
-                    });
-        } catch (JSONException e) {
-            onExceptionCallback.accept(e);
-        }
+        String itineraryName = name.getText().toString();
+        API_REQUEST.itineraire.create(getContext(), itineraryName, distance, itineraryClients, response -> {
+            Toast.makeText(getContext(),
+                    R.string.success_create_itineraire,
+                    Toast.LENGTH_SHORT).show();
+            parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
+        }, onExceptionCallback::accept);
     }
 
-    private void requeteModifierItineraire(Consumer<Exception> onExceptionCallback) {
-        if (idItineraireModifie.isPresent()) {
-            String nomItineraire = nom.getText().toString();
-            try {
-                Deprecated_ApiRequest.modificationItineraire(parent, idItineraireModifie.get(), nomItineraire, clientsItineraire, distance,
-                        new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
-                            @Override
-                            public void onSuccess(JSONObject response) {
-                                Toast.makeText(getContext(),
-                                        R.string.success_update_itineraire,
-                                        Toast.LENGTH_SHORT).show();
-                                parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
-                            }
-
-                            @Override
-                            public void onError(VolleyError error) {
-                                onExceptionCallback.accept(error);
-                            }
-                        });
-            } catch (JSONException e) {
-                onExceptionCallback.accept(e);
-            }
+    private void modifyItinerary(Consumer<Exception> onExceptionCallback) {
+        if (modifiedItineraryId != null) {
+            String itineraryName = name.getText().toString();
+            API_REQUEST.itineraire.update(getContext(), modifiedItineraryId, itineraryName, distance, itineraryClients, response -> {
+                Toast.makeText(getContext(),
+                        R.string.success_update_itineraire,
+                        Toast.LENGTH_SHORT).show();
+                parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
+            }, onExceptionCallback::accept);
         }
     }
 
@@ -389,57 +320,49 @@ public class ItineraryCreationFragment extends Fragment {
      *
      * @param idItineraire l'identifiant de l'itinéraire à modifier
      */
-    private void preparerPourModification(Long idItineraire) {
-        Deprecated_ApiRequest.recupererItineraire(getContext(), idItineraire, new Deprecated_ApiRequest.ApiResponseCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                System.out.println("Itinéraire récupéré");
-                // Réordonner les clients
-                ItineraireDTO itineraireExistant = Deprecated_ApiRequest.itineraireDTOToClient(response);
-                List<Client> clientsExistants = itineraireExistant.getClients();
-                clientsItineraire.clear();
-                clientsItineraire.addAll(clientsExistants);
-                adaptateurClientsItineraire.notifyDataSetChanged();
+    private void prepareForModification(Long idItineraire) {
+        API_REQUEST.itineraire.getOne(getContext(), idItineraire, response -> {
+            // Réordonner les clients
+            List<Client> addedClients = response.getClients();
+            itineraryClients.clear();
+            itineraryClients.addAll(addedClients);
+            itineraryClientsAdapter.notifyDataSetChanged();
 
-                // Remplir les informations
-                nom.setText(itineraireExistant.getNom());
-                distance = itineraireExistant.getDistance();
-                idItineraireModifie = Optional.of(itineraireExistant.getId());
+            // Remplir les informations
+            name.setText(response.getNom());
+            distance = response.getDistance();
+            modifiedItineraryId = response.getId();
 
-                // On désactive la génération
-                disableView(btnGenererItineraire);
+            // On désactive la génération
+            disableView(generateItineraryButton);
 
-                // On vérifie si on a atteint le nombre maximum de clients
-                if (clientsItineraire.size() == MAX_CLIENTS) {
-                    disableView(selectionClient);
+            // On vérifie si on a atteint le nombre maximum de clients
+            if (itineraryClients.size() == MAX_CLIENTS) {
+                disableView(clientSelector);
+            }
+            // On active le bouton de validation et on change son texte en "Modifier"
+            validateItineraryButton.setText(R.string.modifier);
+
+            // On rajoute un TextWatcher pour vérifier si le nom change
+            name.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
-                // On active le bouton de validation et on change son texte en "Modifier"
-                btnValiderItineraire.setText(R.string.modifier);
 
-                // On rajoute un TextWatcher pour vérifier si le nom change
-                nom.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    enableView(validateItineraryButton);
+                }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        enableView(btnValiderItineraire);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(getContext(),
-                        R.string.error_get_itineraire,
-                        Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+        }, error -> {
+            Log.e("ItineraryCreationFragment", "Error during itinerary modification preparation", error);
+            Toast.makeText(getContext(),
+                    R.string.error_get_itineraire,
+                    Toast.LENGTH_SHORT).show();
         });
     }
 }

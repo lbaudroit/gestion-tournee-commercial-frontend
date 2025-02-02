@@ -120,7 +120,7 @@ public class ClientCreationFragment extends Fragment {
             public void onClick(View v) {
                 // Préparer le dialog
                 dialog = new Dialog(context);
-                dialog.setContentView(R.layout.dialog_searchable_spinner);
+                dialog.setContentView(R.layout.dialog_search_adress);
                 dialog.getWindow().setLayout(650, 800);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
@@ -128,7 +128,7 @@ public class ClientCreationFragment extends Fragment {
                 // Récupérer les éléments du dialog
                 EditText editText = dialog.findViewById(R.id.editText_research);
                 ListView listView = dialog.findViewById(R.id.listView_list);
-                TextView titre = dialog.findViewById(R.id.title);
+                TextView titre = dialog.findViewById(R.id.textView_title);
                 titre.setText(R.string.adress_research_title);
 
                 // Initialiser l'adapter

@@ -5,8 +5,10 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import fr.iutrodez.tourneecommercial.R;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -91,6 +93,26 @@ public class ApiRessource {
             }
         };
         requestQueue.add(jsonObjectRequest);
+    }
+
+    /**
+     * Envoie une requête GET avec un token d'authentification.
+     *
+     * @param context   le contexte de l'application
+     * @param url       l'URL de la requête
+     * @param onSuccess le listener pour le succès
+     * @param onError   le listener pour l'erreur
+     */
+    public void getWithTokenAsArray(Context context, String url, Response.Listener<JSONArray> onSuccess, Response.ErrorListener onError) {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, BASE_URL + url, null, onSuccess, onError) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + getToken(context));
+                return headers;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
     }
 
     /**

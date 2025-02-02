@@ -113,5 +113,9 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="error_saving_params">Erreur lors de la sauvegarde des paramètres</string>
+    <string name="error_fetching_itineraries">Impossible de récupérer les itinéraires</string>
+    <string name="no_itineraries">Vous n\'avez aucun itinéraire</string>
+    <string name="couldnt_get_clients">Erreur : impossible de récupérer les clients disponibles</string>
+    <string name="clients_research_title">Ajout d\'un client</string>
 
 </resources>

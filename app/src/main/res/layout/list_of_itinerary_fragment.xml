@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
+              android:paddingBottom="@dimen/default_page_margin"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:paddingBottom="@dimen/default_page_margin"
               android:orientation="vertical">
 
     <Button
@@ -12,13 +12,16 @@
             android:layout_gravity="end"
             android:text="@string/ajouter"
             app:icon="@drawable/baseline_add_24"
-            style="@style/BoutonAjouter"
-            android:onClick="creation_client"/>
+            style="@style/BoutonAjouter"/>
+
+    <Space
+            android:layout_width="@dimen/vertical_space"
+            android:layout_height="wrap_content"/>
 
     <ListView
-            android:id="@+id/listitem_client"
+            android:id="@+id/listView_itinerary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/listitem_client"/>
+            tools:listitem="@layout/list_of_itinerary_items"/>
 
 </LinearLayout>

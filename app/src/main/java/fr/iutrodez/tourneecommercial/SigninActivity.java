@@ -176,7 +176,7 @@ public class SigninActivity extends AppCompatActivity {
     private void onClickAdress(View v) {
         // Préparer le dialog
         dialog = new Dialog(SigninActivity.this);
-        dialog.setContentView(R.layout.dialog_searchable_spinner);
+        dialog.setContentView(R.layout.dialog_search_adress);
         dialog.getWindow().setLayout(650, 800);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
@@ -184,7 +184,7 @@ public class SigninActivity extends AppCompatActivity {
         // Récupérer les éléments du dialog
         EditText research = dialog.findViewById(R.id.editText_research);
         ListView list = dialog.findViewById(R.id.listView_list);
-        TextView title = dialog.findViewById(R.id.title);
+        TextView title = dialog.findViewById(R.id.textView_title);
         title.setText(R.string.adress_research_title);
 
         // Initialiser l'adapter
