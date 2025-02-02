@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="background">@color/white</color>
+    <color name="delete">#DD3737</color>
+    <color name="add">#46A0C4</color>
+    <color name="neutral_blue">#3E5864</color>
+    <color name="edit_text_outline">#AAA</color>
+
 </resources>

@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="default_page_margin">10dp</dimen>
+    <!-- common -->
+    <dimen name="margin_default">10dp</dimen>
+    <dimen name="space_vertical">8dp</dimen>
+    <dimen name="space_horizontal">6dp</dimen>
+    <dimen name="space_half_horizontal">3dp</dimen>
+    <dimen name="size_one">1dp</dimen>
+    <dimen name="size_zero">0dp</dimen>
+    <dimen name="icon_size_24">24dp</dimen>
+
+    <!-- text -->
+    <dimen name="text_size_title">24sp</dimen>
+    <dimen name="text_size_default">18sp</dimen>
+    <dimen name="text_size_list_title">15sp</dimen>
+    <dimen name="text_size_list_subtitle">12sp</dimen>
+    <dimen name="text_size_edit">48sp</dimen>
+    <dimen name="text_size_add_button">20sp</dimen>
+
+    <!-- list item -->
+    <dimen name="list_item_height">65dp</dimen>
+    <dimen name="list_item_padding_top">6dp</dimen>
+    <dimen name="list_item_padding">10dp</dimen>
+    <dimen name="button_width_modify">125dp</dimen>
+    <dimen name="margin_modify">15dp</dimen>
+
+
+    <!-- Delete Button -->
+    <dimen name="passing_icon_delete_button">6dp</dimen>
+    <dimen name="button_rounding_delete">20dp</dimen>
+    <dimen name="button_size_delete">30dp</dimen>
+
+    <!-- Add Button -->
+    <dimen name="padding_start_add_button">10dp</dimen>
+    <dimen name="padding_end_add_button">30dp</dimen>
+    <dimen name="padding_horizontal_add_button">3dp</dimen>
+    <dimen name="margin_add_bottom">20dp</dimen>
+
+    <!-- separator -->
+    <dimen name="separator_margin_horizontal">18dp</dimen>
+    <dimen name="separator_margin_vertical">8dp</dimen>
+
+    <!-- edit text avec contour-->
+    <dimen name="drawable_size_edit_text">8dp</dimen>
+    <dimen name="padding_start_edit_text">12sp</dimen>
+    <dimen name="drawable_padding_edit_text">7sp</dimen>
+
+    <!-- searchable spinner -->
+    <dimen name="padding_searchable_spinner">16dp</dimen>
+
 </resources>

@@ -1,14 +1,109 @@
 <resources>
+    <string name="app_name">Tournée de commercial</string>
+
+    <!-- General Keywords -->
+    <string name="add">Ajouter</string>
+    <string name="delete">Supprimer</string>
+    <string name="edit">Modifier</string>
+    <string name="save">Enregistrer</string>
+    <string name="validate">Valider</string>
+
+    <!-- General Errors -->
+    <string name="database_connection_error">Erreur de connexion à la base de données</string>
+    <string name="empty_field_error">Veuillez remplir le champ</string>
+    <string name="invalid_field_error">Le champ est incorrect car : %s</string>
+    <string name="empty_fields_error">Veuillez remplir tous les champs</string>
+    <string name="invalid_email_error">Adresse e-mail invalide</string>
+    <string name="password_length_error">Le mot de passe doit contenir au moins 8 caractères</string>
+    <string name="password_pattern_error">Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre</string>
+    <string name="invalid_login_params_error">Adresse e-mail ou mot de passe incorrect</string>
+    <string name="password_confirmation_error">Les mots de passe ne correspondent pas</string>
+
+    <!-- Bottom Navigation Bar -->
     <string name="bottom_bar_clients">Clients</string>
-    <string name="bottom_bar_carte">Carte</string>
-    <string name="bottom_bar_historique">Historique</string>
-    <string name="bottom_bar_itineraires">Itinéraire</string>
-    <string name="bottom_bar_parametres">Paramètres</string>
+    <string name="bottom_bar_history">Historique</string>
+    <string name="bottom_bar_itinerary">Itinéraire</string>
+    <string name="bottom_bar_map">Carte</string>
+    <string name="bottom_bar_settings">Paramètres</string>
 
-
+    <!-- User Information -->
+    <string name="last_name">Nom</string>
+    <string name="first_name">Prénom</string>
     <string name="email">Adresse e-mail</string>
-    <string name="password">Mot de passe</string>
-    <string name="login">Se connecter</string>
-    <string name="signin">Créer un compte</string>
+    <string name="address">Adresse postale</string>
+    <string name="postal_code">Code postal</string>
+    <string name="city">Ville</string>
 
+    <!-- Account Creation and Login -->
+    <string name="password">Mot de passe</string>
+    <string name="confirm_password">Resaisir le mot de passe</string>
+    <string name="login">Se connecter</string>
+    <string name="signup">S\'inscrire</string>
+
+    <!-- Itinerary -->
+    <string name="display_distance_km">%d km</string>
+    <string name="itinerary_deleted_success">Itinéraire supprimé avec succès</string>
+    <string name="itinerary_deletion_error">Erreur lors de la suppression de l\'itinéraire</string>
+    <string name="itinerary_name">Nom de l\'itinéraire</string>
+    <string name="companies_to_visit">Entreprises à visiter</string>
+    <string name="generate">Générer</string>
+    <string name="no_clients_error">Aucun client n\'a été saisi</string>
+
+    <!-- Client -->
+    <string name="company_address">Adresse de l\'entreprise</string>
+    <string name="company_name">Nom de l\'entreprise</string>
+    <string name="information">Informations</string>
+    <string name="contact">Contact</string>
+    <string name="phone_number">Numéro de téléphone</string>
+    <string name="status">Statut</string>
+    <string name="prospect">Prospect</string>
+    <string name="client">Client</string>
+    <string name="fetching_params_error">Nous n\'avons pas pû récupéré vos informations</string>
+    <string name="params_update_success">Mise à jour de l\'utilisateur réussite</string>
+    <string name="params_update_error">Mise à jour impossible</string>
+    <string name="confirm_delete_client">Êtes-vous sûr de vouloir supprimer le client \"%s\" ?</string>
+    <string name="client_deleted_success">Le client a bien été supprimer\n</string>
+    <string name="client_deletion_error">Le client n\'a pas pû etre supprimer\n</string>
+
+    <!-- Action Bar -->
+    <string name="create_route">Création d\'un itinéraire</string>
+    <string name="search_company">Recherche une entreprise</string>
+    <string name="select_client">Séléctionner un client</string>
+    <string name="search">Rechercher…</string>
+    <string name="delete_route">Suppresion de l\'itinéraire</string>
+    <string name="confirm_delete_route">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="company_description">Description (optionnel)</string>
+    <string name="address_search_title">Recherche d\'adresse</string>
+
+    <!-- Switch -->
+    <string name="switch_item_client">Client</string>
+    <string name="switch_item_prospect">Prospect</string>
+
+    <!-- Toast Error Messages -->
+    <string name="default_error_msg">Erreur :</string>
+    <string name="fetch_route_error">Erreur : impossible de récupérer l\'itinéraire</string>
+    <string name="fetch_clients_count_error">Erreur lors de la récupération du nombre de clients</string>
+    <string name="fetch_client_error">Erreur lors de la récupération des clients</string>
+    <string name="generate_itinerary_error">Erreur : impossible de générer l\'itinéraire</string>
+    <string name="create_itinerary_error">Erreur : impossible de créer l\'itinéraire</string>
+    <string name="fetch_itinerary_error">Erreur lors de la récupérations des itineraries</string>
+    <string name="fetch_clients_error">Erreur : impossible de récupérer les clients disponibles</string>
+
+    <!-- Toast Success Messages -->
+    <string name="add_client">Ajout d\'un client</string>
+    <string name="create_itinerary_success">Itinéraire créé avec succès</string>
+    <string name="update_itinerary_success">Itinéraire modifié avec succès</string>
+    <string name="sign_up_success">Inscription réussie</string>
+    <string name="create_client_success">Client créé avec succès</string>
+    <string name="update_client_success">Client modifiée avec succès</string>
+
+    <!-- Alert Dialog Builder -->
+    <string name="quit_app">Quitter l\'application</string>
+    <string name="confirm_quit_app">Voulez-vous vraiment quitter l\'application ?</string>
+    <string name="save_params_error">Erreur lors de la sauvegarde des paramètres</string>
+    <string name="no_itinerary">Vous n\'avez aucun itinéraire</string>
+    <string name="clients_search_title">Ajout d\'un client</string>
+    <string name="create_client_error">Impossible de créer le client</string>
 </resources>
