@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 public class MapFragment extends Fragment {
 
@@ -19,6 +20,7 @@ public class MapFragment extends Fragment {
     public static MapFragment newInstance() {
         return new MapFragment();
     }
+    private ApiRequest API_REQUEST = ApiRequest.getInstance();
 
     @Override
     public void onAttach(Context context) {
@@ -31,6 +33,8 @@ public class MapFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.test_fragment, container, false);
         TextView text = frag.findViewById(R.id.nom_frag);
+        prepareItineraireMap(text);
+
         text.setText(R.string.bottom_bar_map);
         return frag;
     }
@@ -40,5 +44,17 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private void prepareItineraireMap(TextView text){
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("id")) {
+            long id = args.getLong("id");
+            API_REQUEST.itineraire.getOne(parent,id, response -> {
+                text.setText(response.getNom());
+
+            },error -> {});
+
+
+            }
+    }
 
 }
