@@ -2,7 +2,6 @@ package fr.iutrodez.tourneecommercial.fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -94,9 +93,8 @@ public class MapFragment extends Fragment {
 
     private void prepareItineraireMap(LinearLayout tableInfo, LinearLayout tvNoRoute) {
         Bundle args = getArguments();
-        if (args != null && args.containsKey("id")) {
+        if (args != null && args.containsKey("id") ) {
             itineraireId = args.getLong("id");
-
             API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
                 clients = response.getClients();
             }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
@@ -121,9 +119,10 @@ public class MapFragment extends Fragment {
                     pointDepart = new GeoPoint(location.getLatitude(), location.getLongitude());
                     mapHelper.drawMarker(start, pointDepart, "Ma Position");
 
-                    if (clients != null && destinationPoint == null) {
+                    if (clients != null) {
                         destinationPoint = new GeoPoint(clients.get(clientsIndex).getCoordonnees().getLatitude(),
                                 clients.get(clientsIndex).getCoordonnees().getLongitude());
+
 
                         mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
                         mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);

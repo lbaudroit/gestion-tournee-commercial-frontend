@@ -3,9 +3,7 @@ package fr.iutrodez.tourneecommercial.utils.helper;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
@@ -16,7 +14,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
-import org.osmdroid.util.GeoPoint;
 
 public class LocationHelper {
     private final FusedLocationProviderClient fusedLocationClient;

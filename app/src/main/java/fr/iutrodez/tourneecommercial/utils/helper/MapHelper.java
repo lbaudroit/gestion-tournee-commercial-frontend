@@ -13,6 +13,7 @@ public class MapHelper {
     }
 
     public void drawMarker(Marker marker, GeoPoint point, String title) {
+        mapView.getOverlays().remove(marker);
         marker.setPosition(point);
         marker.setTitle(title);
         mapView.getOverlays().add(marker);
@@ -30,4 +31,6 @@ public class MapHelper {
             mapView.invalidate();
         }
     }
+
+
 }
