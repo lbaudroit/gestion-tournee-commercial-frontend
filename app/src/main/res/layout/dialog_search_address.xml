@@ -14,6 +14,10 @@
             android:layout_margin="@dimen/space_vertical"
             android:text="@string/select_client"/>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/space_vertical" />
+
     <EditText
             android:id="@+id/editText_research"
             style="@style/RoundedEditText"
@@ -22,6 +26,10 @@
             android:hint="@string/search"
             android:inputType="text"
             android:singleLine="true"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/space_vertical" />
 
     <ListView
             android:layout_width="match_parent"
