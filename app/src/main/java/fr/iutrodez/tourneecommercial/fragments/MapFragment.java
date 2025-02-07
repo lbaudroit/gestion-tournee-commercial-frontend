@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +49,34 @@ public class MapFragment extends Fragment {
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
 
+    private TextView companyName;
+    private TextView companyAdresse;
+
+    // Callback qui sera appelé à chaque mise à jour de la localisation
+    private final LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location location = locationResult.getLastLocation();
+            if (location != null) {
+                pointDepart = new GeoPoint(location.getLatitude(), location.getLongitude());
+                mapHelper.drawMarker(start, pointDepart, "Ma Position");
+
+                if (clients != null) {
+                    // Récupère la position du client courant
+                    destinationPoint = new GeoPoint(
+                            clients.get(clientsIndex).getCoordonnees().getLatitude(),
+                            clients.get(clientsIndex).getCoordonnees().getLongitude()
+                    );
+
+                    companyAdresse.setText(clients.get(clientsIndex).getAdresse().toString());
+                    companyName.setText(clients.get(clientsIndex).getNomEntreprise());
+                    mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
+                    mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);
+                }
+            }
+        }
+    };
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -57,10 +86,13 @@ public class MapFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.map_fragment, container, false);
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
+        companyName = frag.findViewById(R.id.client_company_name);
+        companyAdresse = frag.findViewById(R.id.client_company_adress);
         // Initialisation de la carte
         mapView = frag.findViewById(R.id.mapView);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -86,55 +118,47 @@ public class MapFragment extends Fragment {
 
         // Chargement de l'itinéraire
         prepareItineraireMap(tableInfo, tvNoRoute);
-        getCurrentLocation();
 
         return frag;
     }
 
     private void prepareItineraireMap(LinearLayout tableInfo, LinearLayout tvNoRoute) {
         Bundle args = getArguments();
-        if (args != null && args.containsKey("id") ) {
+        if (args != null && args.containsKey("id")) {
             itineraireId = args.getLong("id");
             API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
                 clients = response.getClients();
             }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
-
         } else {
             tableInfo.setVisibility(View.GONE);
             tvNoRoute.setVisibility(View.VISIBLE);
         }
     }
 
-    private void getCurrentLocation() {
+    /**
+     * Marque le client actuel comme "visité" et passe au suivant.
+     */
+    private void markVisited() {
+        destinationPoint = null;
+        clientsIndex++;
+        // Vous pouvez ici ajouter une logique pour vérifier que clientsIndex est dans les limites
+    }
+
+    // Démarre la mise à jour continue de la localisation lorsque le fragment est visible
+    @Override
+    public void onResume() {
+        super.onResume();
         if (!locationHelper.checkPermissions()) {
             ActivityCompat.requestPermissions(parent, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }
-
-        locationHelper.getCurrentLocation(new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                if (location != null) {
-                    pointDepart = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    mapHelper.drawMarker(start, pointDepart, "Ma Position");
-
-                    if (clients != null) {
-                        destinationPoint = new GeoPoint(clients.get(clientsIndex).getCoordonnees().getLatitude(),
-                                clients.get(clientsIndex).getCoordonnees().getLongitude());
-
-
-                        mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
-                        mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);
-                    }
-                }
-            }
-        });
+        locationHelper.startContinuousLocationUpdates(locationCallback);
     }
 
-    private void markVisited() {
-        destinationPoint = null;
-        clientsIndex++;
-        getCurrentLocation();
+    // Arrête la mise à jour continue de la localisation pour économiser la batterie
+    @Override
+    public void onPause() {
+        super.onPause();
+        locationHelper.stopLocationUpdates(locationCallback);
     }
 }
