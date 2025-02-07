@@ -292,7 +292,7 @@ public class ItineraryCreationFragment extends Fragment {
         String itineraryName = name.getText().toString();
         API_REQUEST.itineraire.create(getContext(), itineraryName, distance, itineraryClients, response -> {
             Toast.makeText(getContext(),
-                    R.string.fetch_itinerary_error,
+                    R.string.create_itinerary_success,
                     Toast.LENGTH_SHORT).show();
             parent.navigateToFragment(MainActivity.ITINERARY_FRAGMENT, false);
         }, onExceptionCallback::accept);
