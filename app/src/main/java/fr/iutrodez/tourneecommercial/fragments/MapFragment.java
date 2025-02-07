@@ -36,6 +36,9 @@ import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
 import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 
+/**
+ * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
+ */
 public class MapFragment extends Fragment {
     private MainActivity parent;
     private final ApiRequest API_REQUEST = ApiRequest.getInstance();
@@ -52,7 +55,9 @@ public class MapFragment extends Fragment {
     private TextView companyName;
     private TextView companyAdresse;
 
-    // Callback qui sera appelé à chaque mise à jour de la localisation
+    /**
+     * Callback appelé à chaque mise à jour de la localisation.
+     */
     private final LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -62,7 +67,6 @@ public class MapFragment extends Fragment {
                 mapHelper.drawMarker(start, pointDepart, "Ma Position");
 
                 if (clients != null) {
-                    // Récupère la position du client courant
                     destinationPoint = new GeoPoint(
                             clients.get(clientsIndex).getCoordonnees().getLatitude(),
                             clients.get(clientsIndex).getCoordonnees().getLongitude()
@@ -77,6 +81,10 @@ public class MapFragment extends Fragment {
         }
     };
 
+    /**
+     * Attache le fragment au contexte de l'activité principale.
+     * @param context Contexte de l'application.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -84,6 +92,13 @@ public class MapFragment extends Fragment {
         locationHelper = new LocationHelper(context);
     }
 
+    /**
+     * Crée et retourne la vue associée au fragment.
+     * @param inflater LayoutInflater pour gonfler la vue.
+     * @param container Vue parente.
+     * @param savedInstanceState État précédent du fragment.
+     * @return Vue créée.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -93,6 +108,7 @@ public class MapFragment extends Fragment {
 
         companyName = frag.findViewById(R.id.client_company_name);
         companyAdresse = frag.findViewById(R.id.client_company_adress);
+
         // Initialisation de la carte
         mapView = frag.findViewById(R.id.mapView);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -122,6 +138,11 @@ public class MapFragment extends Fragment {
         return frag;
     }
 
+    /**
+     * Prépare la carte en récupérant les données de l'itinéraire.
+     * @param tableInfo Layout contenant les informations de l'itinéraire.
+     * @param tvNoRoute Message affiché si aucun itinéraire n'est trouvé.
+     */
     private void prepareItineraireMap(LinearLayout tableInfo, LinearLayout tvNoRoute) {
         Bundle args = getArguments();
         if (args != null && args.containsKey("id")) {
@@ -141,10 +162,12 @@ public class MapFragment extends Fragment {
     private void markVisited() {
         destinationPoint = null;
         clientsIndex++;
-        // Vous pouvez ici ajouter une logique pour vérifier que clientsIndex est dans les limites
+        // Ajout d'une vérification que clientsIndex est dans les limites
     }
 
-    // Démarre la mise à jour continue de la localisation lorsque le fragment est visible
+    /**
+     * Démarre la mise à jour continue de la localisation lorsque le fragment est visible.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -155,7 +178,9 @@ public class MapFragment extends Fragment {
         locationHelper.startContinuousLocationUpdates(locationCallback);
     }
 
-    // Arrête la mise à jour continue de la localisation pour économiser la batterie
+    /**
+     * Arrête la mise à jour continue de la localisation pour économiser la batterie.
+     */
     @Override
     public void onPause() {
         super.onPause();
