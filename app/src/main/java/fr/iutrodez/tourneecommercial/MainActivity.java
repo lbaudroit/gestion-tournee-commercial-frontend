@@ -1,7 +1,9 @@
 package fr.iutrodez.tourneecommercial;
 
 import android.app.AlertDialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -226,4 +228,16 @@ public class MainActivity extends AppCompatActivity
         }
         return idFound;
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "Permission GPS accordée !");
+            } else {
+                Log.e("MainActivity", "Permission GPS refusée !");
+            }
+        }
+    }
+
 }

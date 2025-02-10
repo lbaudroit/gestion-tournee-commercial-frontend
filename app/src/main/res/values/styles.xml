@@ -86,4 +86,5 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="roudedButton"></style>
 </resources>
