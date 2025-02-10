@@ -1,10 +1,13 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.disableView;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -87,13 +90,20 @@ public class SettingFragment extends Fragment {
         name = view.findViewById(R.id.editText_name);
         firstname = view.findViewById(R.id.editText_firstname);
         email = view.findViewById(R.id.editText_email);
-        view.findViewById(R.id.button_modify).setOnClickListener(this::modifier);
+        Button modify = view.findViewById(R.id.button_modify);
+        modify.setOnClickListener(this::modifier);
 
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
             name.setText(response.getNom());
             firstname.setText(response.getPrenom());
             email.setText(response.getEmail());
-        }, error -> Toast.makeText(getContext(), R.string.fetching_params_error, Toast.LENGTH_LONG).show());
+        }, error -> {
+            disableView(name);
+            disableView(firstname);
+            disableView(email);
+            disableView(modify);
+            Toast.makeText(getContext(), R.string.fetching_params_error, Toast.LENGTH_LONG).show();
+        });
     }
 
     /**
@@ -105,7 +115,7 @@ public class SettingFragment extends Fragment {
         if (checkFields()) {
             API_REQUEST.utilisateur.updateSelf(getContext(), name.getText().toString(), firstname.getText().toString(), email.getText().toString(), response -> {
                 Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
-                Objects.requireNonNull(getContext()).getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
+                requireContext().getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
             }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
         }
     }

@@ -1,5 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.disableView;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -43,6 +46,8 @@ public class ClientFragment extends Fragment {
     public MainActivity parent;
     private ClientListAdapter clientListAdapter;
 
+    private Button add;
+
     private boolean isLoading = false;
     private int currentPage = 0;
     private int numberOfPages = 0;
@@ -63,7 +68,8 @@ public class ClientFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_client_fragment, container, false);
         ListView list = frag.findViewById(R.id.listitem_client);
-        frag.findViewById(R.id.button_add).setOnClickListener(this::add);
+        add = frag.findViewById(R.id.button_add);
+        add.setOnClickListener(this::add);
 
         // Initialize adapter
         clientListAdapter = new ClientListAdapter(
@@ -112,7 +118,7 @@ public class ClientFragment extends Fragment {
      * @param client le client appuyé
      */
     public void delete(Client client) {
-        String message = Objects.requireNonNull(getContext()).getString(R.string.confirm_delete_client, client.getNomEntreprise());
+        String message = requireContext().getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.delete_route)
                 .setMessage(message)
@@ -130,8 +136,9 @@ public class ClientFragment extends Fragment {
     }
 
     private void fetchNumberOfClients() {
-        API_REQUEST.client.getNumberOfPages(requireContext(), numberOfPages -> this.numberOfPages = numberOfPages, error -> Toast.makeText(parent, R.string.fetch_clients_count_error,
-                Toast.LENGTH_SHORT).show());
+        API_REQUEST.client.getNumberOfPages(requireContext(),
+                numberOfPages -> this.numberOfPages = numberOfPages,
+                error -> onFetchFail(R.string.fetch_clients_count_error));
     }
 
     private void fetchClientsPage() {
@@ -140,9 +147,13 @@ public class ClientFragment extends Fragment {
             this.clients.addAll(clients);
             clientListAdapter.notifyDataSetChanged();
             currentPage++;
-        }, error -> Toast.makeText(parent, R.string.fetch_client_error,
-                Toast.LENGTH_SHORT).show());
+        }, error -> onFetchFail(R.string.fetch_client_error));
         isLoading = false;
+    }
+
+    private void onFetchFail(int messageId) {
+        disableView(add);
+        Toast.makeText(parent, messageId, Toast.LENGTH_SHORT).show();
     }
 
     /**

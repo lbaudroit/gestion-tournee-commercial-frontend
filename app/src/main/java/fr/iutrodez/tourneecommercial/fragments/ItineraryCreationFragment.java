@@ -19,6 +19,7 @@ import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.WidgetHelpers;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.ArrayList;
@@ -95,9 +96,9 @@ public class ItineraryCreationFragment extends Fragment {
         addedClientsList.setAdapter(itineraryClientsAdapter);
 
         // Blocage des boutons
-        disableView(generateItineraryButton);
-        disableView(validateItineraryButton);
-        disableView(addClientButton);
+        WidgetHelpers.disableView(generateItineraryButton);
+        WidgetHelpers.disableView(validateItineraryButton);
+        WidgetHelpers.disableView(addClientButton);
 
         // Gestion du champ de recherche des clients
         createClientResearch();
@@ -171,7 +172,7 @@ public class ItineraryCreationFragment extends Fragment {
             list.setOnItemClickListener((parent, view, position, id) -> {
                 clientSelector.setText(Objects.requireNonNull(freeClientsAdapter.getItem(position)).getNomEntreprise());
                 selectedClient = freeClientsAdapter.getItem(position);
-                enableView(addClientButton);
+                WidgetHelpers.enableView(addClientButton);
                 dialog.dismiss();
             });
         });
@@ -183,14 +184,14 @@ public class ItineraryCreationFragment extends Fragment {
 
         // On réactive les boutons d'ajout s'il y a moins de 8 clients
         if (itineraryClients.size() < MAX_CLIENTS) {
-            enableView(clientSelector);
+            WidgetHelpers.enableView(clientSelector);
         }
         if (itineraryClients.isEmpty()) {
-            disableView(generateItineraryButton);
+            WidgetHelpers.disableView(generateItineraryButton);
         } else {
-            enableView(generateItineraryButton);
+            WidgetHelpers.enableView(generateItineraryButton);
         }
-        disableView(validateItineraryButton);
+        WidgetHelpers.disableView(validateItineraryButton);
     }
 
     private List<Client> getFreeClients() {
@@ -208,29 +209,19 @@ public class ItineraryCreationFragment extends Fragment {
         selectedClient = null;
 
         // On ré-active le bouton de génération
-        enableView(generateItineraryButton);
+        WidgetHelpers.enableView(generateItineraryButton);
 
         // On désactive les boutons d'ajout s'il y a 8 clients
         if (itineraryClients.size() == MAX_CLIENTS) {
-            disableView(clientSelector);
+            WidgetHelpers.disableView(clientSelector);
         }
 
         // On vide le champ et on rebloque le bouton ajouter
         clientSelector.setText("");
-        disableView(addClientButton);
+        WidgetHelpers.disableView(addClientButton);
 
         // On désactive le bouton de validation tant qu'il n'y a pas de génération
-        disableView(validateItineraryButton);
-    }
-
-    private void disableView(View view) {
-        view.setEnabled(false);
-        view.setAlpha(0.5f);
-    }
-
-    private void enableView(View view) {
-        view.setEnabled(true);
-        view.setAlpha(1f);
+        WidgetHelpers.disableView(validateItineraryButton);
     }
 
     private void generate(View view) {
@@ -239,8 +230,8 @@ public class ItineraryCreationFragment extends Fragment {
             itineraryClients.clear();
             itineraryClients.addAll(response.getClients());
             itineraryClientsAdapter.notifyDataSetChanged();
-            disableView(generateItineraryButton);
-            enableView(validateItineraryButton);
+            WidgetHelpers.disableView(generateItineraryButton);
+            WidgetHelpers.enableView(validateItineraryButton);
         }, error -> {
             Toast.makeText(getContext(),
                     R.string.generate_itinerary_error,
@@ -334,11 +325,11 @@ public class ItineraryCreationFragment extends Fragment {
             modifiedItineraryId = response.getId();
 
             // On désactive la génération
-            disableView(generateItineraryButton);
+            WidgetHelpers.disableView(generateItineraryButton);
 
             // On vérifie si on a atteint le nombre maximum de clients
             if (itineraryClients.size() == MAX_CLIENTS) {
-                disableView(clientSelector);
+                WidgetHelpers.disableView(clientSelector);
             }
             // On active le bouton de validation et on change son texte en "Modifier"
             validateItineraryButton.setText(R.string.edit);
@@ -351,7 +342,7 @@ public class ItineraryCreationFragment extends Fragment {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    enableView(validateItineraryButton);
+                    WidgetHelpers.enableView(validateItineraryButton);
                 }
 
                 @Override

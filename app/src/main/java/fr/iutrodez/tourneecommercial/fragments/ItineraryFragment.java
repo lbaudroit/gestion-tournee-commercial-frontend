@@ -1,5 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.disableView;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import java.util.List;
  */
 public class ItineraryFragment extends Fragment {
     private ItineraryListAdapter itineraryListAdapter;
+    private Button add;
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
@@ -61,7 +64,7 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_itinerary_fragment, container, false);
         ListView list = frag.findViewById(R.id.listView_itinerary);
-        Button add = frag.findViewById(R.id.button_add);
+        add = frag.findViewById(R.id.button_add);
 
         fetchNumberOfItinerarypages();
         fetchItinerariesNextpage();
@@ -85,7 +88,7 @@ public class ItineraryFragment extends Fragment {
      */
     private void fetchNumberOfItinerarypages() {
         API_REQUEST.itineraire.getNumberOfPages(requireContext(), response -> totalPages = response,
-                error -> Toast.makeText(getContext(), R.string.fetch_itinerary_error, Toast.LENGTH_SHORT).show());
+                error -> onFetchFail(R.string.fetch_itinerary_error));
     }
 
     /**
@@ -96,7 +99,12 @@ public class ItineraryFragment extends Fragment {
             itineraries.addAll(response);
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
-        }, error -> Toast.makeText(getContext(), R.string.fetch_itinerary_error, Toast.LENGTH_SHORT).show());
+        }, error -> onFetchFail(R.string.fetch_itinerary_error));
+    }
+
+    private void onFetchFail(int messageId) {
+        disableView(add);
+        Toast.makeText(parent, messageId, Toast.LENGTH_SHORT).show();
     }
 
     /**
