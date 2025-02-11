@@ -63,20 +63,42 @@ public class MapFragment extends Fragment {
         public void onLocationResult(LocationResult locationResult) {
             Location location = locationResult.getLastLocation();
             if (location != null) {
-                pointDepart = new GeoPoint(location.getLatitude(), location.getLongitude());
-                mapHelper.drawMarker(start, pointDepart, "Ma Position");
+                boolean positionChanged = pointDepart == null
+                        || pointDepart.getLongitude() != location.getLongitude()
+                        || pointDepart.getLatitude() != location.getLatitude();
+                //  Avant de placer un nouveau marker vérifie que notre position est bien différente
+                //  que celle de l'ancien marker
+                if( positionChanged){
 
-                if (clients != null) {
-                    destinationPoint = new GeoPoint(
-                            clients.get(clientsIndex).getCoordonnees().getLatitude(),
-                            clients.get(clientsIndex).getCoordonnees().getLongitude()
-                    );
+                        pointDepart = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    mapHelper.drawMarker(start, pointDepart, "Ma Position");
+                    centerView();
 
-                    companyAdresse.setText(clients.get(clientsIndex).getAdresse().toString());
-                    companyName.setText(clients.get(clientsIndex).getNomEntreprise());
-                    mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
-                    mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);
                 }
+                // ne place le marker que le marker client n'existe pas
+                if (clients != null && destinationPoint == null) {
+                    clientMarker();
+                }
+            }
+
+        }
+
+    };
+
+
+    /**
+     *
+     */
+    private void clientMarker(){
+        destinationPoint = new GeoPoint(
+                clients.get(clientsIndex).getCoordonnees().getLatitude(),
+                clients.get(clientsIndex).getCoordonnees().getLongitude());
+
+        companyAdresse.setText(clients.get(clientsIndex).getAdresse().toString());
+        companyName.setText(clients.get(clientsIndex).getNomEntreprise());
+        mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
+        mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);
+    }
             }
         }
     };
@@ -126,11 +148,11 @@ public class MapFragment extends Fragment {
             }, 1);
         }
 
-        // Initialisation des UI
-        LinearLayout tableInfo = frag.findViewById(R.id.layoutOverlay);
-        LinearLayout tvNoRoute = frag.findViewById(R.id.tv_no_route);
-        ImageButton buttonVisit = frag.findViewById(R.id.btn_continue);
+        Button buttonVisit = frag.findViewById(R.id.btn_continue);
         buttonVisit.setOnClickListener(view -> markVisited());
+
+        Button buttonCenter = frag.findViewById(R.id.btn_recenter);
+        buttonCenter.setOnClickListener(view -> centerView());
 
         // Chargement de l'itinéraire
         prepareItineraireMap(tableInfo, tvNoRoute);
@@ -162,9 +184,25 @@ public class MapFragment extends Fragment {
     private void markVisited() {
         destinationPoint = null;
         clientsIndex++;
+        clientMarker();
         // Ajout d'une vérification que clientsIndex est dans les limites
     }
 
+    /**
+     * recentre la vue
+     */
+    private void centerView(){
+        if(pointDepart != null){
+            if(destinationPoint != null){
+                mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);
+
+            }else{
+                mapHelper.adjustZoomToMarkers(pointDepart, pointDepart);
+
+            }
+        }
+
+    }
     /**
      * Démarre la mise à jour continue de la localisation lorsque le fragment est visible.
      */
@@ -185,5 +223,7 @@ public class MapFragment extends Fragment {
     public void onPause() {
         super.onPause();
         locationHelper.stopLocationUpdates(locationCallback);
+        destinationPoint = null;
+        pointDepart = null;
     }
 }
