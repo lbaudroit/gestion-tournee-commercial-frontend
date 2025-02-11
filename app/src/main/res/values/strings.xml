@@ -58,7 +58,7 @@
     <string name="status">Statut</string>
     <string name="prospect">Prospect</string>
     <string name="client">Client</string>
-    <string name="fetching_params_error">Nous n\'avons pas pû récupéré vos informations</string>
+    <string name="fetching_params_error">Nous n\'avons pas pû récupérer vos informations</string>
     <string name="params_update_success">Mise à jour de l\'utilisateur réussite</string>
     <string name="params_update_error">Mise à jour impossible</string>
     <string name="confirm_delete_client">Êtes-vous sûr de vouloir supprimer le client \"%s\" ?</string>

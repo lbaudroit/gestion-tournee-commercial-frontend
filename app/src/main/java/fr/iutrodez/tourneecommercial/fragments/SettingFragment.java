@@ -1,6 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
 import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.disableView;
+import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.setVisibilityFor;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.utils.FetchStatus;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.Objects;
@@ -34,6 +36,17 @@ public class SettingFragment extends Fragment {
      * EditText pour le nom, prénom et email de l'utilisateur.
      */
     private EditText name, firstname, email;
+
+    /**
+     * Affichage pour mettre un Progress ou un message d'erreur
+     * pendant la récupération des données.
+     */
+    private FetchStatus status;
+
+    /**
+     * Le bouton "modifier"
+     */
+    private Button modify;
 
     /**
      * Crée une nouvelle instance de SettingFragment.
@@ -90,19 +103,29 @@ public class SettingFragment extends Fragment {
         name = view.findViewById(R.id.editText_name);
         firstname = view.findViewById(R.id.editText_firstname);
         email = view.findViewById(R.id.editText_email);
-        Button modify = view.findViewById(R.id.button_modify);
+
+        status = view.findViewById(R.id.fetchStatus_status);
+
+        modify = view.findViewById(R.id.button_modify);
         modify.setOnClickListener(this::modifier);
 
+        setContentVisibility(View.GONE);
+        status.setLoading();
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
+            setContentVisibility(View.VISIBLE);
+            status.hide();
+
             name.setText(response.getNom());
             firstname.setText(response.getPrenom());
             email.setText(response.getEmail());
         }, error -> {
+            setContentVisibility(View.GONE);
+            status.setError(R.string.fetching_params_error);
+
             disableView(name);
             disableView(firstname);
             disableView(email);
             disableView(modify);
-            Toast.makeText(getContext(), R.string.fetching_params_error, Toast.LENGTH_LONG).show();
         });
     }
 
@@ -175,5 +198,21 @@ public class SettingFragment extends Fragment {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     *
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    public void setContentVisibility(int visibility) {
+        ViewGroup rootLayout = Objects.requireNonNull((ViewGroup) this.getView());
+        for (int i = 0 ; i < rootLayout.getChildCount() ; i++) {
+            View child = rootLayout.getChildAt(i);
+            if (!(child instanceof FetchStatus)) {
+                setVisibilityFor(visibility, child);
+            }
+        }
     }
 }

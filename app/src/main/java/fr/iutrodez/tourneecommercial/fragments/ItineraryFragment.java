@@ -1,6 +1,6 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.disableView;
+import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.setVisibilityFor;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,18 +12,22 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
-import fr.iutrodez.tourneecommercial.utils.ItineraryListAdapter;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Itineraire;
+import fr.iutrodez.tourneecommercial.utils.FetchStatus;
+import fr.iutrodez.tourneecommercial.utils.ItineraryListAdapter;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 /**
  * Fragment pour afficher et gérer la liste des itinéraires.
@@ -31,13 +35,16 @@ import java.util.List;
 public class ItineraryFragment extends Fragment {
     private ItineraryListAdapter itineraryListAdapter;
     private Button add;
+
+    public MainActivity parent;
+    private ListView list;
+
+    private FetchStatus status;
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
     private final List<Itineraire> itineraries = new ArrayList<>();
-
     public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-    public MainActivity parent;
 
     /**
      * Crée une nouvelle instance de ItineraryFragment.
@@ -63,8 +70,9 @@ public class ItineraryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_itinerary_fragment, container, false);
-        ListView list = frag.findViewById(R.id.listView_itinerary);
+        list = frag.findViewById(R.id.listView_itinerary);
         add = frag.findViewById(R.id.button_add);
+        status = frag.findViewById(R.id.fetchStatus_status);
 
         fetchNumberOfItinerarypages();
         fetchItinerariesNextpage();
@@ -87,24 +95,38 @@ public class ItineraryFragment extends Fragment {
      * Récupère le nombre de pages d'itinéraires depuis l'API.
      */
     private void fetchNumberOfItinerarypages() {
-        API_REQUEST.itineraire.getNumberOfPages(requireContext(), response -> totalPages = response,
-                error -> onFetchFail(R.string.fetch_itinerary_error));
+        status.setLoading();
+
+        API_REQUEST.itineraire.getNumberOfPages(requireContext(),
+                response -> {
+                    totalPages = response;
+
+                    setContentVisibility(View.VISIBLE);
+                    status.hide();
+                },
+                error -> {
+                    setContentVisibility(View.GONE);
+                    status.setError(R.string.fetch_itinerary_error);
+                });
     }
 
     /**
      * Récupère la page suivante d'itinéraires depuis l'API.
      */
     private void fetchItinerariesNextpage() {
+        status.setLoading();
+
         API_REQUEST.itineraire.getPage(parent, currentPage, response -> {
             itineraries.addAll(response);
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
-        }, error -> onFetchFail(R.string.fetch_itinerary_error));
-    }
 
-    private void onFetchFail(int messageId) {
-        disableView(add);
-        Toast.makeText(parent, messageId, Toast.LENGTH_SHORT).show();
+            setContentVisibility(View.VISIBLE);
+            status.hide();
+        }, error -> {
+            setContentVisibility(View.GONE);
+            status.setError(R.string.fetch_itinerary_error);
+        });
     }
 
     /**
@@ -179,5 +201,14 @@ public class ItineraryFragment extends Fragment {
                 }
             }
         });
+    }
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     *
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    public void setContentVisibility(int visibility) {
+        setVisibilityFor(visibility, add, list);
     }
 }

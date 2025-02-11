@@ -20,4 +20,9 @@
             android:layout_height="wrap_content"
             tools:listitem="@layout/list_of_client_items"/>
 
+    <fr.iutrodez.tourneecommercial.utils.FetchStatus
+        android:id="@+id/fetchStatus_status"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </LinearLayout>
