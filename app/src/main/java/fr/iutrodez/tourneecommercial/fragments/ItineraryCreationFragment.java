@@ -11,21 +11,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
 import fr.iutrodez.tourneecommercial.utils.WidgetHelpers;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 public class ItineraryCreationFragment extends Fragment {
 
@@ -53,10 +59,6 @@ public class ItineraryCreationFragment extends Fragment {
     private Integer distance;
     private Client selectedClient;
     private Long modifiedItineraryId = null;
-
-    public static ItineraryCreationFragment newInstance() {
-        return new ItineraryCreationFragment();
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -120,13 +122,11 @@ public class ItineraryCreationFragment extends Fragment {
     }
 
     private void getAllClients() {
-        API_REQUEST.client.getAll(getContext(), response -> {
-            allClients = response;
-        }, error -> {
-            Toast.makeText(getContext(),
-                    R.string.fetch_clients_error,
-                    Toast.LENGTH_SHORT).show();
-        });
+        API_REQUEST.client.getAll(getContext(),
+                response -> allClients = response,
+                error -> Toast.makeText(getContext(),
+                        R.string.fetch_clients_error,
+                        Toast.LENGTH_SHORT).show());
     }
 
     private void createClientResearch() {
@@ -225,18 +225,18 @@ public class ItineraryCreationFragment extends Fragment {
     }
 
     private void generate(View view) {
-        API_REQUEST.itineraire.generate(getContext(), itineraryClients, response -> {
-            distance = response.getDistance();
-            itineraryClients.clear();
-            itineraryClients.addAll(response.getClients());
-            itineraryClientsAdapter.notifyDataSetChanged();
-            WidgetHelpers.disableView(generateItineraryButton);
-            WidgetHelpers.enableView(validateItineraryButton);
-        }, error -> {
-            Toast.makeText(getContext(),
-                    R.string.generate_itinerary_error,
-                    Toast.LENGTH_SHORT).show();
-        });
+        API_REQUEST.itineraire.generate(getContext(), itineraryClients,
+                response -> {
+                    distance = response.getDistance();
+                    itineraryClients.clear();
+                    itineraryClients.addAll(response.getClients());
+                    itineraryClientsAdapter.notifyDataSetChanged();
+                    WidgetHelpers.disableView(generateItineraryButton);
+                    WidgetHelpers.enableView(validateItineraryButton);
+                },
+                error -> Toast.makeText(getContext(),
+                        R.string.generate_itinerary_error,
+                        Toast.LENGTH_SHORT).show());
     }
 
     /**

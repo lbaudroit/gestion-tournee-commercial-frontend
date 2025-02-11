@@ -53,10 +53,6 @@ public class ClientFragment extends Fragment {
     private int numberOfPages = 0;
     private final List<Client> clients = new ArrayList<>();
 
-    public static ClientFragment newInstance() {
-        return new ClientFragment();
-    }
-
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);

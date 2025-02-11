@@ -49,15 +49,6 @@ public class SettingFragment extends Fragment {
     private Button modify;
 
     /**
-     * Crée une nouvelle instance de SettingFragment.
-     *
-     * @return une nouvelle instance de SettingFragment
-     */
-    public SettingFragment newInstance() {
-        return new SettingFragment();
-    }
-
-    /**
      * Appelé lors de la création du fragment.
      *
      * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir de cet état précédent.

@@ -47,15 +47,6 @@ public class ItineraryFragment extends Fragment {
     private final List<Itineraire> itineraries = new ArrayList<>();
     public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
 
-    /**
-     * Crée une nouvelle instance de ItineraryFragment.
-     *
-     * @return une nouvelle instance de ItineraryFragment
-     */
-    public static ItineraryFragment newInstance() {
-        return new ItineraryFragment();
-    }
-
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
@@ -73,6 +64,7 @@ public class ItineraryFragment extends Fragment {
         View frag = inflater.inflate(R.layout.list_of_itinerary_fragment, container, false);
         list = frag.findViewById(R.id.listView_itinerary);
         add = frag.findViewById(R.id.button_add);
+
         status = frag.findViewById(R.id.fetchStatus_status);
         status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
         status.setHideContentFunction(() -> setContentVisibility(View.GONE));

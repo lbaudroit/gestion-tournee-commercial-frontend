@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class ClientCreationFragment extends Fragment {
 
-    private ApiRequest API_REQUEST = ApiRequest.getInstance();
+    private final ApiRequest API_REQUEST = ApiRequest.getInstance();
     private List<Adresse> suggestedAddress;
     private AddressAdapter addressAdapter;
 
@@ -48,10 +48,6 @@ public class ClientCreationFragment extends Fragment {
     private Switch clientOrProspect;
     private EditText businessName, name, firstname, phoneNumber, description;
     private String idModified;
-
-    public static ClientCreationFragment newInstance() {
-        return new ClientCreationFragment();
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
