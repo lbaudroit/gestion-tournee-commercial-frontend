@@ -1,6 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.location.Location;
 import android.os.Build;
@@ -9,7 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import java.util.List;
+import java.util.Objects;
 
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
@@ -54,6 +56,7 @@ public class MapFragment extends Fragment {
 
     private TextView companyName;
     private TextView companyAdresse;
+
 
     /**
      * Callback appelé à chaque mise à jour de la localisation.
@@ -99,9 +102,6 @@ public class MapFragment extends Fragment {
         mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
         mapHelper.adjustZoomToMarkers(pointDepart, destinationPoint);
     }
-            }
-        }
-    };
 
     /**
      * Attache le fragment au contexte de l'activité principale.
@@ -125,7 +125,7 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View frag = inflater.inflate(R.layout.map_fragment, container, false);
+        View frag = inflater.inflate(R.layout.map_fragment_2, container, false);
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
         companyName = frag.findViewById(R.id.client_company_name);
@@ -155,17 +155,15 @@ public class MapFragment extends Fragment {
         buttonCenter.setOnClickListener(view -> centerView());
 
         // Chargement de l'itinéraire
-        prepareItineraireMap(tableInfo, tvNoRoute);
+        prepareItineraireMap();
 
         return frag;
     }
 
     /**
      * Prépare la carte en récupérant les données de l'itinéraire.
-     * @param tableInfo Layout contenant les informations de l'itinéraire.
-     * @param tvNoRoute Message affiché si aucun itinéraire n'est trouvé.
      */
-    private void prepareItineraireMap(LinearLayout tableInfo, LinearLayout tvNoRoute) {
+    private void prepareItineraireMap() {
         Bundle args = getArguments();
         if (args != null && args.containsKey("id")) {
             itineraireId = args.getLong("id");
@@ -173,8 +171,14 @@ public class MapFragment extends Fragment {
                 clients = response.getClients();
             }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
         } else {
-            tableInfo.setVisibility(View.GONE);
-            tvNoRoute.setVisibility(View.VISIBLE);
+            String message = "Aucun itinéraire sélectionné , voulez vous poursuivre sans itinéraire ?";
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.delete_route)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT,false,args))
+                    .show();
+
         }
     }
 
@@ -214,6 +218,8 @@ public class MapFragment extends Fragment {
             return;
         }
         locationHelper.startContinuousLocationUpdates(locationCallback);
+
+
     }
 
     /**
