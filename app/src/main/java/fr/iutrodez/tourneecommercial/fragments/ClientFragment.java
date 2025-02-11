@@ -72,7 +72,11 @@ public class ClientFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_client_fragment, container, false);
         list = frag.findViewById(R.id.listitem_client);
+
         status = frag.findViewById(R.id.fetchStatus_status);
+        status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
+        status.setHideContentFunction(() -> setContentVisibility(View.GONE));
+
         add = frag.findViewById(R.id.button_add);
         add.setOnClickListener(this::add);
 
@@ -141,22 +145,17 @@ public class ClientFragment extends Fragment {
     }
 
     private void fetchNumberOfClients() {
-        setContentVisibility(View.GONE);
         status.setLoading();
 
         API_REQUEST.client.getNumberOfPages(requireContext(),
                 numberOfPages -> {
                     this.numberOfPages = numberOfPages;
                     status.hide();
-                    setContentVisibility(View.VISIBLE);
                 },
-                error -> {
-                    status.setError(R.string.fetch_clients_count_error);
-                });
+                error -> status.setError(R.string.fetch_clients_count_error));
     }
 
     private void fetchClientsPage() {
-        setContentVisibility(View.GONE);
         status.setLoading();
 
         isLoading = true;
@@ -165,11 +164,8 @@ public class ClientFragment extends Fragment {
             clientListAdapter.notifyDataSetChanged();
             currentPage++;
 
-            setContentVisibility(View.VISIBLE);
             status.hide();
-        }, error -> {
-            status.setError(R.string.fetch_client_error);
-        });
+        }, error -> status.setError(R.string.fetch_client_error));
         isLoading = false;
     }
 

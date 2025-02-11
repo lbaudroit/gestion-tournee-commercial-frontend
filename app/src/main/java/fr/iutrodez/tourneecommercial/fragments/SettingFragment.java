@@ -105,21 +105,20 @@ public class SettingFragment extends Fragment {
         email = view.findViewById(R.id.editText_email);
 
         status = view.findViewById(R.id.fetchStatus_status);
+        status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
+        status.setHideContentFunction(() -> setContentVisibility(View.GONE));
 
         modify = view.findViewById(R.id.button_modify);
         modify.setOnClickListener(this::modifier);
 
-        setContentVisibility(View.GONE);
         status.setLoading();
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
-            setContentVisibility(View.VISIBLE);
             status.hide();
 
             name.setText(response.getNom());
             firstname.setText(response.getPrenom());
             email.setText(response.getEmail());
         }, error -> {
-            setContentVisibility(View.GONE);
             status.setError(R.string.fetching_params_error);
 
             disableView(name);

@@ -27,6 +27,8 @@ import fr.iutrodez.tourneecommercial.R;
 public class FetchStatus extends LinearLayout {
     private ProgressBar progressBar;
     private TextView error;
+    private Runnable hideContentFunction;
+    private Runnable showContentFunction;
     public FetchStatus(Context context) {
         super(context);
     }
@@ -57,10 +59,19 @@ public class FetchStatus extends LinearLayout {
         error = findViewById(R.id.textView_error);
     }
 
+    public void setHideContentFunction(Runnable hideContentFunction) {
+        this.hideContentFunction = hideContentFunction;
+    }
+
+    public void setShowContentFunction(Runnable showContentFunction) {
+        this.showContentFunction = showContentFunction;
+    }
+
     /**
      * Affiche la barre de chargement
      */
     public void setLoading() {
+        hideContentFunction.run();
         progressBar.setVisibility(VISIBLE);
         error.setVisibility(GONE);
     }
@@ -70,6 +81,7 @@ public class FetchStatus extends LinearLayout {
      * @param message Ressource du message d'erreur
      */
     public void setError(int message) {
+        hideContentFunction.run();
         progressBar.setVisibility(GONE);
         error.setText(getContext().getString(message));
         error.setVisibility(VISIBLE);
@@ -80,6 +92,7 @@ public class FetchStatus extends LinearLayout {
      * le composant est entièrement invisible, sans hauteur ni largeur
      */
     public void hide() {
+        showContentFunction.run();
         progressBar.setVisibility(GONE);
         error.setVisibility(GONE);
     }

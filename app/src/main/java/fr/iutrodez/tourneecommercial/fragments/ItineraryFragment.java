@@ -74,6 +74,8 @@ public class ItineraryFragment extends Fragment {
         list = frag.findViewById(R.id.listView_itinerary);
         add = frag.findViewById(R.id.button_add);
         status = frag.findViewById(R.id.fetchStatus_status);
+        status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
+        status.setHideContentFunction(() -> setContentVisibility(View.GONE));
 
         fetchNumberOfItinerarypages();
         fetchItinerariesNextpage();
@@ -97,18 +99,14 @@ public class ItineraryFragment extends Fragment {
      */
     private void fetchNumberOfItinerarypages() {
         status.setLoading();
+        
 
         API_REQUEST.itineraire.getNumberOfPages(requireContext(),
                 response -> {
                     totalPages = response;
-
-                    setContentVisibility(View.VISIBLE);
                     status.hide();
                 },
-                error -> {
-                    setContentVisibility(View.GONE);
-                    status.setError(R.string.fetch_itinerary_error);
-                });
+                error -> status.setError(R.string.fetch_itinerary_error));
     }
 
     /**
@@ -122,12 +120,8 @@ public class ItineraryFragment extends Fragment {
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
 
-            setContentVisibility(View.VISIBLE);
             status.hide();
-        }, error -> {
-            setContentVisibility(View.GONE);
-            status.setError(R.string.fetch_itinerary_error);
-        });
+        }, error -> status.setError(R.string.fetch_itinerary_error));
     }
 
     /**
