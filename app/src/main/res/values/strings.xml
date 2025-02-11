@@ -106,4 +106,7 @@
     <string name="no_itinerary">Vous n\'avez aucun itinéraire</string>
     <string name="clients_search_title">Ajout d\'un client</string>
     <string name="create_client_error">Impossible de créer le client</string>
+    <string name="confirm_add_route">Voulez-vous parcourir cet itinéraire : %s ?</string>
+
+    <string name="launch_route">Démarrer le parcours</string>
 </resources>

@@ -5,6 +5,7 @@ import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.setVisibilityFor
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,6 +159,26 @@ public class ItineraryFragment extends Fragment {
         }, error -> Toast.makeText(getContext(), R.string.itinerary_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
+    private void onclickList(int position) {
+        Itineraire itineraire = itineraries.get(position); // Récupérer l'itinéraire cliqué
+
+        String message = getString(R.string.confirm_add_route,itineraire.getNom());
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(getString(R.string.launch_route))
+                .setMessage(message)
+                .setPositiveButton(R.string.yes, (dialog, which) -> itineraryToMap(itineraire)) // Passer l'itinéraire
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+
+    private void itineraryToMap(Itineraire itineraire) {
+        Bundle bundle = new Bundle();
+
+        bundle.putLong("id", itineraire.getId()); // Correction du type (getId() est un long)
+        parent.navigateToNavbarItem(MainActivity.MAP_FRAGMENT, false, bundle);
+    }
     /**
      * Gère le clic sur le bouton de modification d'un itinéraire.
      *
@@ -186,6 +207,11 @@ public class ItineraryFragment extends Fragment {
                 this::onClickModify,
                 this::onClickDelete);
         list.setAdapter(itineraryListAdapter);
+
+        list.setOnItemClickListener((parent, view, position, id) -> {
+            onclickList(position); // Passer la position à onclickList()
+        });
+
         add.setOnClickListener(this::onClickAdd);
         list.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override

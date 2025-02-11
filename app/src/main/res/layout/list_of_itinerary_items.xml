@@ -18,13 +18,15 @@
                 android:id="@+id/textView_title"
                 style="@style/ListTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="@string/client"/>
 
         <TextView
                 android:id="@+id/textView_subTitle"
                 style="@style/ListSubtitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="@string/client"/>
 
     </LinearLayout>
 

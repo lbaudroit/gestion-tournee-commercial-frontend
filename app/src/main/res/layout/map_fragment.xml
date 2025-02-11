@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_no_route"
+        android:visibility="gone"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Veuillez sélectionner un parcours"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            />
+    </LinearLayout>
+    <!-- En-tête avec infos et boutons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="10dp"
+        android:padding="16dp"
+        android:id="@+id/layoutOverlay"
+        android:orientation="vertical">
+
+
+
+        <TextView
+            android:id="@+id/next_client"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prochain client : "
+            android:padding="8dp"
+            android:textColor="@android:color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/client_company_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nom entreprise"
+                android:padding="8dp"
+                android:textColor="@android:color/black"/>
+
+            <ImageButton
+                android:id="@+id/btn_continue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/check_24dp_5f6368_fill0_wght400_grad0_opsz24"
+                android:background="@drawable/rounded_button"
+                android:layout_margin="8dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/skip_next_24dp_5f6368_fill0_wght400_grad0_opsz24"
+                android:background="@drawable/rounded_button"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/client_company_adress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adresse entreprise"
+            android:padding="8dp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <!-- Carte OSM en dessous -->
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</LinearLayout>

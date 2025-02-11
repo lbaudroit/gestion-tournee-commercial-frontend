@@ -1,7 +1,9 @@
 package fr.iutrodez.tourneecommercial;
 
 import android.app.AlertDialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity
 
     HashMap<Integer, Integer> menuId = new HashMap<>();
 
+    Stack<Integer> commits = new Stack<>();
+
     {
         menuId.put(R.id.bottom_bar_client, CLIENT_FRAGMENT);
         menuId.put(R.id.bottom_bar_map, MAP_FRAGMENT);
@@ -61,10 +65,13 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
         navigationBar = findViewById(R.id.bottom_bar);
         navigationBar.setOnItemSelectedListener(this);
+
         fragmentManager = getSupportFragmentManager();
         navigateToFragment(CLIENT_FRAGMENT, false);
+
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -72,8 +79,14 @@ public class MainActivity extends AppCompatActivity
 
                 if (fragmentManager.getBackStackEntryCount() > 1) {
                     int id = Integer.parseInt(Objects.requireNonNull(fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName()));
+
+                    // Désactive le listener pour éviter d'ajouter une nouvelle d'activité à la pile
+                    navigationBar.setOnItemSelectedListener(item -> true);
                     navigationBar.setSelectedItemId(id);
-                    fragmentManager.popBackStack();
+                    navigationBar.setOnItemSelectedListener(MainActivity.this);
+
+                    Integer toRemove = commits.pop();
+                    fragmentManager.popBackStack(toRemove, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 } else {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle(R.string.quit_app)
@@ -140,10 +153,11 @@ public class MainActivity extends AppCompatActivity
      */
     public void navigateToFragment(int id, boolean cached) {
         Fragment fragment = cached ? getCachedFragment(id) : getNotCachedFragment(id);
-        fragmentManager.beginTransaction()
+        int commit = fragmentManager.beginTransaction()
                 .replace(R.id.replaceable, fragment)
                 .addToBackStack(String.valueOf(navigationBar.getSelectedItemId()))
                 .commit();
+        commits.push(commit);
     }
 
     /**
@@ -156,10 +170,11 @@ public class MainActivity extends AppCompatActivity
     public void navigateToFragment(int id, boolean cached, Bundle bundle) {
         Fragment fragment = cached ? getCachedFragment(id) : getNotCachedFragment(id);
         fragment.setArguments(bundle);
-        fragmentManager.beginTransaction()
+        int commit = fragmentManager.beginTransaction()
                 .replace(R.id.replaceable, fragment)
                 .addToBackStack(String.valueOf(getNavbarItemId(id)))
                 .commit();
+        commits.push(commit);
     }
 
     /**
@@ -213,4 +228,16 @@ public class MainActivity extends AppCompatActivity
         }
         return idFound;
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "Permission GPS accordée !");
+            } else {
+                Log.e("MainActivity", "Permission GPS refusée !");
+            }
+        }
+    }
+
 }
