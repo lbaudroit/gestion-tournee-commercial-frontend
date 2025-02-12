@@ -59,10 +59,18 @@ public class FetchStatus extends LinearLayout {
         error = findViewById(R.id.textView_error);
     }
 
+    /**
+     * Modifie la fonction appelée pour cacher le reste du contenu de la page
+     * @param hideContentFunction la fonction permettant de cacher le reste du contenu de la page
+     */
     public void setHideContentFunction(Runnable hideContentFunction) {
         this.hideContentFunction = hideContentFunction;
     }
 
+    /**
+     * Modifie la fonction appelée pour afficher le reste du contenu de la page
+     * @param showContentFunction la fonction permettant d'afficher le reste du contenu de la page
+     */
     public void setShowContentFunction(Runnable showContentFunction) {
         this.showContentFunction = showContentFunction;
     }

@@ -3,11 +3,20 @@ package fr.iutrodez.tourneecommercial.utils;
 import android.view.View;
 
 public class WidgetHelpers {
+
+    /**
+     * Désactive une vue affichée et diminue son opacité.
+     * @param view la vue à modifier
+     */
     public static void disableView(View view) {
         view.setEnabled(false);
         view.setAlpha(0.5f);
     }
 
+    /**
+     * Active une vue affichée et rétablit son opacité à 100¨%
+     * @param view la vue à modifier
+     */
     public static void enableView(View view) {
         view.setEnabled(true);
         view.setAlpha(1f);
