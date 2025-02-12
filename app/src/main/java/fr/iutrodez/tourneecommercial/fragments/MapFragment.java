@@ -69,8 +69,8 @@ public class MapFragment extends Fragment {
                 boolean positionChanged = pointDepart == null
                         || pointDepart.getLongitude() != location.getLongitude()
                         || pointDepart.getLatitude() != location.getLatitude();
-                //  Avant de placer un nouveau marker vérifie que notre position est bien différente
-                //  que celle de l'ancien marker
+                //  Avant de placer un nouveau marker, il faut vérifier que notre position est bien différente
+                //  de l'ancien marker
                 if( positionChanged){
 
                         pointDepart = new GeoPoint(location.getLatitude(), location.getLongitude());
