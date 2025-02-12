@@ -25,7 +25,7 @@ import java.util.List;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
-import fr.iutrodez.tourneecommercial.utils.FetchStatus;
+import fr.iutrodez.tourneecommercial.utils.FullsizeFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
@@ -39,7 +39,7 @@ public class ItineraryFragment extends Fragment {
     public MainActivity parent;
     private ListView list;
 
-    private FetchStatus status;
+    private FullsizeFetchStatusDisplay status;
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;

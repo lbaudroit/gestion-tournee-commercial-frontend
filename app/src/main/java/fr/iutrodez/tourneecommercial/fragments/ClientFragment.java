@@ -26,7 +26,7 @@ import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.FetchStatus;
+import fr.iutrodez.tourneecommercial.utils.FullsizeFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
 
 /**
@@ -46,7 +46,7 @@ public class ClientFragment extends Fragment {
     public MainActivity parent;
     private ClientListAdapter clientListAdapter;
     private Button add;
-    private FetchStatus status;
+    private FullsizeFetchStatusDisplay status;
 
     private boolean isLoading = false;
     private int currentPage = 0;

@@ -24,26 +24,26 @@ import fr.iutrodez.tourneecommercial.R;
  * @author Enzo CLUZEL
  * @author Ahmed BRIBACH
  */
-public class FetchStatus extends LinearLayout {
+public class FullsizeFetchStatusDisplay extends LinearLayout {
     private ProgressBar progressBar;
     private TextView error;
     private Runnable hideContentFunction;
     private Runnable showContentFunction;
-    public FetchStatus(Context context) {
+    public FullsizeFetchStatusDisplay(Context context) {
         super(context);
     }
 
-    public FetchStatus(Context context, @Nullable AttributeSet attrs) {
+    public FullsizeFetchStatusDisplay(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public FetchStatus(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public FullsizeFetchStatusDisplay(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
-    public FetchStatus(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FullsizeFetchStatusDisplay(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
