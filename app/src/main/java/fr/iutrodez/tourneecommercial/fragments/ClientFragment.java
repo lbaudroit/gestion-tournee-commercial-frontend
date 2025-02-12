@@ -1,5 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,21 +9,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.FullsizeFetchStatusDisplay;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
 
 /**
  * Fragment de la navBar pour afficher la liste des clients
@@ -35,13 +41,12 @@ import java.util.Objects;
 public class ClientFragment extends Fragment {
 
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-
-    public static ClientFragment newInstance() {
-        return new ClientFragment();
-    }
+    private ListView list;
 
     public MainActivity parent;
     private ClientListAdapter clientListAdapter;
+    private Button add;
+    private FullsizeFetchStatusDisplay status;
 
     private boolean isLoading = false;
     private int currentPage = 0;
@@ -62,8 +67,14 @@ public class ClientFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_client_fragment, container, false);
-        ListView list = frag.findViewById(R.id.listitem_client);
-        frag.findViewById(R.id.button_add).setOnClickListener(this::add);
+        list = frag.findViewById(R.id.listitem_client);
+
+        status = frag.findViewById(R.id.fetchStatus_status);
+        status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
+        status.setHideContentFunction(() -> setContentVisibility(View.GONE));
+
+        add = frag.findViewById(R.id.button_add);
+        add.setOnClickListener(this::add);
 
         // Initialize adapter
         clientListAdapter = new ClientListAdapter(
@@ -112,7 +123,7 @@ public class ClientFragment extends Fragment {
      * @param client le client appuyé
      */
     public void delete(Client client) {
-        String message = Objects.requireNonNull(getContext()).getString(R.string.confirm_delete_client, client.getNomEntreprise());
+        String message = requireContext().getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.delete_route)
                 .setMessage(message)
@@ -130,18 +141,27 @@ public class ClientFragment extends Fragment {
     }
 
     private void fetchNumberOfClients() {
-        API_REQUEST.client.getNumberOfPages(requireContext(), numberOfPages -> this.numberOfPages = numberOfPages, error -> Toast.makeText(parent, R.string.fetch_clients_count_error,
-                Toast.LENGTH_SHORT).show());
+        status.setLoading();
+
+        API_REQUEST.client.getNumberOfPages(requireContext(),
+                numberOfPages -> {
+                    this.numberOfPages = numberOfPages;
+                    status.hide();
+                },
+                error -> status.setError(R.string.fetch_clients_count_error));
     }
 
     private void fetchClientsPage() {
+        status.setLoading();
+
         isLoading = true;
         API_REQUEST.client.getPage(requireContext(), currentPage, clients -> {
             this.clients.addAll(clients);
             clientListAdapter.notifyDataSetChanged();
             currentPage++;
-        }, error -> Toast.makeText(parent, R.string.fetch_client_error,
-                Toast.LENGTH_SHORT).show());
+
+            status.hide();
+        }, error -> status.setError(R.string.fetch_client_error));
         isLoading = false;
     }
 
@@ -152,5 +172,13 @@ public class ClientFragment extends Fragment {
      */
     public void add(View view) {
         parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
+    }
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    public void setContentVisibility(int visibility) {
+        setVisibilityFor(visibility, add, list);
     }
 }

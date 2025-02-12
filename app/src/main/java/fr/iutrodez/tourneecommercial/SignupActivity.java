@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.utils.AddressAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.ArrayList;

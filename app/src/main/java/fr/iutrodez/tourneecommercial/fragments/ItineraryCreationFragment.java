@@ -11,20 +11,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.helper.ViewHelper;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 public class ItineraryCreationFragment extends Fragment {
 
@@ -52,10 +59,6 @@ public class ItineraryCreationFragment extends Fragment {
     private Integer distance;
     private Client selectedClient;
     private Long modifiedItineraryId = null;
-
-    public static ItineraryCreationFragment newInstance() {
-        return new ItineraryCreationFragment();
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -95,9 +98,9 @@ public class ItineraryCreationFragment extends Fragment {
         addedClientsList.setAdapter(itineraryClientsAdapter);
 
         // Blocage des boutons
-        disableView(generateItineraryButton);
-        disableView(validateItineraryButton);
-        disableView(addClientButton);
+        ViewHelper.disableView(generateItineraryButton);
+        ViewHelper.disableView(validateItineraryButton);
+        ViewHelper.disableView(addClientButton);
 
         // Gestion du champ de recherche des clients
         createClientResearch();
@@ -119,13 +122,11 @@ public class ItineraryCreationFragment extends Fragment {
     }
 
     private void getAllClients() {
-        API_REQUEST.client.getAll(getContext(), response -> {
-            allClients = response;
-        }, error -> {
-            Toast.makeText(getContext(),
-                    R.string.fetch_clients_error,
-                    Toast.LENGTH_SHORT).show();
-        });
+        API_REQUEST.client.getAll(getContext(),
+                response -> allClients = response,
+                error -> Toast.makeText(getContext(),
+                        R.string.fetch_clients_error,
+                        Toast.LENGTH_SHORT).show());
     }
 
     private void createClientResearch() {
@@ -171,7 +172,7 @@ public class ItineraryCreationFragment extends Fragment {
             list.setOnItemClickListener((parent, view, position, id) -> {
                 clientSelector.setText(Objects.requireNonNull(freeClientsAdapter.getItem(position)).getNomEntreprise());
                 selectedClient = freeClientsAdapter.getItem(position);
-                enableView(addClientButton);
+                ViewHelper.enableView(addClientButton);
                 dialog.dismiss();
             });
         });
@@ -183,14 +184,14 @@ public class ItineraryCreationFragment extends Fragment {
 
         // On réactive les boutons d'ajout s'il y a moins de 8 clients
         if (itineraryClients.size() < MAX_CLIENTS) {
-            enableView(clientSelector);
+            ViewHelper.enableView(clientSelector);
         }
         if (itineraryClients.isEmpty()) {
-            disableView(generateItineraryButton);
+            ViewHelper.disableView(generateItineraryButton);
         } else {
-            enableView(generateItineraryButton);
+            ViewHelper.enableView(generateItineraryButton);
         }
-        disableView(validateItineraryButton);
+        ViewHelper.disableView(validateItineraryButton);
     }
 
     private List<Client> getFreeClients() {
@@ -208,44 +209,34 @@ public class ItineraryCreationFragment extends Fragment {
         selectedClient = null;
 
         // On ré-active le bouton de génération
-        enableView(generateItineraryButton);
+        ViewHelper.enableView(generateItineraryButton);
 
         // On désactive les boutons d'ajout s'il y a 8 clients
         if (itineraryClients.size() == MAX_CLIENTS) {
-            disableView(clientSelector);
+            ViewHelper.disableView(clientSelector);
         }
 
         // On vide le champ et on rebloque le bouton ajouter
         clientSelector.setText("");
-        disableView(addClientButton);
+        ViewHelper.disableView(addClientButton);
 
         // On désactive le bouton de validation tant qu'il n'y a pas de génération
-        disableView(validateItineraryButton);
-    }
-
-    private void disableView(View view) {
-        view.setEnabled(false);
-        view.setAlpha(0.5f);
-    }
-
-    private void enableView(View view) {
-        view.setEnabled(true);
-        view.setAlpha(1f);
+        ViewHelper.disableView(validateItineraryButton);
     }
 
     private void generate(View view) {
-        API_REQUEST.itineraire.generate(getContext(), itineraryClients, response -> {
-            distance = response.getDistance();
-            itineraryClients.clear();
-            itineraryClients.addAll(response.getClients());
-            itineraryClientsAdapter.notifyDataSetChanged();
-            disableView(generateItineraryButton);
-            enableView(validateItineraryButton);
-        }, error -> {
-            Toast.makeText(getContext(),
-                    R.string.generate_itinerary_error,
-                    Toast.LENGTH_SHORT).show();
-        });
+        API_REQUEST.itineraire.generate(getContext(), itineraryClients,
+                response -> {
+                    distance = response.getDistance();
+                    itineraryClients.clear();
+                    itineraryClients.addAll(response.getClients());
+                    itineraryClientsAdapter.notifyDataSetChanged();
+                    ViewHelper.disableView(generateItineraryButton);
+                    ViewHelper.enableView(validateItineraryButton);
+                },
+                error -> Toast.makeText(getContext(),
+                        R.string.generate_itinerary_error,
+                        Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -334,11 +325,11 @@ public class ItineraryCreationFragment extends Fragment {
             modifiedItineraryId = response.getId();
 
             // On désactive la génération
-            disableView(generateItineraryButton);
+            ViewHelper.disableView(generateItineraryButton);
 
             // On vérifie si on a atteint le nombre maximum de clients
             if (itineraryClients.size() == MAX_CLIENTS) {
-                disableView(clientSelector);
+                ViewHelper.disableView(clientSelector);
             }
             // On active le bouton de validation et on change son texte en "Modifier"
             validateItineraryButton.setText(R.string.edit);
@@ -351,7 +342,7 @@ public class ItineraryCreationFragment extends Fragment {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    enableView(validateItineraryButton);
+                    ViewHelper.enableView(validateItineraryButton);
                 }
 
                 @Override
