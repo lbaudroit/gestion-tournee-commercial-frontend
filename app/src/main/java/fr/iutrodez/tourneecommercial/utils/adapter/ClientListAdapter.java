@@ -94,9 +94,7 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
 
         // Ajoute le listener de suppression s'il existe, sinon cache le bouton
         if (onClickDelete != null) {
-            delete.setOnClickListener((View v) -> {
-                onClickDelete.onClickDeleteClient(clientInfos);
-            });
+            delete.setOnClickListener((View v) -> onClickDelete.onClickDeleteClient(clientInfos));
             delete.setVisibility(View.VISIBLE);
         } else {
             delete.setVisibility(View.GONE);
@@ -104,9 +102,7 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
 
         // Ajoute le listener de modification s'il existe, sinon cache le bouton
         if (onClickModify != null) {
-            modify.setOnClickListener((View v) -> {
-                onClickModify.onClickModifyClient(clientInfos);
-            });
+            modify.setOnClickListener((View v) -> onClickModify.onClickModifyClient(clientInfos));
             modify.setVisibility(View.VISIBLE);
         } else {
             modify.setVisibility(View.GONE);
@@ -124,6 +120,7 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         return convertView;
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
         if (filteredClient == null) {
