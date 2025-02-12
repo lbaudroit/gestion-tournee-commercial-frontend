@@ -1,6 +1,6 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.setVisibilityFor;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,7 +27,7 @@ import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.FetchStatus;
-import fr.iutrodez.tourneecommercial.utils.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
 
 /**
  * Fragment de la navBar pour afficher la liste des clients

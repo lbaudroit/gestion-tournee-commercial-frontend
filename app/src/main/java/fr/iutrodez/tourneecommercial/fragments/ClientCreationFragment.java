@@ -19,7 +19,7 @@ import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.utils.AddressAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import org.json.JSONException;
 

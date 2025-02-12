@@ -1,8 +1,8 @@
-package fr.iutrodez.tourneecommercial.utils;
+package fr.iutrodez.tourneecommercial.utils.helper;
 
 import android.view.View;
 
-public class WidgetHelpers {
+public class ViewHelper {
 
     /**
      * Désactive une vue affichée et diminue son opacité.

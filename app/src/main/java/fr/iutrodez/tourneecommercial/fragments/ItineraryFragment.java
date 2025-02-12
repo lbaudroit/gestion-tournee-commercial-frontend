@@ -1,11 +1,10 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.setVisibilityFor;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 import fr.iutrodez.tourneecommercial.utils.FetchStatus;
-import fr.iutrodez.tourneecommercial.utils.ItineraryListAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 /**

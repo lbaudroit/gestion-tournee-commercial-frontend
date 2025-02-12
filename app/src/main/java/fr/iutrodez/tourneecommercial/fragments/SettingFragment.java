@@ -1,7 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.disableView;
-import static fr.iutrodez.tourneecommercial.utils.WidgetHelpers.setVisibilityFor;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.disableView;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
 import android.content.Context;
 import android.os.Bundle;
