@@ -72,6 +72,11 @@ jobs:
         path: app/build/outputs/apk/debug/app-debug.apk
 
     - name: Run SonarQube Analysis
+      uses: SonarSource/sonarcloud-github-action@v4.0.0
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./gradlew sonar --info -Dsonar.projectKey=lbaudroit_gestion-tournee-commercial-frontend
+      with:
+        args: >
+          -Dsonar.projectKey=lbaudroit_gestion-tournee-commercial-frontend
+          -Dsonar.organization=lbaudroit
+          -Dsonar.host.url=https://sonarcloud.io
