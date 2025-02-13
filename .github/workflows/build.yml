@@ -72,7 +72,7 @@ jobs:
         path: app/build/outputs/apk/debug/app-debug.apk
 
     - name: Run SonarQube Analysis
-      uses: SonarSource/sonarcloud-github-action@v4.0.0
+      uses: SonarSource/sonarqube-scan-action@v4.2.1
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
