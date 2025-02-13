@@ -50,4 +50,12 @@ public class Parcours {
     public void setName(String name){
         this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Visit> getVisits() {
+        return visits;
+    }
 }
