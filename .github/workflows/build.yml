@@ -38,11 +38,6 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Clean Gradle Cache
-      run: rm -rf ~/.gradle/caches
-
-    - name: Clean SonarQube Cache
-      run: rm -rf ~/.sonar/cache
       
     - name: Cache SonarQube packages
       uses: actions/cache@v4
@@ -59,7 +54,7 @@ jobs:
         restore-keys: ${{ runner.os }}-gradle
 
     - name: Set Gradle version
-      run: ./gradlew wrapper --gradle-version=8.0
+      run: ./gradlew wrapper --gradle-version=8.5
 
     - name: Run Lint
       run: ./gradlew lint
@@ -79,4 +74,4 @@ jobs:
     - name: Run SonarQube Analysis
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./gradlew sonar --info
+      run: ./gradlew sonar --info -Dsonar.projectKey=lbaudroit_gestion-tournee-commercial-frontend
