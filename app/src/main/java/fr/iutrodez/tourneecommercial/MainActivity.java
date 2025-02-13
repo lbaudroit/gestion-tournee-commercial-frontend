@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     public final static int SETTING_FRAGMENT = 4;
     public final static int CLIENT_CREATION_FRAGMENT = 5;
     public final static int ITINERARY_CREATION_FRAGMENT = 6;
+    public final static int PASSWORD_MODIFICATION_FRAGMENT = 7;
 
     List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         fragments.add(SettingFragment.class);
         fragments.add(ClientCreationFragment.class);
         fragments.add(ItineraryCreationFragment.class);
+        fragments.add(PasswordModificationFragment.class);
     }
 
     HashMap<Integer, Fragment> cache = new HashMap<>();

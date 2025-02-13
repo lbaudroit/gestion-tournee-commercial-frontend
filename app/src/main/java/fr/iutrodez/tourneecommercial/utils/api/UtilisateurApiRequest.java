@@ -65,6 +65,21 @@ public class UtilisateurApiRequest extends ApiRessource {
         }, errorCallback::onError);
     }
 
+    public void updatePassword(Context context, String password,
+                               SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
+        String url = RESOURCE_NAME + "/password";
+        JSONObject body = new JSONObject();
+        try {
+            body.put("password", password);
+        } catch (JSONException e) {
+            Log.e(TAG, "Failed to create JSON body", e);
+        }
+        super.putWithToken(context, url, body, response -> {
+            String message = extractMessage(response);
+            successCallback.onSuccess(message);
+        }, errorCallback::onError);
+    }
+
     private String extractMessage(JSONObject json) {
         try {
             return json.getString("message");
