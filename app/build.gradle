@@ -38,6 +38,8 @@ sonar {
         property "sonar.projectKey", "lbaudroit_gestion-tournee-commercial-frontend"
         property "sonar.organization", "lbaudroit"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.java.binaries", "app/build/intermediates/javac/debug/classes"
+        property "sonar.exclusions", "**/*.java"
     }
 }
 
