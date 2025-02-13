@@ -74,4 +74,4 @@ jobs:
     - name: Run SonarQube Analysis
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./gradlew sonar --info
+      run: ./gradlew sonar --info -Dsonar.projectKey=lbaudroit_gestion-tournee-commercial-frontend
