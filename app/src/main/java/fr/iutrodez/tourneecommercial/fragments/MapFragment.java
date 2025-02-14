@@ -167,6 +167,7 @@ public class MapFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null && args.containsKey("id")) {
             itineraireId = args.getLong("id");
+            parcours.setName(args.getString("name"));
             API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
                 clients = response.getClients();
             }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
