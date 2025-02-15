@@ -1,5 +1,9 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,20 +31,38 @@ public class PasswordModificationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.modify_password_fragment, container, false);
+
         newPassword = view.findViewById(R.id.editText_password);
         confirmPassword = view.findViewById(R.id.editText_passwordConfirmation);
         view.findViewById(R.id.button_modify).setOnClickListener(this::modifier);
         return view;
     }
 
+    /**
+     * Si les champs sont valides, met à jour le mot de passe de l'utilisateur.
+     * Le met également à jour dans les SharedPreferences et rafraîchit le token.
+     * En cas d'échec de la requête API, affiche un message d'erreur.
+     *
+     * @param view l'élément cliqué
+     */
     private void modifier(View view) {
-        if (checkPassword(newPassword.getText().toString())
-            && checkPasswordConfirmation(
-                    newPassword.getText().toString(),
-                confirmPassword.getText().toString())) {
+        Context context = requireContext();
+        SharedPreferences pref = context.getSharedPreferences("user", MODE_PRIVATE);
+        String passwordValue = newPassword.getText().toString();
+
+        if (checkPassword(passwordValue)
+                && checkPasswordConfirmation(passwordValue, confirmPassword.getText().toString())) {
+
             API_REQUEST.utilisateur.updatePassword(requireContext(), newPassword.getText().toString(),
-                    response -> Toast.makeText(requireContext(), response, Toast.LENGTH_LONG).show(),
-                    error -> Toast.makeText(requireContext(), R.string.modify_password_error, Toast.LENGTH_LONG).show());
+                    response -> {
+                        Toast.makeText(context, response, Toast.LENGTH_LONG).show();
+
+                        // On met à jour le mdp dans les SharedPreferences et on rafraîchit le token
+                        pref.edit().putString("password", passwordValue).apply();
+                        String email = pref.getString("email", "");
+                        new Thread(() -> API_REQUEST.auth.refreshToken(requireContext(), email, passwordValue)).start();
+                    },
+                    error -> Toast.makeText(context, R.string.modify_password_error, Toast.LENGTH_LONG).show());
         }
     }
 
