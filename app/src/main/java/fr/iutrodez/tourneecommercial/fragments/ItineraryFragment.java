@@ -25,7 +25,7 @@ import java.util.List;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
-import fr.iutrodez.tourneecommercial.utils.FullsizeFetchStatusDisplay;
+import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
@@ -39,7 +39,7 @@ public class ItineraryFragment extends Fragment {
     public MainActivity parent;
     private ListView list;
 
-    private FullsizeFetchStatusDisplay status;
+    private FullscreenFetchStatusDisplay status;
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
@@ -89,7 +89,7 @@ public class ItineraryFragment extends Fragment {
      * Récupère le nombre de pages d'itinéraires depuis l'API.
      */
     private void fetchNumberOfItinerarypages() {
-        status.setLoading();
+        status.loading();
         
 
         API_REQUEST.itineraire.getNumberOfPages(requireContext(),
@@ -97,14 +97,14 @@ public class ItineraryFragment extends Fragment {
                     totalPages = response;
                     status.hide();
                 },
-                error -> status.setError(R.string.fetch_itinerary_error));
+                error -> status.error(R.string.fetch_itinerary_error));
     }
 
     /**
      * Récupère la page suivante d'itinéraires depuis l'API.
      */
     private void fetchItinerariesNextpage() {
-        status.setLoading();
+        status.loading();
 
         API_REQUEST.itineraire.getPage(parent, currentPage, response -> {
             itineraries.addAll(response);
@@ -112,7 +112,7 @@ public class ItineraryFragment extends Fragment {
             currentPage++;
 
             status.hide();
-        }, error -> status.setError(R.string.fetch_itinerary_error));
+        }, error -> status.error(R.string.fetch_itinerary_error));
     }
 
     /**

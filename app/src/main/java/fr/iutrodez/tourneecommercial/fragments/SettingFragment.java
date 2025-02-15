@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.utils.FullsizeFetchStatusDisplay;
+import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class SettingFragment extends Fragment {
      * Affichage pour mettre un Progress ou un message d'erreur
      * pendant la récupération des données.
      */
-    private FullsizeFetchStatusDisplay status;
+    private FullscreenFetchStatusDisplay status;
 
     /**
      * Le bouton "modifier"
@@ -102,7 +102,7 @@ public class SettingFragment extends Fragment {
         modify = view.findViewById(R.id.button_modify);
         modify.setOnClickListener(this::modifier);
 
-        status.setLoading();
+        status.loading();
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
             status.hide();
 
@@ -110,7 +110,7 @@ public class SettingFragment extends Fragment {
             firstname.setText(response.getPrenom());
             email.setText(response.getEmail());
         }, error -> {
-            status.setError(R.string.fetching_params_error);
+            status.error(R.string.fetching_params_error);
 
             disableView(name);
             disableView(firstname);
@@ -200,7 +200,7 @@ public class SettingFragment extends Fragment {
         ViewGroup rootLayout = Objects.requireNonNull((ViewGroup) this.getView());
         for (int i = 0 ; i < rootLayout.getChildCount() ; i++) {
             View child = rootLayout.getChildAt(i);
-            if (!(child instanceof FullsizeFetchStatusDisplay)) {
+            if (!(child instanceof FullscreenFetchStatusDisplay)) {
                 setVisibilityFor(visibility, child);
             }
         }

@@ -24,26 +24,26 @@ import fr.iutrodez.tourneecommercial.R;
  * @author Enzo CLUZEL
  * @author Ahmed BRIBACH
  */
-public class FullsizeFetchStatusDisplay extends LinearLayout {
+public class FullscreenFetchStatusDisplay extends LinearLayout {
     private ProgressBar progressBar;
     private TextView error;
     private Runnable hideContentFunction;
     private Runnable showContentFunction;
-    public FullsizeFetchStatusDisplay(Context context) {
+    public FullscreenFetchStatusDisplay(Context context) {
         super(context);
     }
 
-    public FullsizeFetchStatusDisplay(Context context, @Nullable AttributeSet attrs) {
+    public FullscreenFetchStatusDisplay(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public FullsizeFetchStatusDisplay(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public FullscreenFetchStatusDisplay(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
-    public FullsizeFetchStatusDisplay(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FullscreenFetchStatusDisplay(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
@@ -78,7 +78,7 @@ public class FullsizeFetchStatusDisplay extends LinearLayout {
     /**
      * Affiche la barre de chargement
      */
-    public void setLoading() {
+    public void loading() {
         hideContentFunction.run();
         progressBar.setVisibility(VISIBLE);
         error.setVisibility(GONE);
@@ -88,7 +88,7 @@ public class FullsizeFetchStatusDisplay extends LinearLayout {
      * Affiche un message d'erreur
      * @param message Ressource du message d'erreur
      */
-    public void setError(int message) {
+    public void error(int message) {
         hideContentFunction.run();
         progressBar.setVisibility(GONE);
         error.setText(getContext().getString(message));

@@ -26,7 +26,7 @@ import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.FullsizeFetchStatusDisplay;
+import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
 
 /**
@@ -46,7 +46,7 @@ public class ClientFragment extends Fragment {
     public MainActivity parent;
     private ClientListAdapter clientListAdapter;
     private Button add;
-    private FullsizeFetchStatusDisplay status;
+    private FullscreenFetchStatusDisplay status;
 
     private boolean isLoading = false;
     private int currentPage = 0;
@@ -123,8 +123,8 @@ public class ClientFragment extends Fragment {
      * @param client le client appuyé
      */
     public void delete(Client client) {
-        String message = requireContext().getString(R.string.confirm_delete_client, client.getNomEntreprise());
-        new AlertDialog.Builder(getContext())
+        String message = parent.getString(R.string.confirm_delete_client, client.getNomEntreprise());
+        new AlertDialog.Builder(parent)
                 .setTitle(R.string.delete_route)
                 .setMessage(message)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteClient(client))
@@ -133,40 +133,41 @@ public class ClientFragment extends Fragment {
     }
 
     private void deleteClient(Client client) {
-        API_REQUEST.client.delete(getContext(), client.get_id(), response -> {
+        API_REQUEST.client.delete(parent, client.get_id(), response -> {
             clients.remove(client);
             clientListAdapter.notifyDataSetChanged();
-            Toast.makeText(getContext(), R.string.client_deleted_success, Toast.LENGTH_SHORT).show();
-        }, error -> Toast.makeText(getContext(), R.string.client_deletion_error, Toast.LENGTH_SHORT).show());
+            Toast.makeText(parent, R.string.client_deleted_success, Toast.LENGTH_SHORT).show();
+        }, error -> Toast.makeText(parent, R.string.client_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
     private void fetchNumberOfClients() {
-        status.setLoading();
+        status.loading();
 
-        API_REQUEST.client.getNumberOfPages(requireContext(),
+        API_REQUEST.client.getNumberOfPages(parent,
                 numberOfPages -> {
                     this.numberOfPages = numberOfPages;
                     status.hide();
                 },
-                error -> status.setError(R.string.fetch_clients_count_error));
+                error -> status.error(R.string.fetch_clients_count_error));
     }
 
     private void fetchClientsPage() {
-        status.setLoading();
+        status.loading();
 
         isLoading = true;
-        API_REQUEST.client.getPage(requireContext(), currentPage, clients -> {
+        API_REQUEST.client.getPage(parent, currentPage, clients -> {
             this.clients.addAll(clients);
             clientListAdapter.notifyDataSetChanged();
             currentPage++;
 
             status.hide();
-        }, error -> status.setError(R.string.fetch_client_error));
+        }, error -> status.error(R.string.fetch_client_error));
         isLoading = false;
     }
 
     /**
-     * Méthode appelée quand le
+     * Méthode appelée quand le bouton "Ajouter" est cliqué.
+     * Navigue vers le fragment de création de client.
      *
      * @param view La vue qui a été cliquée.
      */
