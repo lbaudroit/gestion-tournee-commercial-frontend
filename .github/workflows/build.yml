@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - actions
+      - test/deploiement
   pull_request:
     branches:
       - main
