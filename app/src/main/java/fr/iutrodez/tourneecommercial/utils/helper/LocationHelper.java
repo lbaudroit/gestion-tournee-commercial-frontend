@@ -1,6 +1,7 @@
 package fr.iutrodez.tourneecommercial.utils.helper;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Looper;
@@ -62,6 +63,7 @@ public class LocationHelper {
      * Demande une mise à jour de la localisation.
      * @param callback Le callback qui reçoit la nouvelle localisation.
      */
+    @SuppressLint("MissingPermission")
     public void refreshLocation(LocationCallback callback) {
         LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
                 .setMinUpdateIntervalMillis(1000)
@@ -69,6 +71,7 @@ public class LocationHelper {
                 .build();
 
         if (!checkPermissions()) return;
+
 
         fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
             @Override
@@ -85,12 +88,14 @@ public class LocationHelper {
      * Démarre la mise à jour continue de la localisation.
      * @param callback Le callback qui reçoit les mises à jour de localisation.
      */
+    @SuppressLint("MissingPermission")
     public void startContinuousLocationUpdates(LocationCallback callback) {
         LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
                 .setMinUpdateIntervalMillis(1000)
                 .setMaxUpdateDelayMillis(5000)
                 .build();
         if (!checkPermissions()) return;
+
         fusedLocationClient.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper());
     }
 
