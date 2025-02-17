@@ -11,6 +11,7 @@ on:
       - main
       - develop
       - actions
+      - test/deploiement
     types: [opened, synchronize, reopened]
   workflow_dispatch:
     inputs:
