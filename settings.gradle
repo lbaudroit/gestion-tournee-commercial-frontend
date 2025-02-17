@@ -12,6 +12,13 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.apache.commons:commons-compress:1.27.1")
+    }
+}
 rootProject.name = "TourneeCommercial"
 include ':app'
