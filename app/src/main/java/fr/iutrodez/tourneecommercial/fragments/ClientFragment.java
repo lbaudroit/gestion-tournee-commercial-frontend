@@ -112,7 +112,7 @@ public class ClientFragment extends Fragment {
      * @param client le client appuyé
      */
     public void delete(Client client) {
-        String message = Objects.requireNonNull(getContext()).getString(R.string.confirm_delete_client, client.getNomEntreprise());
+        String message = requireContext().getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.delete_route)
                 .setMessage(message)

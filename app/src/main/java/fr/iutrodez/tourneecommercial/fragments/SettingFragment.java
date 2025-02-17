@@ -105,7 +105,7 @@ public class SettingFragment extends Fragment {
         if (checkFields()) {
             API_REQUEST.utilisateur.updateSelf(getContext(), name.getText().toString(), firstname.getText().toString(), email.getText().toString(), response -> {
                 Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
-                Objects.requireNonNull(getContext()).getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
+                requireContext().getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
             }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
         }
     }
