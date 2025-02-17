@@ -33,6 +33,14 @@ public class MapHelper {
     }
 
     /**
+     * Supprime le marqueur sur la carte
+     * @param marker le marqueur à supprimer
+     */
+    public void dropMarker(Marker marker){
+        mapView.getOverlays().remove(marker);
+    }
+
+    /**
      * Ajuste le zoom de la carte pour englober deux points donnés.
      * @param start Point de départ.
      * @param end Point d'arrivée.
@@ -40,10 +48,10 @@ public class MapHelper {
     public void adjustZoomToMarkers(GeoPoint start, GeoPoint end) {
         if (start != null && end != null) {
             BoundingBox boundingBox = new BoundingBox(
-                    Math.max(start.getLatitude(), end.getLatitude()) + 0.8,
-                    Math.max(start.getLongitude(), end.getLongitude()) + 0.1,
-                    Math.min(start.getLatitude(), end.getLatitude()) - 1.4,
-                    Math.min(start.getLongitude(), end.getLongitude()) - 0.1
+                    Math.max(start.getLatitude(), end.getLatitude()) + 0.02,
+                    Math.max(start.getLongitude(), end.getLongitude()) + 0.02,
+                    Math.min(start.getLatitude(), end.getLatitude()) - 0.04,
+                    Math.min(start.getLongitude(), end.getLongitude()) - 0.04
             );
             mapView.zoomToBoundingBox(boundingBox, true);
             mapView.invalidate();
