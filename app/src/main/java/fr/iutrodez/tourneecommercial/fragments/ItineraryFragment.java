@@ -147,6 +147,8 @@ public class ItineraryFragment extends Fragment {
         Bundle bundle = new Bundle();
 
         bundle.putLong("id", itineraire.getId()); // Correction du type (getId() est un long)
+        bundle.putString("name", itineraire.getNom()); // Correction du type (getId() est un long)
+
         parent.navigateToNavbarItem(MainActivity.MAP_FRAGMENT, false, bundle);
     }
     /**

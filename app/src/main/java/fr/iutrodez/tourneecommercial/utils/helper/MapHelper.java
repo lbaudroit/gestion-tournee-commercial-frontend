@@ -40,10 +40,10 @@ public class MapHelper {
     public void adjustZoomToMarkers(GeoPoint start, GeoPoint end) {
         if (start != null && end != null) {
             BoundingBox boundingBox = new BoundingBox(
-                    Math.max(start.getLatitude(), end.getLatitude()) + 0.3,
-                    Math.max(start.getLongitude(), end.getLongitude()) + 0.3,
-                    Math.min(start.getLatitude(), end.getLatitude()) - 0.3,
-                    Math.min(start.getLongitude(), end.getLongitude()) - 0.3
+                    Math.max(start.getLatitude(), end.getLatitude()) + 0.8,
+                    Math.max(start.getLongitude(), end.getLongitude()) + 0.1,
+                    Math.min(start.getLatitude(), end.getLatitude()) - 1.4,
+                    Math.min(start.getLongitude(), end.getLongitude()) - 0.1
             );
             mapView.zoomToBoundingBox(boundingBox, true);
             mapView.invalidate();

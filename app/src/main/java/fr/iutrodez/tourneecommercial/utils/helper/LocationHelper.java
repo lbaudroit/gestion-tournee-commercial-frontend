@@ -36,7 +36,9 @@ public class LocationHelper {
      */
     public boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
+                == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context,Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED ;
     }
 
     /**
@@ -91,6 +93,7 @@ public class LocationHelper {
                 .setMaxUpdateDelayMillis(5000)
                 .build();
         if (!checkPermissions()) return;
+
         fusedLocationClient.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper());
     }
 
