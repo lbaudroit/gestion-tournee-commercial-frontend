@@ -1,4 +1,4 @@
-package fr.iutrodez.tourneecommercial.utils;
+package fr.iutrodez.tourneecommercial.utils.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

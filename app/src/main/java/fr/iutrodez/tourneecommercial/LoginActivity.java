@@ -1,16 +1,20 @@
 package fr.iutrodez.tourneecommercial;
 
+import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.Objects;
+
+import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 /**
  * Activité de connexion pour l'application Tournée Commerciale.
@@ -87,6 +91,11 @@ public class LoginActivity extends AppCompatActivity {
             password.setError(getString(R.string.password_pattern_error));
             inputsValid = false;
         }
+        if (!hasInternetCapability(this)) {
+            Toast.makeText(this, R.string.no_internet_error, Toast.LENGTH_LONG).show();
+            inputsValid = false;
+        }
+
         if (inputsValid) {
             apiRequest.auth.login(extracted_email, extracted_password, (jwtToken) -> {
                 long expirationTime = System.currentTimeMillis() + jwtToken.getExpiration();

@@ -1,8 +1,14 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
+import java.util.Arrays;
 
 /**
  * ApiRequest est une classe singleton qui gère divers objets de requêtes API.
@@ -51,5 +57,20 @@ public class ApiRequest {
         parcours = new ParcoursApiRequest(requestQueue);
         utilisateur = new UtilisateurApiRequest(requestQueue);
         ban = new BanApiRequest(requestQueue);
+    }
+
+    /**
+     * Vérifie si l'appareil a la capacité de se connecter à Internet.
+     * @param context le contexte de l'application
+     * @return true si l'appareil a la capacité de se connecter à Internet, false sinon
+     */
+    public static boolean hasInternetCapability(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = connectivityManager.getAllNetworks();
+        return networks.length > 0 && Arrays.stream(networks)
+                .anyMatch(network -> {
+                    NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
+                    return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+                });
     }
 }
