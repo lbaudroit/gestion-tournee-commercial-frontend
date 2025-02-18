@@ -59,6 +59,11 @@ public class ApiRequest {
         ban = new BanApiRequest(requestQueue);
     }
 
+    /**
+     * Vérifie si l'appareil a la capacité de se connecter à Internet.
+     * @param context le contexte de l'application
+     * @return true si l'appareil a la capacité de se connecter à Internet, false sinon
+     */
     public static boolean hasInternetCapability(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = connectivityManager.getAllNetworks();
