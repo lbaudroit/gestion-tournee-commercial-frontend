@@ -59,18 +59,21 @@
     <string name="prospect">Prospect</string>
     <string name="client">Client</string>
     <string name="fetching_params_error">Nous n\'avons pas pû récupéré vos informations</string>
-    <string name="params_update_success">Mise à jour de l\'utilisateur réussite</string>
+    <string name="params_update_success">Mise à jour de l\'utilisateur réussie</string>
     <string name="params_update_error">Mise à jour impossible</string>
-    <string name="confirm_delete_client">Êtes-vous sûr de vouloir supprimer le client \"%s\" ?</string>
-    <string name="client_deleted_success">Le client a bien été supprimer\n</string>
-    <string name="client_deletion_error">Le client n\'a pas pû etre supprimer\n</string>
+    <string name="confirm_delete_client">
+        Êtes-vous sûr de vouloir supprimer le client \"%s\" ?\n
+        Tous les itinéraires contenant ce client seront également supprimés.
+    </string>
+    <string name="client_deleted_success">Le client a bien été supprimé</string>
+    <string name="client_deletion_error">Le client n\'a pas pû être supprimé</string>
 
     <!-- Action Bar -->
     <string name="create_route">Création d\'un itinéraire</string>
     <string name="search_company">Recherche une entreprise</string>
     <string name="select_client">Séléctionner un client</string>
     <string name="search">Rechercher…</string>
-    <string name="delete_route">Suppresion de l\'itinéraire</string>
+    <string name="delete_route">Suppression de l\'itinéraire</string>
     <string name="confirm_delete_route">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
@@ -88,7 +91,7 @@
     <string name="fetch_client_error">Erreur lors de la récupération des clients</string>
     <string name="generate_itinerary_error">Erreur : impossible de générer l\'itinéraire</string>
     <string name="create_itinerary_error">Erreur : impossible de créer l\'itinéraire</string>
-    <string name="fetch_itinerary_error">Erreur lors de la récupérations des itineraries</string>
+    <string name="fetch_itinerary_error">Erreur lors de la récupérations des itinéraires</string>
     <string name="fetch_clients_error">Erreur : impossible de récupérer les clients disponibles</string>
 
     <!-- Toast Success Messages -->
