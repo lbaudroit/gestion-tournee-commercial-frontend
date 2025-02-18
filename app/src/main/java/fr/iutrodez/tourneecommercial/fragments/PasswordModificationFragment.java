@@ -18,14 +18,14 @@ import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
+/**
+ * Fragment permettant de modifier le mot de passe de l'utilisateur.
+ */
 public class PasswordModificationFragment extends Fragment {
     private final static ApiRequest API_REQUEST = ApiRequest.getInstance();
     private final static String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=_]).+$";
     private EditText newPassword;
     private EditText confirmPassword;
-
-    public PasswordModificationFragment() {
-    }
 
     @Nullable
     @Override
@@ -66,6 +66,12 @@ public class PasswordModificationFragment extends Fragment {
         }
     }
 
+    /**
+     * Vérifie que le mot de passe est non-vide, a une longueur minimale de 8 caractères et respecte
+     * le pattern défini.
+     * @param password le mot de passe
+     * @return true si le mot de passe est valide, false sinon
+     */
     private boolean checkPassword(String password) {
         if (password.trim().isEmpty()) {
             this.newPassword.setError(getString(R.string.empty_field_error));
@@ -82,6 +88,12 @@ public class PasswordModificationFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Vérifie que la confirmation du mot de passe est non-vide et identique au mot de passe.
+     * @param password le mot de passe
+     * @param passwordConfirmation la confirmation du mot de passe
+     * @return true si la confirmation est valide, false sinon
+     */
     private boolean checkPasswordConfirmation(String password, String passwordConfirmation) {
         if (passwordConfirmation.trim().isEmpty()) {
             this.confirmPassword.setError(getString(R.string.empty_field_error));

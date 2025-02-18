@@ -8,6 +8,9 @@ import fr.iutrodez.tourneecommercial.modeles.dto.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Gère les requêtes API relatives à l'utilisateur.
+ */
 public class UtilisateurApiRequest extends ApiRessource {
     private static final String RESOURCE_NAME = "utilisateur";
     private static final String TAG = "UtilisateurApiRequest";
@@ -16,6 +19,12 @@ public class UtilisateurApiRequest extends ApiRessource {
         super(requestQueue);
     }
 
+    /**
+     * Récupère les informations de l'utilisateur.
+     * @param context le contexte de l'application
+     * @param successCallback le callback en cas de succès
+     * @param errorCallback le callback en cas d'erreur
+     */
     public void getSelf(Context context, SuccessCallback<Parameter> successCallback, ErrorCallback errorCallback) {
         String url = RESOURCE_NAME + "/";
         super.getWithToken(context, url, response -> {
@@ -24,6 +33,18 @@ public class UtilisateurApiRequest extends ApiRessource {
         }, errorCallback::onError);
     }
 
+    /**
+     * Crée un nouvel utilisateur.
+     * @param name le nom de l'utilisateur
+     * @param firstName le prénom de l'utilisateur
+     * @param email l'email de l'utilisateur
+     * @param address l'adresse de l'utilisateur
+     * @param postalCode le code postal de l'utilisateur
+     * @param city la ville de l'utilisateur
+     * @param password le mot de passe de l'utilisateur
+     * @param successCallback le callback en cas de succès
+     * @param errorCallback le callback en cas d'erreur
+     */
     public void create(String name, String firstName, String email,
                        String address, String postalCode, String city,
                        String password,
@@ -48,6 +69,15 @@ public class UtilisateurApiRequest extends ApiRessource {
         }, errorCallback::onError);
     }
 
+    /**
+     * Met à jour les informations de l'utilisateur.
+     * @param context le contexte de l'application
+     * @param name le nom de l'utilisateur
+     * @param firstname le prénom de l'utilisateur
+     * @param email l'email de l'utilisateur
+     * @param successCallback le callback en cas de succès
+     * @param errorCallback le callback en cas d'erreur
+     */
     public void updateSelf(Context context, String name, String firstname, String email,
                            SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
         String url = RESOURCE_NAME + "/";
@@ -65,6 +95,13 @@ public class UtilisateurApiRequest extends ApiRessource {
         }, errorCallback::onError);
     }
 
+    /**
+     * Met à jour le mot de passe de l'utilisateur.
+     * @param context le contexte de l'application
+     * @param password le nouveau mot de passe
+     * @param successCallback le callback en cas de succès
+     * @param errorCallback le callback en cas d'erreur
+     */
     public void updatePassword(Context context, String password,
                                SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
         String url = RESOURCE_NAME + "/password";
