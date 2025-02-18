@@ -1,19 +1,21 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-
-import java.util.Objects;
 
 public class SettingFragment extends Fragment {
 
@@ -31,15 +33,6 @@ public class SettingFragment extends Fragment {
      * EditText pour le nom, prénom et email de l'utilisateur.
      */
     private EditText name, firstname, email;
-
-    /**
-     * Crée une nouvelle instance de SettingFragment.
-     *
-     * @return une nouvelle instance de SettingFragment
-     */
-    public SettingFragment newInstance() {
-        return new SettingFragment();
-    }
 
     /**
      * Appelé lors de la création du fragment.
@@ -88,6 +81,7 @@ public class SettingFragment extends Fragment {
         firstname = view.findViewById(R.id.editText_firstname);
         email = view.findViewById(R.id.editText_email);
         view.findViewById(R.id.button_modify).setOnClickListener(this::modifier);
+        view.findViewById(R.id.button_modifyPassword).setOnClickListener(this::goToPasswordModification);
 
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
             name.setText(response.getNom());
@@ -96,16 +90,31 @@ public class SettingFragment extends Fragment {
         }, error -> Toast.makeText(getContext(), R.string.fetching_params_error, Toast.LENGTH_LONG).show());
     }
 
+    private void goToPasswordModification(View view) {
+        ((MainActivity) requireContext()).navigateToFragment(MainActivity.PASSWORD_MODIFICATION_FRAGMENT, false);
+    }
+
     /**
      * Méthode appelée lors du clic sur le bouton de modification.
      *
      * @param view La vue qui a été cliquée.
      */
     public void modifier(View view) {
+        Context context = requireContext();
+        SharedPreferences pref = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+        String nameValue = name.getText().toString();
+        String firstnameValue = firstname.getText().toString();
+        String emailValue = email.getText().toString();
+
         if (checkFields()) {
-            API_REQUEST.utilisateur.updateSelf(getContext(), name.getText().toString(), firstname.getText().toString(), email.getText().toString(), response -> {
-                Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
-                Objects.requireNonNull(getContext()).getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
+            API_REQUEST.utilisateur.updateSelf(context, nameValue, firstnameValue, emailValue, response -> {
+                Toast.makeText(context, response, Toast.LENGTH_LONG).show();
+
+                // On met à jour le mdp dans les SharedPreferences et on rafraîchit le token
+                pref.edit().putString("email", emailValue).apply();
+                String password = pref.getString("password", "");
+                new Thread(() -> API_REQUEST.auth.refreshToken(context, emailValue, password)).start();
             }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
         }
     }

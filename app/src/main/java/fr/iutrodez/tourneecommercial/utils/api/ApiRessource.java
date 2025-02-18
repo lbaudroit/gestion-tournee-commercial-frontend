@@ -1,20 +1,21 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
-import android.widget.Toast;
+import android.content.SharedPreferences;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import fr.iutrodez.tourneecommercial.R;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Classe ApiRessource pour gérer les requêtes API.
@@ -44,20 +45,19 @@ public class ApiRessource {
 
     /**
      * Récupère le token d'authentification.
+     * Le rafraîchit de manière blocante s'il est expiré.
      *
      * @param context le contexte de l'application
      * @return le token d'authentification
      */
     public static String getToken(Context context) {
-        long expirationTime = context.getSharedPreferences("user", MODE_PRIVATE).getLong("expiration", 0);
+        SharedPreferences pref = context.getSharedPreferences("user", MODE_PRIVATE);
+        long expirationTime = pref.getLong("expiration", 0);
+
         if (expirationTime < System.currentTimeMillis()) {
-            String email = context.getSharedPreferences("user", MODE_PRIVATE).getString("email", "");
-            String password = context.getSharedPreferences("user", MODE_PRIVATE).getString("password", "");
-            ApiRequest apiRequest = ApiRequest.getInstance();
-            apiRequest.auth.login(email, password, jwtToken -> {
-                context.getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", jwtToken.getToken()).apply();
-                context.getSharedPreferences("user", MODE_PRIVATE).edit().putLong("expiration", jwtToken.getExpiration()).apply();
-            }, error -> Toast.makeText(context, R.string.invalid_login_params_error, Toast.LENGTH_LONG).show());
+            String email = pref.getString("email", "");
+            String password = pref.getString("password", "");
+            ApiRequest.getInstance().auth.refreshToken(context, email, password);
         }
         return context.getSharedPreferences("user", MODE_PRIVATE).getString("token", "");
     }
