@@ -17,39 +17,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.Coordonnees;
+import fr.iutrodez.tourneecommercial.modeles.Parcours;
+import fr.iutrodez.tourneecommercial.modeles.Visit;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
+import nl.dionsegijn.konfetti.models.Size;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.Parcours;
-import fr.iutrodez.tourneecommercial.modeles.Visit;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
-import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
-import nl.dionsegijn.konfetti.KonfettiView;
-import nl.dionsegijn.konfetti.models.Shape;
-import nl.dionsegijn.konfetti.models.Size;
 
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements NotificationHelper.NotificationListener {
     private MainActivity parent;
     private KonfettiView konfettiView;
     private final ApiRequest API_REQUEST = ApiRequest.getInstance();
@@ -58,22 +57,18 @@ public class MapFragment extends Fragment {
     private long itineraireId;
     private List<Client> clients;
     private int clientsIndex = 0;
-
     private Marker start, end;
+    private NotificationHelper notificationHelper;
+    private boolean gotNotificationForClient = false;
+    List<Client> prospectNotified;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
-
     private TextView companyName;
     private TextView companyAdress;
-
     private Parcours parcours;
-
     private Button buttonVisit;
-
     private Button buttonPass;
-
     private boolean isParcoursFinished;
-
     private Button buttonPause;
     private Button buttonStop;
     /**
@@ -89,28 +84,30 @@ public class MapFragment extends Fragment {
                         || startPoint.getLatitude() != location.getLatitude();
                 //  Avant de placer un nouveau marker, il faut vérifier que notre position est bien différente
                 //  de l'ancien marker
-                if( positionChanged){
-
+                if (positionChanged) {
+                    if (destinationPoint != null) {
+                        Coordonnees position = new Coordonnees(location.getLatitude(), location.getLongitude());
+                        Coordonnees destination = new Coordonnees(destinationPoint.getLatitude(),
+                                destinationPoint.getLongitude());
+                        notificationHelper.locationChanged(position, destination);
+                    }
                     startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
                     centerView();
 
                 }
                 // ne place le marker que si le marker client n'existe pas
-                if (clients != null && destinationPoint == null && !isParcoursFinished ) {
+                if (clients != null && destinationPoint == null && !isParcoursFinished) {
                     clientMarker();
                 }
             }
-
         }
-
     };
-
 
     /**
      *
      */
-    private void clientMarker(){
+    private void clientMarker() {
         destinationPoint = new GeoPoint(
                 clients.get(clientsIndex).getCoordonnees().getLatitude(),
                 clients.get(clientsIndex).getCoordonnees().getLongitude());
@@ -123,6 +120,7 @@ public class MapFragment extends Fragment {
 
     /**
      * Attache le fragment au contexte de l'activité principale.
+     *
      * @param context Contexte de l'application.
      */
     @Override
@@ -130,12 +128,14 @@ public class MapFragment extends Fragment {
         super.onAttach(context);
         parent = (MainActivity) context;
         locationHelper = new LocationHelper(context);
+        notificationHelper = new NotificationHelper(context, this);
     }
 
     /**
      * Crée et retourne la vue associée au fragment.
-     * @param inflater LayoutInflater pour gonfler la vue.
-     * @param container Vue parente.
+     *
+     * @param inflater           LayoutInflater pour gonfler la vue.
+     * @param container          Vue parente.
      * @param savedInstanceState État précédent du fragment.
      * @return Vue créée.
      */
@@ -145,38 +145,28 @@ public class MapFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.map_fragment_2, container, false);
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
-
         companyName = frag.findViewById(R.id.client_company_name);
         companyAdress = frag.findViewById(R.id.client_company_adress);
-
         // Initialisation de la carte
         mapView = frag.findViewById(R.id.mapView);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapHelper = new MapHelper(mapView);
-
         konfettiView = frag.findViewById(R.id.viewKonfetti);
         start = new Marker(mapView);
         end = new Marker(mapView);
-
         buttonVisit = frag.findViewById(R.id.btn_continue);
         buttonVisit.setOnClickListener(view -> markVisited());
-
         buttonPass = frag.findViewById(R.id.btn_pass);
         buttonPass.setOnClickListener(view -> pass());
-
         buttonPause = frag.findViewById(R.id.btn_pause);
         buttonPause.setOnClickListener(view -> pause());
-
         buttonStop = frag.findViewById(R.id.btn_stop);
         buttonStop.setOnClickListener(view -> stop());
-
-
-
-        if(parcours == null){
+        if (parcours == null) {
             parcours = new Parcours();
-        }else {
-            if(isParcoursFinished){
+        } else {
+            if (isParcoursFinished) {
                 buttonVisit.setVisibility(View.GONE);
                 buttonPass.setVisibility(View.GONE);
                 buttonPause.setVisibility(View.GONE);
@@ -186,17 +176,13 @@ public class MapFragment extends Fragment {
 
             }
         }
-
-
+        prospectNotified = new ArrayList<>();
         Button buttonCenter = frag.findViewById(R.id.btn_recenter);
         buttonCenter.setOnClickListener(view -> centerView());
-
         // Chargement de l'itinéraire
         prepareItineraireMap();
-
         return frag;
     }
-
 
     private void startConfetti(int duration) {
         konfettiView.build()
@@ -211,7 +197,6 @@ public class MapFragment extends Fragment {
                 .streamFor(300, 5000L);
     }
 
-
     /**
      * Prépare la carte en récupérant les données de l'itinéraire.
      */
@@ -223,24 +208,19 @@ public class MapFragment extends Fragment {
             API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
                 clients = response.getClients();
             }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
-
-            System.out.println("passe par la");
-            API_REQUEST.utilisateur.getSelf(getContext(),response -> System.out.println(response)
-                    ,error -> System.out.println(error));
-
+            API_REQUEST.utilisateur.getSelf(getContext(), response -> System.out.println(response)
+                    , error -> System.out.println(error));
         } else {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.no_itinerary)
                     .setMessage(R.string.stay_without_itinerary)
                     .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
-                    .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT,false,args))
+                    .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT, false, args))
                     .show();
-
             buttonVisit.setVisibility(View.GONE);
             buttonPass.setVisibility(View.GONE);
             buttonPause.setVisibility(View.GONE);
             buttonStop.setVisibility(View.GONE);
-
         }
     }
 
@@ -251,69 +231,57 @@ public class MapFragment extends Fragment {
         goToNext(true);
         // Ajout d'une vérification que clientsIndex est dans les limites
     }
-    private void goToNext(boolean visit){
-        parcours.addVisite(new Visit(clients.get(clientsIndex),visit));
+
+    private void goToNext(boolean visit) {
+        gotNotificationForClient = false;
+        parcours.addVisite(new Visit(clients.get(clientsIndex), visit));
         destinationPoint = null;
-        if(clientsIndex+1 == clients.size()){
-
+        if (clientsIndex + 1 == clients.size()) {
             enregistrerParcours();
-
-
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
             ringtone.play();
-
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (ringtone.isPlaying()) {
                     ringtone.stop();
                 }
             }, 2000); // 1000
-
             new AlertDialog.Builder(requireContext())
-                    .setTitle(getString(R.string.destination_done))
+                    .setTitle(getString(R.string.itinerary_done))
                     .setMessage(getString(R.string.message_destination))
                     .setPositiveButton("OK", (dialog, which) -> {
                         dialog.dismiss();
                         startConfetti(1000); // Confetti for 1 seconds
                     })
                     .show();
-
-
-
-        }else{
+        } else {
             clientsIndex++;
             clientMarker();
         }
     }
 
-    /**
-     *
-     */
-    private void pass(){
+    private void pass() {
+        gotNotificationForClient = false;
         goToNext(false);
     }
 
     /**
      * recentre la vue
      */
-    private void centerView(){
-        if(startPoint != null){
-            if(destinationPoint != null){
+    private void centerView() {
+        if (startPoint != null) {
+            if (destinationPoint != null) {
                 mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
-            }else{
+            } else {
                 mapHelper.adjustZoomToMarkers(startPoint, startPoint);
             }
         }
     }
 
-
-    public void pause(){
-
-
+    public void pause() {
     }
 
-
-    public void stop(){
+    public void stop() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Arrêter le parcours")
                 .setMessage("êtes vous sur de vouloir arrêter le parcours")
@@ -322,6 +290,7 @@ public class MapFragment extends Fragment {
                 .show();
 
     }
+
     /**
      * Démarre la mise à jour continue de la localisation lorsque le fragment est visible.
      */
@@ -335,12 +304,9 @@ public class MapFragment extends Fragment {
         locationHelper.startContinuousLocationUpdates(locationCallback);
     }
 
-
-    public void enregistrerParcours(){
-
-        API_REQUEST.parcours.create(getContext(),parcours,response -> System.out.println(response)
+    public void enregistrerParcours() {
+        API_REQUEST.parcours.create(getContext(), parcours, response -> System.out.println(response)
                 , error -> System.out.println(error.getMessage()));
-
         buttonVisit.setVisibility(View.GONE);
         buttonPass.setVisibility(View.GONE);
         buttonPause.setVisibility(View.GONE);
@@ -350,6 +316,7 @@ public class MapFragment extends Fragment {
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
     }
+
     /**
      * Arrête la mise à jour continue de la localisation pour économiser la batterie.
      */
@@ -359,5 +326,82 @@ public class MapFragment extends Fragment {
         locationHelper.stopLocationUpdates(locationCallback);
         destinationPoint = null;
         startPoint = null;
+    }
+
+    /**
+     * Appelé lorsque au moins un prospect est à moins de 1 Km.
+     */
+    @Override
+    public void onProspectNotification(List<Client> prospects) {
+        System.out.println(prospects.size());
+        StringBuilder message = new StringBuilder();
+        for (Client prospect : prospects) {
+            if (!(prospectNotified.contains(prospect) || clients.contains(prospect))) {
+                prospectNotified.add(prospect);
+                message.append(getString(R.string.prospect_nearby_sub_message, prospect.getNomEntreprise(),
+                        prospect.getAdresse(), prospect.getContact().getNumeroTelephone()));
+            }
+        }
+        if (message.length() > 0) {
+            triggerNotification(getString(R.string.prospect_nearby_message), message.toString());
+        }
+    }
+
+    /**
+     * Appelé lorsque le client est à moins de 200 mètres.
+     * La notification ressemble à ceci :
+     * "Vous êtes à moins de 200 mètres du client :
+     * Nom de l'entreprise
+     * Numéro de téléphone : xx xx xx xx xx".
+     */
+    @Override
+    public void onClientNotification() {
+        if (!gotNotificationForClient) {
+            gotNotificationForClient = true;
+            String message = getString(R.string.client_notification_message,
+                    clients.get(clientsIndex).getNomEntreprise(),
+                    clients.get(clientsIndex).getContact().getNumeroTelephone());
+            triggerNotification(getString(R.string.destination_reached), message);
+        }
+    }
+
+    /**
+     * Affiche un pop up de notification.
+     * Celui-ci joue un son et affiche un message pendant 10 secondes.
+     * L'utilisateur est informé toutes les secondes du temps restant.
+     * L'utilisateur peut également fermer la notification manuellement en appuyant sur le bouton "Fermer".
+     *
+     * @param contenue le message à afficher
+     */
+    private void triggerNotification(String title, String contenue) {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
+        ringtone.play();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (ringtone.isPlaying()) {
+                ringtone.stop();
+            }
+        }, 2000);
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(title)
+                .setMessage(contenue)
+                .setPositiveButton("Fermer", (dialogInterface, which) -> dialogInterface.dismiss())
+                .create();
+        dialog.show();
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final int[] secondsLeft = {20};
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (secondsLeft[0] > 0) {
+                    dialog.setMessage(contenue + "\n" + getString(R.string.time_remaining, secondsLeft[0]));
+                    secondsLeft[0]--;
+                    handler.postDelayed(this, 1000);
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        };
+        handler.post(runnable);
     }
 }

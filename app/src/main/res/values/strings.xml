@@ -118,6 +118,12 @@
     <string name="end_point">Position client</string>
 
     <!-- -->
-    <string name="destination_done">Destination atteinte 🎯</string>
+    <string name="itinerary_done">Itinéraire finit !</string>
     <string name="message_destination">Merci d\'avoir utilisé notre service !</string>
+    <string name="destination_reached">Vous êtes arrivé !</string>
+    <string name="prospect_nearby">Prospect(s) à proximité :</string>
+    <string name="prospect_nearby_message">Vous êtes à proximité de ce(s) prospect(s)\n%s</string>
+    <string name="prospect_nearby_sub_message">\n%s\n%s\n%s\n----------</string>
+    <string name="client_notification_message">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
+    <string name="time_remaining">Fermeture dans %d secondes.</string>
 </resources>
