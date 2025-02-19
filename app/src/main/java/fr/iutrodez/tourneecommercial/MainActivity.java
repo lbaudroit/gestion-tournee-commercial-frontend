@@ -1,7 +1,12 @@
 package fr.iutrodez.tourneecommercial;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationBarView;
 import fr.iutrodez.tourneecommercial.fragments.*;
+import fr.iutrodez.tourneecommercial.utils.api.OfflineRequestManager;
 
 import java.util.*;
 
@@ -53,6 +59,25 @@ public class MainActivity extends AppCompatActivity
         menuId.put(R.id.bottom_bar_itinerary, ITINERARY_FRAGMENT);
         menuId.put(R.id.bottom_bar_setting, SETTING_FRAGMENT);
     }
+    private BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            OfflineRequestManager.getInstance(context).processQueue();
+        }
+    };
+
+
+
+    private void registerNetworkReceiver() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkReceiver);
+    }
 
     /**
      * Appelé lors de la création de l'activité.
@@ -62,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerNetworkReceiver();
         setContentView(R.layout.main_activity);
         navigationBar = findViewById(R.id.bottom_bar);
         navigationBar.setOnItemSelectedListener(this);

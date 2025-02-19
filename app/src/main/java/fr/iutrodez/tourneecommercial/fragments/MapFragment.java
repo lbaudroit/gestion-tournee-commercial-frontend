@@ -30,6 +30,7 @@ import fr.iutrodez.tourneecommercial.modeles.Coordonnees;
 import fr.iutrodez.tourneecommercial.modeles.Parcours;
 import fr.iutrodez.tourneecommercial.modeles.Visit;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.api.OfflineRequestManager;
 import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
 import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
@@ -208,7 +209,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
             API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
                 clients = response.getClients();
             }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
-            API_REQUEST.utilisateur.getSelf(getContext(), response -> System.out.println(response)
+            API_REQUEST.utilisateur.getCoordinate(getContext(), response -> System.out.println(response)
                     , error -> System.out.println(error));
         } else {
             new AlertDialog.Builder(getContext())
@@ -305,8 +306,8 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     }
 
     public void enregistrerParcours() {
-        API_REQUEST.parcours.create(getContext(), parcours, response -> System.out.println(response)
-                , error -> System.out.println(error.getMessage()));
+        OfflineRequestManager.getInstance(getContext()).saveParcours(parcours);
+
         buttonVisit.setVisibility(View.GONE);
         buttonPass.setVisibility(View.GONE);
         buttonPause.setVisibility(View.GONE);

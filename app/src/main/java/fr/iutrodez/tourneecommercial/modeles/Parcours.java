@@ -10,6 +10,7 @@ import java.util.List;
 public class Parcours {
 
     private List<Visit> visits;
+    private List<Coordonnees> etapes;
 
     private String name;
     /**
@@ -47,6 +48,13 @@ public class Parcours {
         this.visits.addAll(visits);
     }
 
+    public void addEtapes(Coordonnees coords){
+        etapes.add(coords);
+    }
+
+    public List<Coordonnees> getEtapes(){
+        return etapes;
+    }
     public void setName(String name){
         this.name = name;
     }

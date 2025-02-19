@@ -40,13 +40,12 @@ public class ParcoursApiRequest extends ApiRessource {
     private static JSONObject parcoursDTOCreation(Parcours parcours) {
         JSONObject parcoursData = new JSONObject();
         try {
-
             JSONArray etapesArray = new JSONArray();
             for (Object visite : parcours.getVisits()) {
-                if (visite != null) {  // Vérifier que l'objet n'est pas null
+                if (visite != null) {
                     JSONObject visiteObj = new JSONObject();
-                    Visit v = (Visit) visite; // Cast en Visite
-                    visiteObj.put("nom", v.getName());  // Ajoutez les vrais attributs de Visite
+                    Visit v = (Visit) visite;
+                    visiteObj.put("nom", v.getName());
                     visiteObj.put("visite", v.isVisited());
 
                     JSONObject coordinates = new JSONObject();
@@ -87,5 +86,4 @@ public class ParcoursApiRequest extends ApiRessource {
         }
         return clientList;
     }
-
 }
