@@ -21,25 +21,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:elevation="8dp"
-        android:padding="12dp">
+        android:elevation="@dimen/map_elevation"
+        android:paddingBottom="24dp">
 
         <TextView
             android:id="@+id/client_company_name"
+            style="@style/PrimaryInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nom entreprise"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            android:text="@string/nom_entreprise"/>
 
         <TextView
             android:id="@+id/client_company_adress"
+            style="@style/SecondaryInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Adresse entreprise"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:text="@string/adresse_entreprise"/>
     </LinearLayout>
 
     <!-- Bouton flottant pour recentrer la carte -->
@@ -47,10 +44,11 @@
         android:id="@+id/btn_center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/medium_margin"
         android:layout_gravity="bottom|end"
         app:backgroundTint="@color/white"
-        app:elevation="6dp"/>
+        app:elevation="@dimen/map_elevation"
+        android:contentDescription="@string/description_map" />
 
     <!-- Zone des boutons en bas -->
     <LinearLayout
@@ -58,8 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:elevation="8dp"
-        android:padding="16dp"
+        android:elevation="@dimen/map_elevation"
+        android:paddingVertical="@dimen/space_vertical"
         android:layout_gravity="bottom"
         android:orientation="vertical"
         android:gravity="center">
@@ -77,8 +75,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_margin="8dp"
-                android:text="Visité"
+                android:layout_marginEnd="@dimen/space_half_horizontal"
+                android:text="@string/visiter"
                 android:backgroundTint="@color/neutral_blue"/>
 
             <Button
@@ -86,18 +84,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_margin="8dp"
-                android:text="Passer"
+                android:layout_marginStart="@dimen/space_half_horizontal"
+                android:text="@string/passer"
                 android:backgroundTint="@color/neutral_blue"/>
         </LinearLayout>
+
         <Button
             android:id="@+id/btn_recenter"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_margin="8dp"
-            android:text="centrer"
+            android:layout_marginVertical="@dimen/space_vertical"
+            android:text="@string/centrer"
             android:backgroundTint="@color/neutral_blue"/>
+
+
         <!-- Deuxième ligne : Pause / Arrêter -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -111,8 +112,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_margin="8dp"
-                android:text="Pause"
+                android:layout_marginEnd="@dimen/space_half_horizontal"
+                android:text="@string/pause"
                 android:backgroundTint="@color/neutral_blue"/>
 
             <Button
@@ -120,8 +121,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_margin="8dp"
-                android:text="Arrêter"
+                android:layout_marginStart="@dimen/space_half_horizontal"
+                android:text="@string/arreter"
                 android:backgroundTint="@color/neutral_blue"/>
         </LinearLayout>
     </LinearLayout>

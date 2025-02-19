@@ -21,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.location.LocationCallback;
@@ -157,7 +158,10 @@ public class MapFragment extends Fragment {
 
         konfettiView = frag.findViewById(R.id.viewKonfetti);
         start = new Marker(mapView);
+        start.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_my_location_24, null));
+
         end = new Marker(mapView);
+        end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
 
         buttonVisit = frag.findViewById(R.id.btn_continue);
         buttonVisit.setOnClickListener(view -> markVisited());

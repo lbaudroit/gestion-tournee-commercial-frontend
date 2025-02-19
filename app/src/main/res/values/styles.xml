@@ -86,5 +86,15 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="roudedButton"></style>
+    <!-- Informations entreprise sur la map-->
+
+    <style name="PrimaryInfoText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="SecondaryInfoText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+    </style>
 </resources>

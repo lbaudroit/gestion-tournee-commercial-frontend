@@ -112,12 +112,22 @@
     <string name="no_route_map">Il n\'y a pas d\'itinéraire </string>
     <string name="launch_route">Démarrer le parcours</string>
 
-
     <!-- Marker -->
-    <string name="start_point">Ma Position</string>
+    <string name="start_point">Ma position</string>
     <string name="end_point">Position client</string>
 
-    <!-- -->
+    <!-- Carte -->
     <string name="destination_done">Destination atteinte 🎯</string>
     <string name="message_destination">Merci d\'avoir utilisé notre service !</string>
+
+    <string name="nom_entreprise">Nom de l\'entreprise</string>
+    <string name="adresse_entreprise">Adresse de l\'entreprise</string>
+
+    <string name="description_map">Carte représentant la position actuelle et la position du prochain client à visiter.</string>
+
+    <string name="visiter">Visiter</string>
+    <string name="passer">Passer</string>
+    <string name="centrer">Centrer</string>
+    <string name="pause">Mettre en pause</string>
+    <string name="arreter">Arrêter</string>
 </resources>
