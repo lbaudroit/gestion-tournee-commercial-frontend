@@ -49,9 +49,9 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.button_signup).setOnClickListener(this::onClickGoToInscription);
         apiRequest = ApiRequest.buildInstance(this);
         //TODO : Supprimer les lignes suivantes
-        email.setText("en@cl.fr");
-        password.setText("Enzo_123");
-        findViewById(R.id.button_login).performClick();
+        //email.setText("en@cl.fr");
+        //password.setText("Enzo_123");
+        //findViewById(R.id.button_login).performClick();
     }
 
     /**
