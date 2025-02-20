@@ -1,28 +1,26 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Classe ApiRessource pour gérer les requêtes API.
  */
 public class ApiRessource {
 
-    private static final String BASE_URL = "http://10.0.2.2:9090/";
+    private static final String BASE_URL = "http://direct.bennybean.fr:9090/";
     private static RequestQueue requestQueue;
 
     /**
