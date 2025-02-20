@@ -106,12 +106,36 @@
     <string name="quit_app">Quitter l\'application</string>
     <string name="confirm_quit_app">Voulez-vous vraiment quitter l\'application ?</string>
     <string name="save_params_error">Erreur lors de la sauvegarde des paramètres</string>
-    <string name="no_itinerary">Vous n\'avez aucun itinéraire</string>
+    <string name="no_itinerary">Vous n\'avez sélectionnez aucun itinéraire</string>
     <string name="clients_search_title">Ajout d\'un client</string>
     <string name="create_client_error">Impossible de créer le client</string>
     <string name="confirm_add_route">Voulez-vous parcourir cet itinéraire : %s ?</string>
+    <string name="stay_without_itinerary">Aucun itinéraire sélectionné. Voulez-vous poursuivre sans itinéraire ?</string>
 
+    <string name="no_route_map">Il n\'y a pas d\'itinéraire </string>
     <string name="launch_route">Démarrer le parcours</string>
+
+    <!-- Marker -->
+    <string name="start_point">Ma position</string>
+    <string name="end_point">Position client</string>
+
+    <!-- Carte -->
+    <string name="destination_done">Destination atteinte </string>
+    <!-- -->
+    <string name="itinerary_done">Itinéraire finit !</string>
+    <string name="message_destination">Merci d\'avoir utilisé notre service !</string>
+
+    <string name="nom_entreprise">Nom de l\'entreprise</string>
+    <string name="adresse_entreprise">Adresse de l\'entreprise</string>
+
+    <string name="description_map">Carte représentant la position actuelle et la position du prochain client à visiter.</string>
+
+    <string name="visiter">Visiter</string>
+    <string name="passer">Passer</string>
+    <string name="centrer">Centrer</string>
+    <string name="pause">Mettre en pause</string>
+    <string name="arreter">Arrêter</string>
+    <string name="route_finished">Parcours Terminée</string>
 
     <!-- Connectivity errors -->
     <string name="no_internet_error">Impossible de se connecter à Internet. Veuillez vérifier que vous avez votre WiFi ou vos données mobiles activées.</string>
@@ -122,5 +146,10 @@
     <string name="new_password">Nouveau mot de passe</string>
     <string name="new_password_confirmation">Confirmation du nouveau mot de passe</string>
     <string name="modify_password_error">Impossible de changer le mot de passe</string>
-
+    <string name="destination_reached">Vous êtes arrivé !</string>
+    <string name="prospect_nearby">Prospect(s) à proximité :</string>
+    <string name="prospect_nearby_message">²\n%s</string>
+    <string name="prospect_nearby_sub_message">\n%s\n%s\n%s\n----------</string>
+    <string name="client_notification_message">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
+    <string name="time_remaining">Fermeture dans %d secondes.</string>
 </resources>
