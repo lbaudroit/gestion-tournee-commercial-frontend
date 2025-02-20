@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- common -->
-    <dimen name="margin_default">10dp</dimen>
     <dimen name="space_vertical">8dp</dimen>
     <dimen name="space_horizontal">6dp</dimen>
     <dimen name="space_half_horizontal">3dp</dimen>
     <dimen name="size_one">1dp</dimen>
     <dimen name="size_zero">0dp</dimen>
+
+    <!-- margin -->
+    <dimen name="page_margin_default">10dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
+    <dimen name="medium_margin">16dp</dimen>
+
+    <!-- icon size -->
     <dimen name="icon_size_24">24dp</dimen>
+    <dimen name="icon_size_48">48dp</dimen>
+    <dimen name="icon_size_72">72dp</dimen>
 
     <!-- text -->
     <dimen name="text_size_title">24sp</dimen>
@@ -47,5 +55,8 @@
 
     <!-- searchable spinner -->
     <dimen name="padding_searchable_spinner">16dp</dimen>
+
+    <!-- map -->
+    <dimen name="map_elevation">8dp</dimen>
 
 </resources>

@@ -19,7 +19,7 @@ import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.utils.AddressAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import org.json.JSONException;
 
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class ClientCreationFragment extends Fragment {
 
-    private ApiRequest API_REQUEST = ApiRequest.getInstance();
+    private final ApiRequest API_REQUEST = ApiRequest.getInstance();
     private List<Adresse> suggestedAddress;
     private AddressAdapter addressAdapter;
 
@@ -48,10 +48,6 @@ public class ClientCreationFragment extends Fragment {
     private Switch clientOrProspect;
     private EditText businessName, name, firstname, phoneNumber, description;
     private String idModified;
-
-    public static ClientCreationFragment newInstance() {
-        return new ClientCreationFragment();
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {

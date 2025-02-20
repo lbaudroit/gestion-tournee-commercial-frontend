@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
 import fr.iutrodez.tourneecommercial.modeles.Client;
 import fr.iutrodez.tourneecommercial.modeles.Contact;
-import fr.iutrodez.tourneecommercial.modeles.dto.ClientCreation;
+import fr.iutrodez.tourneecommercial.modeles.dto.ClientDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,9 +108,9 @@ public class ClientApiRequest extends ApiRessource {
                                                 String contactPhone, boolean isClient) {
         Adresse adress = new Adresse(adressLabel, postalCode, city);
         Contact contact = new Contact(contactName, contactFirstname, contactPhone);
-        ClientCreation clientCreation = new ClientCreation(businessname, adress, description, contact, isClient);
+        ClientDTO clientDTO = new ClientDTO(businessname, adress, description, contact, isClient);
         Gson gson = new Gson();
-        String json = gson.toJson(clientCreation);
+        String json = gson.toJson(clientDTO);
         try {
             return new JSONObject(json);
         } catch (JSONException e) {

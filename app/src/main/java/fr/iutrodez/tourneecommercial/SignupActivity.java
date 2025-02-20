@@ -1,5 +1,7 @@
 package fr.iutrodez.tourneecommercial;
 
+import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.utils.AddressAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.ArrayList;
@@ -67,7 +69,9 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void onClickSignup(View view) {
-        if (checkFields()) {
+        if (!hasInternetCapability(this)) {
+            Toast.makeText(this, R.string.no_internet_error, Toast.LENGTH_LONG).show();
+        } else if (checkFields()) {
             String name = this.name.getText().toString();
             String firstname = this.firstname.getText().toString();
             String email = this.email.getText().toString();
