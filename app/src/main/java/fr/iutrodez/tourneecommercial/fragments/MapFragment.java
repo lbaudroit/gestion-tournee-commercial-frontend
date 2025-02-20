@@ -17,13 +17,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
+
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.util.List;
+
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
@@ -35,33 +45,38 @@ import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-
-import java.util.List;
 
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements NotificationHelper.NotificationListener {
     private MainActivity parent;
     private KonfettiView konfettiView;
     private final ApiRequest API_REQUEST = ApiRequest.getInstance();
+    private MapView mapView;
     private GeoPoint destinationPoint, startPoint;
+    private long itineraireId;
     private List<Client> clients;
     private int clientsIndex = 0;
+
     private Marker start, end;
+    private NotificationHelper notificationHelper;
+    private boolean gotNotificationForClient = false;
+    List<Client> prospectNotified;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
+
     private TextView companyName;
     private TextView companyAdress;
+
     private Parcours parcours;
+
     private Button buttonVisit;
+
     private Button buttonPass;
+
     private boolean isParcoursFinished;
+
     private Button buttonPause;
     private Button buttonStop;
 
@@ -75,6 +90,7 @@ public class MapFragment extends Fragment {
         super.onAttach(context);
         parent = (MainActivity) context;
         locationHelper = new LocationHelper(context);
+        notificationHelper = new NotificationHelper(context, this);
     }
 
     /**
@@ -176,6 +192,7 @@ public class MapFragment extends Fragment {
                 removeButtons();
                 startConfetti();
                 mapHelper.dropMarker(end);
+
             }
         }
     }
@@ -367,5 +384,82 @@ public class MapFragment extends Fragment {
         companyName.setText(R.string.route_finished);
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
+    }
+
+    /**
+     * Appelé lorsque au moins un prospect est à moins de 1 Km.
+     */
+    @Override
+    public void onProspectNotification(List<Client> prospects) {
+        System.out.println(prospects.size());
+        StringBuilder message = new StringBuilder();
+        for (Client prospect : prospects) {
+            if (!(prospectNotified.contains(prospect) || clients.contains(prospect))) {
+                prospectNotified.add(prospect);
+                message.append(getString(R.string.prospect_nearby_sub_message, prospect.getNomEntreprise(),
+                        prospect.getAdresse(), prospect.getContact().getNumeroTelephone()));
+            }
+        }
+        if (message.length() > 0) {
+            triggerNotification(getString(R.string.prospect_nearby_message), message.toString());
+        }
+    }
+
+    /**
+     * Appelé lorsque le client est à moins de 200 mètres.
+     * La notification ressemble à ceci :
+     * "Vous êtes à moins de 200 mètres du client :
+     * Nom de l'entreprise
+     * Numéro de téléphone : xx xx xx xx xx".
+     */
+    @Override
+    public void onClientNotification() {
+        if (!gotNotificationForClient) {
+            gotNotificationForClient = true;
+            String message = getString(R.string.client_notification_message,
+                    clients.get(clientsIndex).getNomEntreprise(),
+                    clients.get(clientsIndex).getContact().getNumeroTelephone());
+            triggerNotification(getString(R.string.destination_reached), message);
+        }
+    }
+
+    /**
+     * Affiche un pop up de notification.
+     * Celui-ci joue un son et affiche un message pendant 10 secondes.
+     * L'utilisateur est informé toutes les secondes du temps restant.
+     * L'utilisateur peut également fermer la notification manuellement en appuyant sur le bouton "Fermer".
+     *
+     * @param contenue le message à afficher
+     */
+    private void triggerNotification(String title, String contenue) {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
+        ringtone.play();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (ringtone.isPlaying()) {
+                ringtone.stop();
+            }
+        }, 2000);
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(title)
+                .setMessage(contenue)
+                .setPositiveButton("Fermer", (dialogInterface, which) -> dialogInterface.dismiss())
+                .create();
+        dialog.show();
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final int[] secondsLeft = {20};
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (secondsLeft[0] > 0) {
+                    dialog.setMessage(contenue + "\n" + getString(R.string.time_remaining, secondsLeft[0]));
+                    secondsLeft[0]--;
+                    handler.postDelayed(this, 1000);
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        };
+        handler.post(runnable);
     }
 }

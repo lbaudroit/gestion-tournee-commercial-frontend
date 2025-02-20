@@ -1,12 +1,15 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
 import android.content.Context;
+
 import com.android.volley.RequestQueue;
-import fr.iutrodez.tourneecommercial.modeles.Parcours;
-import fr.iutrodez.tourneecommercial.modeles.Visit;
+
+import fr.iutrodez.tourneecommercial.modeles.Client;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Classe pour gérer les requêtes API pour les parcours.
@@ -41,6 +44,13 @@ public class ParcoursApiRequest extends ApiRessource {
         }, errorCallback::onError);
     }
 
+    public void getProspectsForNotifications(Context context, double latitude, double longitude, SuccessCallback<List<Client>> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/prospects/notifications?latitude=" + latitude + "&longitude=" + longitude;
+        super.getWithTokenAsArray(context, url, response -> {
+            successCallback.onSuccess(extractClients(response));
+        }, errorCallback::onError);
+    }
+
     /**
      * Crée un objet JSON à partir d'un objet Parcours.
      *
@@ -63,7 +73,7 @@ public class ParcoursApiRequest extends ApiRessource {
                     coordinates.put("latitude", v.getCoordonnees().getLatitude());
                     coordinates.put("longitude", v.getCoordonnees().getLongitude());
 
-                    visiteObj.put("coordonnees", coordinates);
+                    visiteObj.put("coordonnees",coordinates );
                     etapesArray.put(visiteObj);
                 } else {
                     System.out.println("Visite est null !");
@@ -77,12 +87,6 @@ public class ParcoursApiRequest extends ApiRessource {
         return parcoursData;
     }
 
-    /**
-     * Extrait le message d'un objet JSON.
-     *
-     * @param json l'objet JSON contenant le message
-     * @return le message extrait
-     */
     private String extractMessage(JSONObject json) {
         try {
             return json.getString("message");
@@ -90,4 +94,18 @@ public class ParcoursApiRequest extends ApiRessource {
             throw new RuntimeException(e);
         }
     }
+
+    private List<Client> extractClients(JSONArray clients) {
+        Gson gson = new Gson();
+        ArrayList<Client> clientList = new ArrayList<>();
+        for (int i = 0; i < clients.length(); i++) {
+            try {
+                clientList.add(gson.fromJson(clients.getJSONObject(i).toString(), Client.class));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return clientList;
+    }
+
 }
