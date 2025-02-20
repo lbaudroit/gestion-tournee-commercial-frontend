@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.Objects;
+
+import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 /**
  * Activité de connexion pour l'application Tournée Commerciale.
@@ -89,8 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (inputsValid) {
             apiRequest.auth.login(extracted_email, extracted_password, (jwtToken) -> {
-                long expirationTime = System.currentTimeMillis() + jwtToken.getExpiration();
-                setSharedPreferences(jwtToken, expirationTime);
+                setSharedPreferences(jwtToken);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -108,10 +109,18 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(new Intent(this, SignupActivity.class));
     }
 
-    private void setSharedPreferences(JwtToken jwtToken, long expirationTime) {
-        getSharedPreferences("user", MODE_PRIVATE).edit().putString("token", jwtToken.getToken()).apply();
-        getSharedPreferences("user", MODE_PRIVATE).edit().putLong("expiration", expirationTime).apply();
-        getSharedPreferences("user", MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
-        getSharedPreferences("user", MODE_PRIVATE).edit().putString("password", password.getText().toString()).apply();
+    /**
+     * Enregistre le token d'authentification et les informations de connexion dans les SharedPreferences.
+     * @param jwtToken les informations du token d'authentification
+     */
+    private void setSharedPreferences(JwtToken jwtToken) {
+        long expirationTime = System.currentTimeMillis() + jwtToken.getExpiration();
+        getSharedPreferences("user", MODE_PRIVATE)
+                .edit()
+                .putString("token", jwtToken.getToken())
+                .putLong("expiration", expirationTime)
+                .putString("email", email.getText().toString())
+                .putString("password", password.getText().toString())
+                .apply();
     }
 }
