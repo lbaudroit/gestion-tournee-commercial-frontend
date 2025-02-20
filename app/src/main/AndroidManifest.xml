@@ -4,18 +4,23 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+
 
     <application
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"
-            android:icon="@mipmap/ic_launcher"
-            android:label="Tournée commercial"
-            android:roundIcon="@mipmap/ic_launcher_round"
+            android:icon="@mipmap/icon"
+            android:label="Avengo"
             android:supportsRtl="true"
             android:theme="@style/Theme.TourneeCommercial"
             android:usesCleartextTraffic="true"
             tools:targetApi="33">
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
         <activity
                 android:name=".LoginActivity"
