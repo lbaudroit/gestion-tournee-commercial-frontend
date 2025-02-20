@@ -17,23 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-
-import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
@@ -42,9 +32,17 @@ import fr.iutrodez.tourneecommercial.modeles.Visit;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
 import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.util.List;
 
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
@@ -53,30 +51,20 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private MainActivity parent;
     private KonfettiView konfettiView;
     private final ApiRequest API_REQUEST = ApiRequest.getInstance();
-    private MapView mapView;
     private GeoPoint destinationPoint, startPoint;
-    private long itineraireId;
     private List<Client> clients;
     private int clientsIndex = 0;
-
     private Marker start, end;
-    private NotificationHelper notificationHelper;
     private boolean gotNotificationForClient = false;
     List<Client> prospectNotified;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
-
     private TextView companyName;
-    private TextView companyAdress;
-
+    private TextView companyAddress;
     private Parcours parcours;
-
     private Button buttonVisit;
-
     private Button buttonPass;
-
     private boolean isParcoursFinished;
-
     private Button buttonPause;
     private Button buttonStop;
 
@@ -90,7 +78,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         super.onAttach(context);
         parent = (MainActivity) context;
         locationHelper = new LocationHelper(context);
-        notificationHelper = new NotificationHelper(context, this);
+        new NotificationHelper(context, this);
     }
 
     /**
@@ -110,7 +98,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
         companyName = frag.findViewById(R.id.client_company_name);
-        companyAdress = frag.findViewById(R.id.client_company_adress);
+        companyAddress = frag.findViewById(R.id.client_company_adress);
         konfettiView = frag.findViewById(R.id.viewKonfetti);
         buttonVisit = frag.findViewById(R.id.btn_continue);
         buttonPass = frag.findViewById(R.id.btn_pass);
@@ -126,7 +114,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
 
         buttonVisit.setOnClickListener(view -> markVisited());
         buttonPass.setOnClickListener(view -> pass());
-        buttonPause.setOnClickListener(view -> pause());
+        //TODO: handle pause
         buttonStop.setOnClickListener(view -> stop());
         buttonCenter.setOnClickListener(view -> centerView());
 
@@ -190,9 +178,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         } else {
             if (isParcoursFinished) {
                 removeButtons();
-                startConfetti();
                 mapHelper.dropMarker(end);
-
             }
         }
     }
@@ -251,14 +237,11 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                     mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
                     centerView();
                 }
-                // ne place le marker que si le marker client n'existe pas
                 if (clients != null && destinationPoint == null && !isParcoursFinished) {
                     clientMarker();
                 }
             }
-
         }
-
     };
 
     /**
@@ -269,7 +252,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 clients.get(clientsIndex).getCoordonnees().getLatitude(),
                 clients.get(clientsIndex).getCoordonnees().getLongitude());
 
-        companyAdress.setText(clients.get(clientsIndex).getAdresse().toString());
+        companyAddress.setText(clients.get(clientsIndex).getAdresse().toString());
         companyName.setText(clients.get(clientsIndex).getNomEntreprise());
         mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
         mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
@@ -297,7 +280,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      */
     private void markVisited() {
         goToNext(true);
-        // Ajout d'une vérification que clientsIndex est dans les limites
     }
 
     /**
@@ -321,14 +303,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      */
     private void finish() {
         enregistrerParcours();
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
-        ringtone.play();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (ringtone.isPlaying()) {
-                ringtone.stop();
-            }
-        }, 2000);
+        playNotificationSound();
         new AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.destination_done))
                 .setMessage(getString(R.string.message_destination))
@@ -337,9 +312,11 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                     startConfetti();
                 })
                 .show();
-        parent.clearCache(MainActivity.MAP_FRAGMENT);
     }
 
+    /**
+     * Passe au client suivant sans le marquer comme visité.
+     */
     private void pass() {
         goToNext(false);
     }
@@ -355,9 +332,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 mapHelper.adjustZoomToMarkers(startPoint, startPoint);
             }
         }
-    }
-
-    private void pause() {
     }
 
     /**
@@ -380,14 +354,22 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 , error -> System.out.println(error.getMessage()));
 
         removeButtons();
-        companyAdress.setVisibility(View.GONE);
+        companyAddress.setVisibility(View.GONE);
         companyName.setText(R.string.route_finished);
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
+        parent.clearCache(MainActivity.MAP_FRAGMENT);
     }
 
     /**
      * Appelé lorsque au moins un prospect est à moins de 1 Km.
+     * La notification ressemble à ceci :
+     * Vous êtes à proximité de ce(s) prospect(s)
+     * Nom de l'entreprise
+     * Adresse
+     * Numéro de téléphone
+     * --------
+     * et ainsi de suite pour chaque prospect.
      */
     @Override
     public void onProspectNotification(List<Client> prospects) {
@@ -432,21 +414,24 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * @param contenue le message à afficher
      */
     private void triggerNotification(String title, String contenue) {
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
-        ringtone.play();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (ringtone.isPlaying()) {
-                ringtone.stop();
-            }
-        }, 2000);
+        playNotificationSound();
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(title)
                 .setMessage(contenue)
                 .setPositiveButton("Fermer", (dialogInterface, which) -> dialogInterface.dismiss())
                 .create();
         dialog.show();
-        final Handler handler = new Handler(Looper.getMainLooper());
+        handleAutoCloseNotification(dialog, contenue);
+    }
+
+    /**
+     * Affiche un message pendant 20 secondes.
+     *
+     * @param dialog   le dialog affiché
+     * @param contenue le message à afficher
+     */
+    private void handleAutoCloseNotification(AlertDialog dialog, String contenue) {
+        Handler handler = new Handler(Looper.getMainLooper());
         final int[] secondsLeft = {20};
         Runnable runnable = new Runnable() {
             @Override
@@ -461,5 +446,19 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
             }
         };
         handler.post(runnable);
+    }
+
+    /**
+     * Joue un son de notification.
+     */
+    private void playNotificationSound() {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
+        ringtone.play();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (ringtone.isPlaying()) {
+                ringtone.stop();
+            }
+        }, 2000);
     }
 }

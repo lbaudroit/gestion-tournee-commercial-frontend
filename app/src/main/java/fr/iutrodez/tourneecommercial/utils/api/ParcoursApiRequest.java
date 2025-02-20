@@ -1,14 +1,16 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
 import android.content.Context;
-
 import com.android.volley.RequestQueue;
-
+import com.google.gson.Gson;
 import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.Parcours;
+import fr.iutrodez.tourneecommercial.modeles.Visit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,18 +64,17 @@ public class ParcoursApiRequest extends ApiRessource {
         try {
 
             JSONArray etapesArray = new JSONArray();
-            for (Object visite : parcours.getVisits()) {
-                if (visite != null) {  // Vérifier que l'objet n'est pas null
+            for (Visit visite : parcours.getVisits()) {
+                if (visite != null) {
                     JSONObject visiteObj = new JSONObject();
-                    Visit v = (Visit) visite; // Cast en Visite
-                    visiteObj.put("nom", v.getName());  // Ajoutez les vrais attributs de Visite
-                    visiteObj.put("visite", v.isVisited());
+                    visiteObj.put("nom", visite.getName());
+                    visiteObj.put("visite", visite.isVisited());
 
                     JSONObject coordinates = new JSONObject();
-                    coordinates.put("latitude", v.getCoordonnees().getLatitude());
-                    coordinates.put("longitude", v.getCoordonnees().getLongitude());
+                    coordinates.put("latitude", visite.getCoordonnees().getLatitude());
+                    coordinates.put("longitude", visite.getCoordonnees().getLongitude());
 
-                    visiteObj.put("coordonnees",coordinates );
+                    visiteObj.put("coordonnees", coordinates);
                     etapesArray.put(visiteObj);
                 } else {
                     System.out.println("Visite est null !");
