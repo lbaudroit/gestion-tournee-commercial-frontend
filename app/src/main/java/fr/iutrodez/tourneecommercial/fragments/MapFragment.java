@@ -217,6 +217,8 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
                 .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT, false))
                 .show();
+        companyName.setVisibility(View.GONE);
+        companyAddress.setVisibility(View.GONE);
         removeButtons();
     }
 
