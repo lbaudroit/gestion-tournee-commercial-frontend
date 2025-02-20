@@ -15,10 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HistoryFragment extends Fragment {
 
-    public static HistoryFragment newInstance() {
-        return new HistoryFragment();
-    }
-
     public MainActivity parent;
 
     @Override
