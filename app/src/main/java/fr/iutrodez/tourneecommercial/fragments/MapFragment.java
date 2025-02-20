@@ -17,24 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-
-import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
@@ -46,6 +35,13 @@ import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.util.List;
 
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
@@ -54,76 +50,24 @@ public class MapFragment extends Fragment {
     private MainActivity parent;
     private KonfettiView konfettiView;
     private final ApiRequest API_REQUEST = ApiRequest.getInstance();
-    private MapView mapView;
     private GeoPoint destinationPoint, startPoint;
-    private long itineraireId;
     private List<Client> clients;
     private int clientsIndex = 0;
-
     private Marker start, end;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
-
     private TextView companyName;
     private TextView companyAdress;
-
     private Parcours parcours;
-
     private Button buttonVisit;
-
     private Button buttonPass;
-
     private boolean isParcoursFinished;
-
     private Button buttonPause;
     private Button buttonStop;
-    /**
-     * Callback appelé à chaque mise à jour de la localisation.
-     */
-    private final LocationCallback locationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location location = locationResult.getLastLocation();
-            if (location != null) {
-                boolean positionChanged = startPoint == null
-                        || startPoint.getLongitude() != location.getLongitude()
-                        || startPoint.getLatitude() != location.getLatitude();
-                //  Avant de placer un nouveau marker, il faut vérifier que notre position est bien différente
-                //  de l'ancien marker
-                if( positionChanged){
-
-                    startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
-                    centerView();
-
-                }
-                // ne place le marker que si le marker client n'existe pas
-                if (clients != null && destinationPoint == null && !isParcoursFinished ) {
-                    clientMarker();
-                }
-            }
-
-        }
-
-    };
-
-
-    /**
-     *
-     */
-    private void clientMarker(){
-        destinationPoint = new GeoPoint(
-                clients.get(clientsIndex).getCoordonnees().getLatitude(),
-                clients.get(clientsIndex).getCoordonnees().getLongitude());
-
-        companyAdress.setText(clients.get(clientsIndex).getAdresse().toString());
-        companyName.setText(clients.get(clientsIndex).getNomEntreprise());
-        mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
-        mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
-    }
 
     /**
      * Attache le fragment au contexte de l'activité principale.
+     *
      * @param context Contexte de l'application.
      */
     @Override
@@ -135,8 +79,9 @@ public class MapFragment extends Fragment {
 
     /**
      * Crée et retourne la vue associée au fragment.
-     * @param inflater LayoutInflater pour gonfler la vue.
-     * @param container Vue parente.
+     *
+     * @param inflater           LayoutInflater pour gonfler la vue.
+     * @param container          Vue parente.
      * @param savedInstanceState État précédent du fragment.
      * @return Vue créée.
      */
@@ -144,65 +89,179 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View frag = inflater.inflate(R.layout.map_fragment_2, container, false);
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
         companyName = frag.findViewById(R.id.client_company_name);
         companyAdress = frag.findViewById(R.id.client_company_adress);
+        konfettiView = frag.findViewById(R.id.viewKonfetti);
+        buttonVisit = frag.findViewById(R.id.btn_continue);
+        buttonPass = frag.findViewById(R.id.btn_pass);
+        buttonPause = frag.findViewById(R.id.btn_pause);
+        buttonStop = frag.findViewById(R.id.btn_stop);
+        Button buttonCenter = frag.findViewById(R.id.btn_recenter);
+        MapView mapView = frag.findViewById(R.id.mapView);
 
-        // Initialisation de la carte
-        mapView = frag.findViewById(R.id.mapView);
+        initializeMapView(mapView);
+        initializeStartEnd(mapView);
+        initializeParcours();
+        initializeItineraryMap();
+
+        buttonVisit.setOnClickListener(view -> markVisited());
+        buttonPass.setOnClickListener(view -> pass());
+        buttonPause.setOnClickListener(view -> pause());
+        buttonStop.setOnClickListener(view -> stop());
+        buttonCenter.setOnClickListener(view -> centerView());
+
+        return frag;
+    }
+
+    /**
+     * Arrête la mise à jour continue de la localisation pour économiser la batterie.
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        locationHelper.stopLocationUpdates(locationCallback);
+        destinationPoint = null;
+        startPoint = null;
+    }
+
+    /**
+     * Démarre la mise à jour continue de la localisation lorsque le fragment est visible.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!locationHelper.checkPermissions()) {
+            ActivityCompat.requestPermissions(parent, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        locationHelper.startContinuousLocationUpdates(locationCallback);
+    }
+
+    /**
+     * Initialise la vue de la carte.
+     *
+     * @param mapView Vue de la carte.
+     */
+    private void initializeMapView(MapView mapView) {
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapHelper = new MapHelper(mapView);
+    }
 
-        konfettiView = frag.findViewById(R.id.viewKonfetti);
+    /**
+     * Initialise les marqueurs de début et de fin.
+     *
+     * @param mapView Vue de la carte.
+     */
+    private void initializeStartEnd(MapView mapView) {
         start = new Marker(mapView);
         start.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_my_location_24, null));
 
         end = new Marker(mapView);
         end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
-
-        buttonVisit = frag.findViewById(R.id.btn_continue);
-        buttonVisit.setOnClickListener(view -> markVisited());
-
-        buttonPass = frag.findViewById(R.id.btn_pass);
-        buttonPass.setOnClickListener(view -> pass());
-
-        buttonPause = frag.findViewById(R.id.btn_pause);
-        buttonPause.setOnClickListener(view -> pause());
-
-        buttonStop = frag.findViewById(R.id.btn_stop);
-        buttonStop.setOnClickListener(view -> stop());
-
-
-
-        if(parcours == null){
-            parcours = new Parcours();
-        }else {
-            if(isParcoursFinished){
-                buttonVisit.setVisibility(View.GONE);
-                buttonPass.setVisibility(View.GONE);
-                buttonPause.setVisibility(View.GONE);
-                buttonStop.setVisibility(View.GONE);
-                startConfetti(1000); // Confetti for 1 seconds
-                mapHelper.dropMarker(end);
-
-            }
-        }
-
-
-        Button buttonCenter = frag.findViewById(R.id.btn_recenter);
-        buttonCenter.setOnClickListener(view -> centerView());
-
-        // Chargement de l'itinéraire
-        prepareItineraireMap();
-
-        return frag;
     }
 
+    /**
+     * Initialise le parcours.
+     */
+    private void initializeParcours() {
+        if (parcours == null) {
+            parcours = new Parcours();
+        } else {
+            if (isParcoursFinished) {
+                removeButtons();
+                startConfetti();
+                mapHelper.dropMarker(end);
+            }
+        }
+    }
 
-    private void startConfetti(int duration) {
+    /**
+     * Prépare la carte en récupérant les données de l'itinéraire.
+     */
+    private void initializeItineraryMap() {
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("id")) {
+            long itineraireId = args.getLong("id");
+            parcours.setName(args.getString("name"));
+            API_REQUEST.itineraire.getOne(parent, itineraireId, response -> clients = response.getClients(),
+                    error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
+        } else {
+            handleNoItinerary();
+        }
+    }
+
+    /**
+     * Gère le cas où il n'y a pas d'itinéraire.
+     */
+    private void handleNoItinerary() {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.no_itinerary)
+                .setMessage(R.string.stay_without_itinerary)
+                .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT, false))
+                .show();
+        removeButtons();
+    }
+
+    /**
+     * Affiche ou cache les boutons.
+     */
+    private void removeButtons() {
+        buttonVisit.setVisibility(View.GONE);
+        buttonPass.setVisibility(View.GONE);
+        buttonPause.setVisibility(View.GONE);
+        buttonStop.setVisibility(View.GONE);
+    }
+
+    /**
+     * Callback appelé à chaque mise à jour de la localisation.
+     */
+    private final LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location location = locationResult.getLastLocation();
+            if (location != null) {
+                boolean positionChanged = startPoint == null
+                        || startPoint.getLongitude() != location.getLongitude()
+                        || startPoint.getLatitude() != location.getLatitude();
+                if (positionChanged) {
+                    startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
+                    centerView();
+                }
+                // ne place le marker que si le marker client n'existe pas
+                if (clients != null && destinationPoint == null && !isParcoursFinished) {
+                    clientMarker();
+                }
+            }
+
+        }
+
+    };
+
+    /**
+     * Place un marqueur pour le client actuel.
+     */
+    private void clientMarker() {
+        destinationPoint = new GeoPoint(
+                clients.get(clientsIndex).getCoordonnees().getLatitude(),
+                clients.get(clientsIndex).getCoordonnees().getLongitude());
+
+        companyAdress.setText(clients.get(clientsIndex).getAdresse().toString());
+        companyName.setText(clients.get(clientsIndex).getNomEntreprise());
+        mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
+        mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
+    }
+
+    /**
+     * Démarre l'animation de confettis.
+     */
+    private void startConfetti() {
         konfettiView.build()
                 .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
                 .setDirection(0.0, 359.0)
@@ -217,151 +276,96 @@ public class MapFragment extends Fragment {
 
 
     /**
-     * Prépare la carte en récupérant les données de l'itinéraire.
-     */
-    private void prepareItineraireMap() {
-        Bundle args = getArguments();
-        if (args != null && args.containsKey("id")) {
-            itineraireId = args.getLong("id");
-            parcours.setName(args.getString("name"));
-            API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
-                clients = response.getClients();
-            }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
-
-            System.out.println("passe par la");
-            API_REQUEST.utilisateur.getSelf(getContext(),response -> System.out.println(response)
-                    ,error -> System.out.println(error));
-
-        } else {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.no_itinerary)
-                    .setMessage(R.string.stay_without_itinerary)
-                    .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
-                    .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT,false,args))
-                    .show();
-
-            buttonVisit.setVisibility(View.GONE);
-            buttonPass.setVisibility(View.GONE);
-            buttonPause.setVisibility(View.GONE);
-            buttonStop.setVisibility(View.GONE);
-
-        }
-    }
-
-    /**
      * Marque le client actuel comme "visité" et passe au suivant.
      */
     private void markVisited() {
         goToNext(true);
         // Ajout d'une vérification que clientsIndex est dans les limites
     }
-    private void goToNext(boolean visit){
-        parcours.addVisite(new Visit(clients.get(clientsIndex),visit));
+
+    /**
+     * Passe au client suivant.
+     *
+     * @param visit Indique si le client a été visité.
+     */
+    private void goToNext(boolean visit) {
+        parcours.addVisite(new Visit(clients.get(clientsIndex), visit));
         destinationPoint = null;
-        if(clientsIndex+1 == clients.size()){
-
-            enregistrerParcours();
-
-
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
-            ringtone.play();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (ringtone.isPlaying()) {
-                    ringtone.stop();
-                }
-            }, 2000); // 1000
-
-            new AlertDialog.Builder(requireContext())
-                    .setTitle(getString(R.string.destination_done))
-                    .setMessage(getString(R.string.message_destination))
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        dialog.dismiss();
-                        startConfetti(1000); // Confetti for 1 seconds
-                    })
-                    .show();
-
-
-
-        }else{
+        if (clientsIndex + 1 == clients.size()) {
+            finish();
+        } else {
             clientsIndex++;
             clientMarker();
         }
     }
 
     /**
-     *
+     * Termine le parcours.
      */
-    private void pass(){
+    private void finish() {
+        enregistrerParcours();
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
+        ringtone.play();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (ringtone.isPlaying()) {
+                ringtone.stop();
+            }
+        }, 2000);
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.destination_done))
+                .setMessage(getString(R.string.message_destination))
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    startConfetti();
+                })
+                .show();
+        parent.clearCache(MainActivity.MAP_FRAGMENT);
+    }
+
+    private void pass() {
         goToNext(false);
     }
 
     /**
-     * recentre la vue
+     * Centre la vue sur les marqueurs.
      */
-    private void centerView(){
-        if(startPoint != null){
-            if(destinationPoint != null){
+    private void centerView() {
+        if (startPoint != null) {
+            if (destinationPoint != null) {
                 mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
-            }else{
+            } else {
                 mapHelper.adjustZoomToMarkers(startPoint, startPoint);
             }
         }
     }
 
-
-    public void pause(){
-
-
+    private void pause() {
     }
 
-
-    public void stop(){
+    /**
+     * Affiche une boîte de dialogue pour confirmer l'arrêt du parcours.
+     */
+    private void stop() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Arrêter le parcours")
                 .setMessage("êtes vous sur de vouloir arrêter le parcours")
                 .setPositiveButton(R.string.yes, (dialog, which) -> enregistrerParcours())
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
-
     }
+
     /**
-     * Démarre la mise à jour continue de la localisation lorsque le fragment est visible.
+     * Enregistre le parcours.
      */
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!locationHelper.checkPermissions()) {
-            ActivityCompat.requestPermissions(parent, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }
-        locationHelper.startContinuousLocationUpdates(locationCallback);
-    }
-
-
-    public void enregistrerParcours(){
-
-        API_REQUEST.parcours.create(getContext(),parcours,response -> System.out.println(response)
+    public void enregistrerParcours() {
+        API_REQUEST.parcours.create(getContext(), parcours, System.out::println
                 , error -> System.out.println(error.getMessage()));
 
-        buttonVisit.setVisibility(View.GONE);
-        buttonPass.setVisibility(View.GONE);
-        buttonPause.setVisibility(View.GONE);
-        buttonStop.setVisibility(View.GONE);
+        removeButtons();
         companyAdress.setVisibility(View.GONE);
-        companyName.setText("Parcours Terminée");
+        companyName.setText(R.string.route_finished);
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
-    }
-    /**
-     * Arrête la mise à jour continue de la localisation pour économiser la batterie.
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-        locationHelper.stopLocationUpdates(locationCallback);
-        destinationPoint = null;
-        startPoint = null;
     }
 }

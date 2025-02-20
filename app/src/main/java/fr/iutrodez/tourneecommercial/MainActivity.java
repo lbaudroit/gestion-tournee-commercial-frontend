@@ -161,6 +161,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * Efface le cache d'un fragment.
+     *
+     * @param id
+     */
+    public void clearCache(int id) {
+        cache.remove(id);
+    }
+
+    /**
      * Navigue vers un fragment avec des paramètres supplémentaires.
      *
      * @param id     L'ID du fragment.
@@ -228,6 +237,7 @@ public class MainActivity extends AppCompatActivity
         }
         return idFound;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
