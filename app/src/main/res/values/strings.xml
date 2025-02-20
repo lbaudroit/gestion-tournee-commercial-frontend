@@ -110,7 +110,7 @@
     <string name="clients_search_title">Ajout d\'un client</string>
     <string name="create_client_error">Impossible de créer le client</string>
     <string name="confirm_add_route">Voulez-vous parcourir cet itinéraire : %s ?</string>
-    <string name="stay_without_itinerary">Aucun itinéraire sélectionné , voulez vous poursuivre sans itinéraire ?</string>
+    <string name="stay_without_itinerary">Aucun itinéraire sélectionné. voulez-vous poursuivre sans itinéraire ?</string>
 
     <string name="no_route_map">Il n\'y a pas d\'itinéraire </string>
     <string name="launch_route">Démarrer le parcours</string>
@@ -120,7 +120,7 @@
     <string name="end_point">Position client</string>
 
     <!-- Carte -->
-    <string name="destination_done">Destination atteinte 🎯</string>
+    <string name="destination_done">Destination atteinte </string>
     <!-- -->
     <string name="itinerary_done">Itinéraire finit !</string>
     <string name="message_destination">Merci d\'avoir utilisé notre service !</string>
@@ -148,7 +148,7 @@
     <string name="modify_password_error">Impossible de changer le mot de passe</string>
     <string name="destination_reached">Vous êtes arrivé !</string>
     <string name="prospect_nearby">Prospect(s) à proximité :</string>
-    <string name="prospect_nearby_message">Vous êtes à proximité de ce(s) prospect(s)\n%s</string>
+    <string name="prospect_nearby_message">²\n%s</string>
     <string name="prospect_nearby_sub_message">\n%s\n%s\n%s\n----------</string>
     <string name="client_notification_message">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
     <string name="time_remaining">Fermeture dans %d secondes.</string>

@@ -5,9 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +24,7 @@ import com.google.android.gms.location.LocationResult;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.modeles.Coordonnees;
 import fr.iutrodez.tourneecommercial.modeles.Parcours;
 import fr.iutrodez.tourneecommercial.modeles.Visit;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
@@ -57,6 +55,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private Marker start, end;
     private boolean gotNotificationForClient = false;
     List<Client> prospectNotified;
+    private NotificationHelper notificationHelper;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
     private TextView companyName;
@@ -78,7 +77,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         super.onAttach(context);
         parent = (MainActivity) context;
         locationHelper = new LocationHelper(context);
-        new NotificationHelper(context, this);
+        notificationHelper = new NotificationHelper(context, this);
     }
 
     /**
@@ -94,7 +93,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View frag = inflater.inflate(R.layout.map_fragment_2, container, false);
+        View frag = inflater.inflate(R.layout.map_fragment, container, false);
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
         companyName = frag.findViewById(R.id.client_company_name);
@@ -199,6 +198,16 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     }
 
     /**
+     * Déverrouille les boutons de visite, de passage, de pause et d'arrêt.
+     */
+    private void unlockButtons() {
+        buttonVisit.setEnabled(true);
+        buttonPass.setEnabled(true);
+        buttonPause.setEnabled(true);
+        buttonStop.setEnabled(true);
+    }
+
+    /**
      * Gère le cas où il n'y a pas d'itinéraire.
      */
     private void handleNoItinerary() {
@@ -227,6 +236,9 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private final LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+            if (!buttonVisit.isEnabled()) {
+                unlockButtons();
+            }
             Location location = locationResult.getLastLocation();
             if (location != null) {
                 boolean positionChanged = startPoint == null
@@ -235,10 +247,15 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 if (positionChanged) {
                     startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
+                    if (clients != null && destinationPoint == null && !isParcoursFinished) {
+                        clientMarker();
+                        notificationHelper.locationChanged(new Coordonnees(location.getLatitude(), location.getLongitude()),
+                                new Coordonnees(clients.get(clientsIndex).getCoordonnees().getLatitude(),
+                                        clients.get(clientsIndex).getCoordonnees().getLongitude()));
+                    } else {
+                        mapHelper.adjustZoomToMarker(startPoint);
+                    }
                     centerView();
-                }
-                if (clients != null && destinationPoint == null && !isParcoursFinished) {
-                    clientMarker();
                 }
             }
         }
@@ -283,12 +300,19 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     }
 
     /**
+     * Passe au client suivant sans le marquer comme visité.
+     */
+    private void pass() {
+        goToNext(false);
+    }
+
+    /**
      * Passe au client suivant.
      *
-     * @param visit Indique si le client a été visité.
+     * @param visited Indique si le client a été visité.
      */
-    private void goToNext(boolean visit) {
-        parcours.addVisite(new Visit(clients.get(clientsIndex), visit));
+    private void goToNext(boolean visited) {
+        parcours.addVisite(new Visit(clients.get(clientsIndex), visited));
         destinationPoint = null;
         if (clientsIndex + 1 == clients.size()) {
             finish();
@@ -303,7 +327,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      */
     private void finish() {
         enregistrerParcours();
-        playNotificationSound();
+        notificationHelper.playNotificationSound();
         new AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.destination_done))
                 .setMessage(getString(R.string.message_destination))
@@ -315,13 +339,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     }
 
     /**
-     * Passe au client suivant sans le marquer comme visité.
-     */
-    private void pass() {
-        goToNext(false);
-    }
-
-    /**
      * Centre la vue sur les marqueurs.
      */
     private void centerView() {
@@ -329,7 +346,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
             if (destinationPoint != null) {
                 mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
             } else {
-                mapHelper.adjustZoomToMarkers(startPoint, startPoint);
+                mapHelper.adjustZoomToMarker(startPoint);
             }
         }
     }
@@ -414,7 +431,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * @param contenue le message à afficher
      */
     private void triggerNotification(String title, String contenue) {
-        playNotificationSound();
+        notificationHelper.playNotificationSound();
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(title)
                 .setMessage(contenue)
@@ -446,19 +463,5 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
             }
         };
         handler.post(runnable);
-    }
-
-    /**
-     * Joue un son de notification.
-     */
-    private void playNotificationSound() {
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), notification);
-        ringtone.play();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (ringtone.isPlaying()) {
-                ringtone.stop();
-            }
-        }, 2000);
     }
 }

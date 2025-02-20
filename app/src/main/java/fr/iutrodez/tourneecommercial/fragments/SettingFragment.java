@@ -98,15 +98,18 @@ public class SettingFragment extends Fragment {
         email = view.findViewById(R.id.editText_email);
         view.findViewById(R.id.button_modify).setOnClickListener(this::modifier);
         view.findViewById(R.id.button_modifyPassword).setOnClickListener(this::goToPasswordModification);
-
         status = view.findViewById(R.id.fetchStatus_status);
         status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
         status.setHideContentFunction(() -> setContentVisibility(View.GONE));
-
         modify = view.findViewById(R.id.button_modify);
+
         modify.setOnClickListener(this::modifier);
 
         status.loading();
+        initializeFields();
+    }
+
+    private void initializeFields() {
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
             status.hide();
 
@@ -141,10 +144,12 @@ public class SettingFragment extends Fragment {
         String emailValue = email.getText().toString();
 
         if (checkFields()) {
-            API_REQUEST.utilisateur.updateSelf(getContext(), name.getText().toString(), firstname.getText().toString(), email.getText().toString(), response -> {
+            API_REQUEST.utilisateur.updateSelf(getContext(), nameValue, firstnameValue, emailValue, response -> {
                 Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
                 requireContext().getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
-
+                Thread thread = new Thread(() -> API_REQUEST.auth.refreshToken(context,
+                        emailValue, pref.getString("password", "")));
+                thread.start();
             }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
         }
     }

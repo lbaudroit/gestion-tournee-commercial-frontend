@@ -8,6 +8,10 @@ import org.osmdroid.views.overlay.Marker;
 /**
  * Classe utilitaire pour la gestion des cartes et des marqueurs avec OSMdroid.
  */
+
+/**
+ * Classe utilitaire pour la gestion des cartes et des marqueurs avec OSMdroid.
+ */
 public class MapHelper {
     private final MapView mapView;
 
@@ -57,10 +61,30 @@ public class MapHelper {
         double deltaLat = maxLat - minLat;
         double deltaLon = maxLon - minLon;
         double margin = 0.5 * Math.max(deltaLat, deltaLon);
-        BoundingBox boundingBox = new BoundingBox(maxLat + margin,
-                maxLon + margin,
-                minLat - margin,
-                minLon - margin
+        try {
+            BoundingBox boundingBox = new BoundingBox(maxLat + margin,
+                    maxLon + margin,
+                    minLat - margin,
+                    minLon - margin
+            );
+            mapView.zoomToBoundingBox(boundingBox, true);
+            mapView.invalidate();
+        } catch (IllegalArgumentException e) {
+            adjustZoomToMarker(start);
+        }
+    }
+
+    /**
+     * Ajuste le zoom de la carte pour englober un seul point donné.
+     *
+     * @param point Le point géographique à englober.
+     */
+    public void adjustZoomToMarker(GeoPoint point) {
+        BoundingBox boundingBox = new BoundingBox(
+                point.getLatitude() + 0.1,
+                point.getLongitude() + 0.1,
+                point.getLatitude() - 0.1,
+                point.getLongitude() - 0.1
         );
         mapView.zoomToBoundingBox(boundingBox, true);
         mapView.invalidate();
