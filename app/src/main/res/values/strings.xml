@@ -113,10 +113,14 @@
 
     <string name="launch_route">Démarrer le parcours</string>
 
+    <!-- Connectivity errors -->
+    <string name="no_internet_error">Impossible de se connecter à Internet. Veuillez vérifier que vous avez votre WiFi ou vos données mobiles activées.</string>
+
     <!-- Modify Password -->
     <string name="modify_password">Modifier le mot de passe</string>
     <string name="old_password">Ancien mot de passe</string>
     <string name="new_password">Nouveau mot de passe</string>
     <string name="new_password_confirmation">Confirmation du nouveau mot de passe</string>
     <string name="modify_password_error">Impossible de changer le mot de passe</string>
+
 </resources>

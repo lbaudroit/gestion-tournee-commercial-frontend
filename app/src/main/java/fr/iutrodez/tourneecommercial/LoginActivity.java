@@ -1,5 +1,7 @@
 package fr.iutrodez.tourneecommercial;
 
+import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -89,6 +91,11 @@ public class LoginActivity extends AppCompatActivity {
             password.setError(getString(R.string.password_pattern_error));
             inputsValid = false;
         }
+        if (!hasInternetCapability(this)) {
+            Toast.makeText(this, R.string.no_internet_error, Toast.LENGTH_LONG).show();
+            inputsValid = false;
+        }
+
         if (inputsValid) {
             apiRequest.auth.login(extracted_email, extracted_password, (jwtToken) -> {
                 setSharedPreferences(jwtToken);

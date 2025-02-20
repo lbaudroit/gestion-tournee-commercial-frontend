@@ -1,11 +1,15 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.disableView;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 public class SettingFragment extends Fragment {
@@ -33,6 +38,17 @@ public class SettingFragment extends Fragment {
      * EditText pour le nom, prénom et email de l'utilisateur.
      */
     private EditText name, firstname, email;
+
+    /**
+     * Affichage pour mettre un Progress ou un message d'erreur
+     * pendant la récupération des données.
+     */
+    private FullscreenFetchStatusDisplay status;
+
+    /**
+     * Le bouton "modifier"
+     */
+    private Button modify;
 
     /**
      * Appelé lors de la création du fragment.
@@ -83,11 +99,28 @@ public class SettingFragment extends Fragment {
         view.findViewById(R.id.button_modify).setOnClickListener(this::modifier);
         view.findViewById(R.id.button_modifyPassword).setOnClickListener(this::goToPasswordModification);
 
+        status = view.findViewById(R.id.fetchStatus_status);
+        status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
+        status.setHideContentFunction(() -> setContentVisibility(View.GONE));
+
+        modify = view.findViewById(R.id.button_modify);
+        modify.setOnClickListener(this::modifier);
+
+        status.loading();
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
+            status.hide();
+
             name.setText(response.getNom());
             firstname.setText(response.getPrenom());
             email.setText(response.getEmail());
-        }, error -> Toast.makeText(getContext(), R.string.fetching_params_error, Toast.LENGTH_LONG).show());
+        }, error -> {
+            status.error(R.string.fetching_params_error);
+
+            disableView(name);
+            disableView(firstname);
+            disableView(email);
+            disableView(modify);
+        });
     }
 
     private void goToPasswordModification(View view) {
@@ -108,13 +141,10 @@ public class SettingFragment extends Fragment {
         String emailValue = email.getText().toString();
 
         if (checkFields()) {
-            API_REQUEST.utilisateur.updateSelf(context, nameValue, firstnameValue, emailValue, response -> {
-                Toast.makeText(context, response, Toast.LENGTH_LONG).show();
+            API_REQUEST.utilisateur.updateSelf(getContext(), name.getText().toString(), firstname.getText().toString(), email.getText().toString(), response -> {
+                Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
+                requireContext().getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
 
-                // On met à jour le mdp dans les SharedPreferences et on rafraîchit le token
-                pref.edit().putString("email", emailValue).apply();
-                String password = pref.getString("password", "");
-                new Thread(() -> API_REQUEST.auth.refreshToken(context, emailValue, password)).start();
             }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
         }
     }
@@ -174,5 +204,21 @@ public class SettingFragment extends Fragment {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     *
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    public void setContentVisibility(int visibility) {
+        ViewGroup rootLayout = Objects.requireNonNull((ViewGroup) this.getView());
+        for (int i = 0 ; i < rootLayout.getChildCount() ; i++) {
+            View child = rootLayout.getChildAt(i);
+            if (!(child instanceof FullscreenFetchStatusDisplay)) {
+                setVisibilityFor(visibility, child);
+            }
+        }
     }
 }
