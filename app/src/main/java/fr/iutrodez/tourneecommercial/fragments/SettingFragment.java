@@ -1,8 +1,5 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.disableView;
-import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,15 +9,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+
+import java.util.Objects;
+
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.disableView;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
 public class SettingFragment extends Fragment {
 
@@ -214,7 +214,7 @@ public class SettingFragment extends Fragment {
      */
     public void setContentVisibility(int visibility) {
         ViewGroup rootLayout = Objects.requireNonNull((ViewGroup) this.getView());
-        for (int i = 0 ; i < rootLayout.getChildCount() ; i++) {
+        for (int i = 0; i < rootLayout.getChildCount(); i++) {
             View child = rootLayout.getChildAt(i);
             if (!(child instanceof FullscreenFetchStatusDisplay)) {
                 setVisibilityFor(visibility, child);

@@ -1,7 +1,5 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,13 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Fragment permettant de modifier le mot de passe de l'utilisateur.
@@ -69,6 +67,7 @@ public class PasswordModificationFragment extends Fragment {
     /**
      * Vérifie que le mot de passe est non-vide, a une longueur minimale de 8 caractères et respecte
      * le pattern défini.
+     *
      * @param password le mot de passe
      * @return true si le mot de passe est valide, false sinon
      */
@@ -90,7 +89,8 @@ public class PasswordModificationFragment extends Fragment {
 
     /**
      * Vérifie que la confirmation du mot de passe est non-vide et identique au mot de passe.
-     * @param password le mot de passe
+     *
+     * @param password             le mot de passe
      * @param passwordConfirmation la confirmation du mot de passe
      * @return true si la confirmation est valide, false sinon
      */
