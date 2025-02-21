@@ -30,11 +30,18 @@
                 android:text="@string/nom_entreprise"/>
 
         <TextView
-                android:id="@+id/client_company_adress"
+                android:id="@+id/client_company_address"
                 style="@style/SecondaryInfoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/adresse_entreprise"/>
+
+        <TextView
+                android:id="@+id/client_company_type"
+                style="@style/SecondaryInfoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/type_entreprise"/>
     </LinearLayout>
 
     <!-- Bouton flottant pour recentrer la carte -->

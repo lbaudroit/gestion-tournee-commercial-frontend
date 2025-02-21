@@ -67,6 +67,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private boolean isUserInteraction = false;
     private TextView companyName;
     private TextView companyAddress;
+    private TextView companyType;
     private Parcours parcours;
     private Button buttonVisit;
     private Button buttonPass;
@@ -104,7 +105,8 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
         companyName = frag.findViewById(R.id.client_company_name);
-        companyAddress = frag.findViewById(R.id.client_company_adress);
+        companyAddress = frag.findViewById(R.id.client_company_address);
+        companyType = frag.findViewById(R.id.client_company_type);
         konfettiView = frag.findViewById(R.id.viewKonfetti);
         buttonVisit = frag.findViewById(R.id.btn_continue);
         buttonPass = frag.findViewById(R.id.btn_pass);
@@ -257,6 +259,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .show();
         companyName.setVisibility(View.GONE);
         companyAddress.setVisibility(View.GONE);
+        companyType.setVisibility(View.GONE);
         removeButtons();
     }
 
@@ -311,6 +314,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
 
         companyAddress.setText(clients.get(clientsIndex).getAdresse().toString());
         companyName.setText(clients.get(clientsIndex).getNomEntreprise());
+        companyType.setText(getString(R.string.type, clients.get(clientsIndex).isClientEffectif() ? "Client" : "Prospect"));
         mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
         mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
     }
@@ -420,6 +424,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
 
         removeButtons();
         companyAddress.setVisibility(View.GONE);
+        companyType.setVisibility(View.GONE);
         companyName.setText(R.string.route_finished);
         mapHelper.dropMarker(end);
         isParcoursFinished = true;

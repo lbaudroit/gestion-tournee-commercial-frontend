@@ -156,4 +156,6 @@
     <string name="time_remaining">Fermeture dans %d secondes.</string>
     <string name="ok">ok\n</string>
     <string name="unable_to_launch_route">Un itinéraire est déjà en cours, veuillez le finir avant d\'en lancer un nouveau.</string>
+    <string name="type">Type : %s</string>
+    <string name="type_entreprise">type: type</string>
 </resources>
