@@ -89,4 +89,8 @@ public class MapHelper {
         mapView.zoomToBoundingBox(boundingBox, true);
         mapView.invalidate();
     }
+
+    public void updateMap() {
+        mapView.invalidate();
+    }
 }

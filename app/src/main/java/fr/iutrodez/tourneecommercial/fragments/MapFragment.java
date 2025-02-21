@@ -1,6 +1,7 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -35,6 +36,9 @@ import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapAdapter;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -58,7 +62,9 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     List<Client> prospectNotified = new ArrayList<Client>();
     private NotificationHelper notificationHelper;
     private LocationHelper locationHelper;
+    private boolean userInteracted = false;
     private MapHelper mapHelper;
+    private boolean isUserInteraction = false;
     private TextView companyName;
     private TextView companyAddress;
     private Parcours parcours;
@@ -116,7 +122,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         buttonPass.setOnClickListener(view -> pass());
         //TODO: handle pause
         buttonStop.setOnClickListener(view -> stop());
-        buttonCenter.setOnClickListener(view -> centerView());
+        buttonCenter.setOnClickListener(view -> centerButtonPressed());
 
         return frag;
     }
@@ -150,11 +156,40 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      *
      * @param mapView Vue de la carte.
      */
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeMapView(MapView mapView) {
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapHelper = new MapHelper(mapView);
 
+        mapView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                isUserInteraction = event.getAction() == android.view.MotionEvent.ACTION_DOWN || event.getAction() == android.view.MotionEvent.ACTION_MOVE;
+                if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    v.performClick();
+                }
+                return false;
+            }
+        });
+
+        mapView.addMapListener(new MapAdapter() {
+            @Override
+            public boolean onScroll(ScrollEvent event) {
+                if (isUserInteraction) {
+                    userInteracted = true;
+                }
+                return super.onScroll(event);
+            }
+
+            @Override
+            public boolean onZoom(ZoomEvent event) {
+                if (isUserInteraction) {
+                    userInteracted = true;
+                }
+                return super.onZoom(event);
+            }
+        });
     }
 
     /**
@@ -259,8 +294,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                     }
                     if (clients != null && destinationPoint == null && !isParcoursFinished) {
                         clientMarker();
-                    } else {
-                        mapHelper.adjustZoomToMarker(startPoint);
                     }
                     centerView();
                 }
@@ -345,16 +378,23 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .show();
     }
 
+    private void centerButtonPressed() {
+        userInteracted = false;
+        centerView();
+    }
+
     /**
      * Centre la vue sur les marqueurs.
      */
     private void centerView() {
-        if (startPoint != null) {
+        if (startPoint != null && !userInteracted) {
             if (destinationPoint != null) {
                 mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
             } else {
                 mapHelper.adjustZoomToMarker(startPoint);
             }
+        } else {
+            mapHelper.updateMap();
         }
     }
 
