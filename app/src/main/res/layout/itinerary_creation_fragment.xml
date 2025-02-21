@@ -21,26 +21,6 @@
 
     <View style="@style/Separator"/>
 
-    <TableRow android:layout_marginBottom="@dimen/space_vertical">
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/companies_to_visit"
-                style="@style/SubPartTitle"
-                android:layout_span="2"/>
-    </TableRow>
-
-    <TableRow android:layout_marginBottom="@dimen/space_vertical">
-
-        <ListView
-                android:id="@+id/listView_client"
-                android:layout_span="2"
-                android:layout_marginBottom="@dimen/space_vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/list_of_client_items"/>
-    </TableRow>
 
     <TableRow android:layout_marginBottom="@dimen/space_vertical">
 
@@ -63,6 +43,7 @@
                 android:text="@string/add"/>
     </TableRow>
 
+
     <TableRow android:layout_marginBottom="@dimen/space_vertical">
 
         <Button
@@ -78,5 +59,28 @@
                 style="@style/PrimaryButton"
                 android:text="@string/validate"
                 android:layout_marginStart="@dimen/space_half_horizontal"/>
+    </TableRow>
+
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/companies_to_visit"
+                style="@style/SubPartTitle"
+                android:layout_span="2"/>
+    </TableRow>
+
+    <TableRow android:layout_marginBottom="@dimen/space_vertical">
+
+        <ListView
+                android:id="@+id/listView_client"
+                android:layout_span="2"
+                android:layout_marginBottom="@dimen/space_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="200dp"
+                tools:listitem="@layout/list_of_client_items"/>
     </TableRow>
 </TableLayout>
