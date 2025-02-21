@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationBarView.OnItemSelectedListener {
     private FragmentManager fragmentManager;
     private NavigationBarView navigationBar;
+    private boolean mapIsUsed = false;
     public final static int CLIENT_FRAGMENT = 0;
     public final static int MAP_FRAGMENT = 1;
     public final static int HISTORY_FRAGMENT = 2;
@@ -120,6 +121,14 @@ public class MainActivity extends AppCompatActivity
         }
         navigateToFragment(id, cache);
         return true;
+    }
+
+    public void markMapAs(boolean mapIsUsed) {
+        this.mapIsUsed = mapIsUsed;
+    }
+
+    public boolean isMapUsed() {
+        return mapIsUsed;
     }
 
     /**

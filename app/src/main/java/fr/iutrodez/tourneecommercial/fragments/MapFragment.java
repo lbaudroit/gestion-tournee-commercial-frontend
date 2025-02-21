@@ -366,6 +366,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Termine le parcours.
      */
     private void finish() {
+        parent.markMapAs(false);
         enregistrerParcours();
         notificationHelper.playNotificationSound();
         new AlertDialog.Builder(requireContext())
