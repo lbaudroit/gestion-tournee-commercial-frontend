@@ -370,7 +370,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Termine le parcours.
      */
     private void finish() {
-        parent.markMapAs(false);
         enregistrerParcours();
         notificationHelper.playNotificationSound();
         new AlertDialog.Builder(requireContext())
@@ -419,6 +418,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Enregistre le parcours.
      */
     public void enregistrerParcours() {
+        parent.markMapAs(false);
         API_REQUEST.parcours.create(getContext(), parcours, System.out::println
                 , error -> System.out.println(error.getMessage()));
 
