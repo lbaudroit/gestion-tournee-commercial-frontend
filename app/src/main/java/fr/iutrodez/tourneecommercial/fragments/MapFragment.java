@@ -40,6 +40,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,7 +55,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private int clientsIndex = 0;
     private Marker start, end;
     private boolean gotNotificationForClient = false;
-    List<Client> prospectNotified;
+    List<Client> prospectNotified = new ArrayList<Client>();
     private NotificationHelper notificationHelper;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
@@ -153,6 +154,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapHelper = new MapHelper(mapView);
+
     }
 
     /**
@@ -195,6 +197,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         } else {
             handleNoItinerary();
         }
+
     }
 
     /**
@@ -249,11 +252,13 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 if (positionChanged) {
                     startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
-                    if (clients != null && destinationPoint == null && !isParcoursFinished) {
-                        clientMarker();
+                    if (clients != null) {
                         notificationHelper.locationChanged(new Coordonnees(location.getLatitude(), location.getLongitude()),
                                 new Coordonnees(clients.get(clientsIndex).getCoordonnees().getLatitude(),
                                         clients.get(clientsIndex).getCoordonnees().getLongitude()));
+                    }
+                    if (clients != null && destinationPoint == null && !isParcoursFinished) {
+                        clientMarker();
                     } else {
                         mapHelper.adjustZoomToMarker(startPoint);
                     }
@@ -392,7 +397,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      */
     @Override
     public void onProspectNotification(List<Client> prospects) {
-        System.out.println(prospects.size());
         StringBuilder message = new StringBuilder();
         for (Client prospect : prospects) {
             if (!(prospectNotified.contains(prospect) || clients.contains(prospect))) {
@@ -402,7 +406,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
             }
         }
         if (message.length() > 0) {
-            triggerNotification(getString(R.string.prospect_nearby_message), message.toString());
+            triggerNotification(getString(R.string.prospect_nearby), getString(R.string.prospect_nearby_message, message.toString()));
         }
     }
 
