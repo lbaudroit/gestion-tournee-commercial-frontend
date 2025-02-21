@@ -1,7 +1,5 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,22 +10,21 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
-import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
 /**
  * Fragment de la navBar pour afficher la liste des clients
@@ -125,7 +122,7 @@ public class ClientFragment extends Fragment {
     public void delete(Client client) {
         String message = parent.getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(parent)
-                .setTitle(R.string.delete_route)
+                .setTitle(R.string.delete_client)
                 .setMessage(message)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteClient(client))
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
@@ -177,6 +174,7 @@ public class ClientFragment extends Fragment {
 
     /**
      * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     *
      * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
      */
     public void setContentVisibility(int visibility) {

@@ -71,6 +71,7 @@ public class NotificationHelper {
         ApiRequest.getInstance().parcours.getProspectsForNotifications(context, lastChangedCoordinates.getLatitude(), lastChangedCoordinates.getLongitude(),
                 prospects -> {
                     if (!prospects.isEmpty()) {
+                        System.out.println("Prospects à proximité : " + prospects.get(0).getCoordonnees().getLongitude());
                         listener.onProspectNotification(prospects);
                     }
                 }, error -> {
@@ -85,6 +86,7 @@ public class NotificationHelper {
      * @param clientCoordinates les coordonnées du client
      */
     private void checkClientNotification(Coordonnees coordinates, Coordonnees clientCoordinates) {
+        System.out.println("Distance client : " + computeHaversineFormula(coordinates, clientCoordinates));
         if (computeHaversineFormula(coordinates, clientCoordinates) < 200) {
             listener.onClientNotification();
         }

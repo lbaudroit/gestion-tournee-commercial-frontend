@@ -73,6 +73,8 @@
     <string name="search_company">Recherche une entreprise</string>
     <string name="select_client">Séléctionner un client</string>
     <string name="search">Rechercher…</string>
+
+    <string name="delete_client">Suppression du client</string>
     <string name="delete_route">Suppression de l\'itinéraire</string>
     <string name="confirm_delete_route">Êtes vous sûr de vouloir supprimer l\'itinéraire \"%s\" ?</string>
     <string name="yes">Oui</string>
@@ -148,8 +150,12 @@
     <string name="modify_password_error">Impossible de changer le mot de passe</string>
     <string name="destination_reached">Vous êtes arrivé !</string>
     <string name="prospect_nearby">Prospect(s) à proximité :</string>
-    <string name="prospect_nearby_message">²\n%s</string>
+    <string name="prospect_nearby_message">Ce(s) prospect(s) sont à proximiter ::\n%s</string>
     <string name="prospect_nearby_sub_message">\n%s\n%s\n%s\n----------</string>
     <string name="client_notification_message">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
     <string name="time_remaining">Fermeture dans %d secondes.</string>
+    <string name="ok">ok\n</string>
+    <string name="unable_to_launch_route">Un itinéraire est déjà en cours, veuillez le finir avant d\'en lancer un nouveau.</string>
+    <string name="type">Type : %s</string>
+    <string name="type_entreprise">type: type</string>
 </resources>

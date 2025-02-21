@@ -1,7 +1,5 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
-import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,22 +10,21 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.modeles.Itineraire;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
 /**
  * Fragment pour afficher et gérer la liste des itinéraires.
@@ -90,7 +87,7 @@ public class ItineraryFragment extends Fragment {
      */
     private void fetchNumberOfItinerarypages() {
         status.loading();
-        
+
 
         API_REQUEST.itineraire.getNumberOfPages(requireContext(),
                 response -> {
@@ -146,19 +143,27 @@ public class ItineraryFragment extends Fragment {
 
     private void onclickList(int position) {
         Itineraire itineraire = itineraries.get(position); // Récupérer l'itinéraire cliqué
+        if (parent.isMapUsed()) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(getString(R.string.launch_route))
+                    .setMessage(getString(R.string.unable_to_launch_route))
+                    .setNegativeButton(R.string.ok, (dialog, which) -> dialog.dismiss())
+                    .show();
 
-        String message = getString(R.string.confirm_add_route,itineraire.getNom());
+        } else {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(getString(R.string.launch_route))
+                    .setMessage(getString(R.string.confirm_add_route, itineraire.getNom()))
+                    .setPositiveButton(R.string.yes, (dialog, which) -> itineraryToMap(itineraire)) // Passer l'itinéraire
+                    .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle(getString(R.string.launch_route))
-                .setMessage(message)
-                .setPositiveButton(R.string.yes, (dialog, which) -> itineraryToMap(itineraire)) // Passer l'itinéraire
-                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
-                .show();
     }
 
 
     private void itineraryToMap(Itineraire itineraire) {
+        parent.markMapAs(true);
         Bundle bundle = new Bundle();
 
         bundle.putLong("id", itineraire.getId()); // Correction du type (getId() est un long)
@@ -166,6 +171,7 @@ public class ItineraryFragment extends Fragment {
 
         parent.navigateToNavbarItem(MainActivity.MAP_FRAGMENT, false, bundle);
     }
+
     /**
      * Gère le clic sur le bouton de modification d'un itinéraire.
      *
