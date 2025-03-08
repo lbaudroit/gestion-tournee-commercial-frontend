@@ -1,13 +1,15 @@
 package fr.iutrodez.tourneecommercial.utils.helper;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.Coordonnees;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.List;
@@ -24,16 +26,10 @@ public class NotificationHelper {
          * Appelé lorsque au moins un prospect est à moins de 1 Km.
          */
         void onProspectNotification(List<Client> prospects);
-
-        /**
-         * Appelé lorsque le client est à moins de 200 mètres.
-         */
-        void onClientNotification();
     }
 
     private final Context context;
     private final NotificationListener listener;
-    private Coordonnees lastChangedCoordinates;
 
     /**
      * Constructeur pour initialiser le NotificationHelper.
@@ -47,28 +43,10 @@ public class NotificationHelper {
     }
 
     /**
-     * Méthode appelée lorsque la localisation change.
-     *
-     * @param coordinates       les nouvelles coordonnées
-     * @param clientCoordinates les coordonnées du client
-     */
-    public void locationChanged(Coordonnees coordinates, Coordonnees clientCoordinates) {
-        if (lastChangedCoordinates == null) {
-            lastChangedCoordinates = coordinates;
-            checkProspectNotification();
-        }
-        if (shouldCheckForProspectNotification(coordinates)) {
-            lastChangedCoordinates = coordinates;
-            checkProspectNotification();
-        }
-        checkClientNotification(coordinates, clientCoordinates);
-    }
-
-    /**
      * Vérifie et notifie si des prospects sont à proximité.
      */
-    private void checkProspectNotification() {
-        ApiRequest.getInstance().parcours.getProspectsForNotifications(context, lastChangedCoordinates.getLatitude(), lastChangedCoordinates.getLongitude(),
+    public void checkProspectNotification(Coordonnees coordinates) {
+        ApiRequest.getInstance().parcours.getProspectsForNotifications(context, coordinates.getLatitude(), coordinates.getLongitude(),
                 prospects -> {
                     if (!prospects.isEmpty()) {
                         System.out.println("Prospects à proximité : " + prospects.get(0).getCoordonnees().getLongitude());
@@ -77,51 +55,6 @@ public class NotificationHelper {
                 }, error -> {
                     // Do nothing
                 });
-    }
-
-    /**
-     * Vérifie et notifie si le client est à proximité.
-     *
-     * @param coordinates       les nouvelles coordonnées
-     * @param clientCoordinates les coordonnées du client
-     */
-    private void checkClientNotification(Coordonnees coordinates, Coordonnees clientCoordinates) {
-        System.out.println("Distance client : " + computeHaversineFormula(coordinates, clientCoordinates));
-        if (computeHaversineFormula(coordinates, clientCoordinates) < 200) {
-            listener.onClientNotification();
-        }
-    }
-
-    /**
-     * Détermine si une vérification de notification de prospect est nécessaire.
-     *
-     * @param newCoordinates les nouvelles coordonnées
-     * @return true si une vérification est nécessaire, sinon false
-     */
-    private boolean shouldCheckForProspectNotification(Coordonnees newCoordinates) {
-        return computeHaversineFormula(newCoordinates, lastChangedCoordinates) > 200;
-    }
-
-    /**
-     * Calcule la distance entre deux points géographiques en utilisant la formule de Haversine.
-     *
-     * @param coordinates      les coordonnées du premier point
-     * @param otherCoordinates les coordonnées du second point
-     * @return la distance entre les deux points en mètres
-     */
-    private static int computeHaversineFormula(Coordonnees coordinates, Coordonnees otherCoordinates) {
-        double earthRadiusInKm = 6371.0;
-        double deltaLat = Math.toRadians(otherCoordinates.getLatitude() - coordinates.getLatitude());
-        double deltaLon = Math.toRadians(otherCoordinates.getLongitude() - coordinates.getLongitude());
-        double startLat = Math.toRadians(coordinates.getLatitude());
-        double endLat = Math.toRadians(otherCoordinates.getLatitude());
-
-        double a = Math.pow(Math.sin(deltaLat / 2), 2)
-                + Math.cos(startLat) * Math.cos(endLat)
-                * Math.pow(Math.sin(deltaLon / 2), 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (int) Math.round(earthRadiusInKm * c * 1000);
     }
 
     /**
@@ -136,5 +69,48 @@ public class NotificationHelper {
                 ringtone.stop();
             }
         }, 2000);
+    }
+
+    /**
+     * Affiche un pop up de notification.
+     * Celui-ci joue un son et affiche un message pendant 10 secondes.
+     * L'utilisateur est informé toutes les secondes du temps restant.
+     * L'utilisateur peut également fermer la notification manuellement en appuyant sur le bouton "Fermer".
+     *
+     * @param contenue le message à afficher
+     */
+    public void triggerNotification(String title, String contenue) {
+        this.playNotificationSound();
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(contenue)
+                .setPositiveButton("Fermer", (dialogInterface, which) -> dialogInterface.dismiss())
+                .create();
+        dialog.show();
+        handleAutoCloseNotification(dialog, contenue);
+    }
+
+    /**
+     * Affiche un message pendant 20 secondes.
+     *
+     * @param dialog   le dialog affiché
+     * @param contenue le message à afficher
+     */
+    private void handleAutoCloseNotification(AlertDialog dialog, String contenue) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        final int[] secondsLeft = {20};
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (secondsLeft[0] > 0) {
+                    dialog.setMessage(contenue + "\n" + context.getString(R.string.time_remaining, secondsLeft[0]));
+                    secondsLeft[0]--;
+                    handler.postDelayed(this, 1000);
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        };
+        handler.post(runnable);
     }
 }

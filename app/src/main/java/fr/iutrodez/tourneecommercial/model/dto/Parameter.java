@@ -1,4 +1,4 @@
-package fr.iutrodez.tourneecommercial.modeles.dto;
+package fr.iutrodez.tourneecommercial.model.dto;
 
 public class Parameter {
     String nom;

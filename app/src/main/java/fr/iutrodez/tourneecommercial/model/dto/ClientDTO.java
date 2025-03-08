@@ -1,7 +1,7 @@
-package fr.iutrodez.tourneecommercial.modeles.dto;
+package fr.iutrodez.tourneecommercial.model.dto;
 
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.modeles.Contact;
+import fr.iutrodez.tourneecommercial.model.Adresse;
+import fr.iutrodez.tourneecommercial.model.Contact;
 
 public class ClientDTO {
     String nomEntreprise;

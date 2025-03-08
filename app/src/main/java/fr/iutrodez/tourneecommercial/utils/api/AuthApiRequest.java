@@ -1,18 +1,18 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.widget.Toast;
-
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
-
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.model.dto.JwtToken;
 import org.json.JSONObject;
 
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
+import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Classe permettant de gérer les requêtes d'authentification à l'API.
+ */
 public class AuthApiRequest extends ApiRessource {
 
     private static final String RESOURCE_NAME = "auth";
@@ -81,6 +81,12 @@ public class AuthApiRequest extends ApiRessource {
         }
     }
 
+    /**
+     * Extrait un objet JwtToken à partir d'un objet JSON.
+     *
+     * @param json l'objet JSON contenant les données du token JWT
+     * @return l'objet JwtToken extrait
+     */
     private JwtToken extractJwtToken(JSONObject json) {
         Gson gson = new Gson();
         return gson.fromJson(json.toString(), JwtToken.class);

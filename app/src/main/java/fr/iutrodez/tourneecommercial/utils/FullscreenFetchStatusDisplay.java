@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-
 import fr.iutrodez.tourneecommercial.R;
 
 /**
@@ -29,28 +27,43 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
     private TextView error;
     private Runnable hideContentFunction;
     private Runnable showContentFunction;
+
+    /**
+     * Constructeur pour initialiser le composant avec un contexte.
+     *
+     * @param context le contexte de l'application
+     */
     public FullscreenFetchStatusDisplay(Context context) {
         super(context);
     }
 
+    /**
+     * Constructeur pour initialiser le composant avec un contexte et des attributs.
+     *
+     * @param context le contexte de l'application
+     * @param attrs   les attributs de l'interface utilisateur
+     */
     public FullscreenFetchStatusDisplay(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
+    /**
+     * Constructeur pour initialiser le composant avec un contexte, des attributs et un style par défaut.
+     *
+     * @param context      le contexte de l'application
+     * @param attrs        les attributs de l'interface utilisateur
+     * @param defStyleAttr l'attribut de style par défaut
+     */
     public FullscreenFetchStatusDisplay(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    public FullscreenFetchStatusDisplay(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
 
     /**
      * Initialise le composant à l'aide du Layout XML associé.
      * Récupère ainsi les composants ProgressBar et TextView
+     *
      * @param context le contexte d'inflation du Layout
      */
     public void init(Context context) {
@@ -61,6 +74,7 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
 
     /**
      * Modifie la fonction appelée pour cacher le reste du contenu de la page
+     *
      * @param hideContentFunction la fonction permettant de cacher le reste du contenu de la page
      */
     public void setHideContentFunction(Runnable hideContentFunction) {
@@ -69,6 +83,7 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
 
     /**
      * Modifie la fonction appelée pour afficher le reste du contenu de la page
+     *
      * @param showContentFunction la fonction permettant d'afficher le reste du contenu de la page
      */
     public void setShowContentFunction(Runnable showContentFunction) {
@@ -86,6 +101,7 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
 
     /**
      * Affiche un message d'erreur
+     *
      * @param message Ressource du message d'erreur
      */
     public void error(int message) {

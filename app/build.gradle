@@ -54,6 +54,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     implementation 'org.osmdroid:osmdroid-android:6.1.13' // implementation d'OSM
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0' // implementation d'OSM Bonus Pack
     implementation 'com.google.android.gms:play-services-location:21.0.1' // Pour récupérer la position
     implementation 'nl.dionsegijn:konfetti:1.3.2'
 

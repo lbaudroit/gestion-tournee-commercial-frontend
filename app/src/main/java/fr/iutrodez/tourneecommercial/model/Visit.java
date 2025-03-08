@@ -1,12 +1,12 @@
-package fr.iutrodez.tourneecommercial.modeles;
+package fr.iutrodez.tourneecommercial.model;
 
-public class Visit {
+public class Visit implements java.io.Serializable {
 
+    private final String name;
+    private final boolean visited;
+    private final Coordonnees coordonnees;
 
-    private String name;
-    private boolean visited;
-    private Coordonnees coordonnees;
-    public Visit(Client client, boolean visited){
+    public Visit(Client client, boolean visited) {
         this.name = client.getNomEntreprise();
         this.visited = visited;
         this.coordonnees = client.getCoordonnees();

@@ -3,12 +3,14 @@ package fr.iutrodez.tourneecommercial.utils.api;
 import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.Parcours;
-import fr.iutrodez.tourneecommercial.modeles.Visit;
+import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.model.Parcours;
+import fr.iutrodez.tourneecommercial.model.Visit;
+import fr.iutrodez.tourneecommercial.model.dto.ParcoursReducedDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +35,81 @@ public class ParcoursApiRequest extends ApiRessource {
      * Crée un nouveau parcours via une requête API.
      *
      * @param context         le contexte de l'application
-     * @param parcours        l'objet Parcours à créer
+     * @param mapData         l'objet Parcours à créer
      * @param successCallback le callback en cas de succès
      * @param errorCallback   le callback en cas d'erreur
      */
-    public void create(Context context, Parcours parcours, SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
+    public void create(Context context, Parcours mapData, SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
         String url = RESSOURCE_NAME + "/";
-        JSONObject body = parcoursDTOCreation(parcours);
-        System.out.println(body);
+        JSONObject body = parcoursDTOCreation(mapData);
         super.postWithToken(context, url, body, response -> {
             successCallback.onSuccess(extractMessage(response));
         }, errorCallback::onError);
     }
 
+    /**
+     * Récupère le nombre de pages de parcours disponibles via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param successCallback le callback en cas de succès, retourne le nombre de pages
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void getNumberOfPages(Context context, SuccessCallback<Integer> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/count";
+        System.out.println(url);
+        super.getWithToken(context, url, response -> {
+            try {
+                System.out.println(response);
+                successCallback.onSuccess(response.getInt("nombre"));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }, errorCallback::onError);
+    }
+
+    /**
+     * Récupère une page de parcours via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param page            le numéro de la page à récupérer
+     * @param successCallback le callback en cas de succès, retourne une liste de ParcoursReducedDTO
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void getPage(Context context, int page, SuccessCallback<List<ParcoursReducedDTO>> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/lazy?page=" + page;
+        super.getWithTokenAsArray(context, url, response -> {
+            successCallback.onSuccess(extractParcours(response));
+        }, errorCallback::onError);
+    }
+
+    /**
+     * Extrait une liste de ParcoursReducedDTO à partir d'un JSONArray.
+     *
+     * @param response le JSONArray contenant les données des parcours
+     * @return une liste de ParcoursReducedDTO
+     */
+    private List<ParcoursReducedDTO> extractParcours(JSONArray response) {
+        Gson gson = new Gson();
+        ArrayList<ParcoursReducedDTO> parcoursList = new ArrayList<>();
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                parcoursList.add(gson.fromJson(response.getJSONObject(i).toString(), ParcoursReducedDTO.class));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return parcoursList;
+    }
+
+    /**
+     * Récupère les prospects pour les notifications via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param latitude        la latitude de la position actuelle
+     * @param longitude       la longitude de la position actuelle
+     * @param successCallback le callback en cas de succès, retourne une liste de clients
+     * @param errorCallback   le callback en cas d'erreur
+     */
     public void getProspectsForNotifications(Context context, double latitude, double longitude, SuccessCallback<List<Client>> successCallback, ErrorCallback errorCallback) {
         String url = RESSOURCE_NAME + "/prospects/notifications?latitude=" + latitude + "&longitude=" + longitude;
         super.getWithTokenAsArray(context, url, response -> {
@@ -56,15 +120,15 @@ public class ParcoursApiRequest extends ApiRessource {
     /**
      * Crée un objet JSON à partir d'un objet Parcours.
      *
-     * @param parcours l'objet Parcours à convertir
+     * @param mapData l'objet Parcours à convertir
      * @return l'objet JSON représentant le parcours
      */
-    private static JSONObject parcoursDTOCreation(Parcours parcours) {
+    private static JSONObject parcoursDTOCreation(Parcours mapData) {
         JSONObject parcoursData = new JSONObject();
         try {
 
             JSONArray etapesArray = new JSONArray();
-            for (Visit visite : parcours.getVisits()) {
+            for (Visit visite : mapData.getClientsVisited()) {
                 if (visite != null) {
                     JSONObject visiteObj = new JSONObject();
                     visiteObj.put("nom", visite.getName());
@@ -80,7 +144,20 @@ public class ParcoursApiRequest extends ApiRessource {
                     System.out.println("Visite est null !");
                 }
             }
-            parcoursData.put("nom", parcours.getName());
+            JSONArray coordinatesArray = new JSONArray();
+            for (GeoPoint point : mapData.getPath()) {
+                JSONArray pointObj = new JSONArray();
+                pointObj.put(point.getLatitude());
+                pointObj.put(point.getLongitude());
+                coordinatesArray.put(pointObj);
+            }
+            JSONObject linestring = new JSONObject();
+            linestring.put("type", "LineString");
+            linestring.put("coordinates", coordinatesArray);
+            parcoursData.put("debut", mapData.getStart());
+            parcoursData.put("fin", mapData.getEnd());
+            parcoursData.put("chemin", linestring);
+            parcoursData.put("nom", mapData.getItineraryName());
             parcoursData.put("etapes", etapesArray);
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -88,6 +165,13 @@ public class ParcoursApiRequest extends ApiRessource {
         return parcoursData;
     }
 
+    /**
+     * Extrait le message d'un objet JSON.
+     *
+     * @param json l'objet JSON contenant le message
+     * @return le message extrait
+     * @throws RuntimeException si une erreur JSON se produit
+     */
     private String extractMessage(JSONObject json) {
         try {
             return json.getString("message");
@@ -96,6 +180,13 @@ public class ParcoursApiRequest extends ApiRessource {
         }
     }
 
+    /**
+     * Extrait une liste de clients à partir d'un JSONArray.
+     *
+     * @param clients le JSONArray contenant les données des clients
+     * @return une liste de clients
+     * @throws RuntimeException si une erreur JSON se produit
+     */
     private List<Client> extractClients(JSONArray clients) {
         Gson gson = new Gson();
         ArrayList<Client> clientList = new ArrayList<>();
@@ -108,5 +199,4 @@ public class ParcoursApiRequest extends ApiRessource {
         }
         return clientList;
     }
-
 }

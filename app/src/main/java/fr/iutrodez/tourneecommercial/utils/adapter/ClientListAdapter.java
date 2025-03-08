@@ -8,19 +8,28 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.model.Adresse;
+import fr.iutrodez.tourneecommercial.model.Client;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter permettant de gérer l’affichage des clients dans une ListView
+ */
 public class ClientListAdapter extends ArrayAdapter<Client> {
 
+    /**
+     * Interface permettant de définir une action à effectuer lorsqu’un client est modifié
+     */
     public interface OnClickModifyCallback {
 
         void onClickModifyClient(Client client);
     }
 
+    /**
+     * Interface permettant de définir une action à effectuer lorsqu’un client est supprimé
+     */
     public interface OnClickSupprimerCallback {
 
         void onClickDeleteClient(Client client);
@@ -43,6 +52,15 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
     private final List<Client> filteredClients;
     private ClientListAdapter.filteredClient filteredClient;
 
+    /**
+     * Constructeur de l'adaptateur de la liste des clients.
+     *
+     * @param context       Le contexte de l'application.
+     * @param resource      L'identifiant de la vue pour chaque élément de la liste.
+     * @param objects       La liste des objets Client à afficher.
+     * @param onClickModify Le callback pour la modification d'un client.
+     * @param onClickDelete Le callback pour la suppression d'un client.
+     */
     public ClientListAdapter(@NonNull Context context,
                              int resource,
                              @NonNull List<Client> objects,
@@ -58,17 +76,36 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         this.onClickDelete = onClickDelete;
     }
 
+    /**
+     * Retourne le nombre d'éléments dans la liste filtrée.
+     *
+     * @return Le nombre d'éléments dans la liste filtrée.
+     */
     @Override
     public int getCount() {
         return filteredClients.size();
     }
 
+    /**
+     * Retourne l'objet Client à la position spécifiée.
+     *
+     * @param position La position de l'élément dans la liste.
+     * @return L'objet Client à la position spécifiée.
+     */
     @Nullable
     @Override
     public Client getItem(int position) {
         return filteredClients.get(position);
     }
 
+    /**
+     * Retourne la vue pour un élément de la liste à la position spécifiée.
+     *
+     * @param position    La position de l'élément dans la liste.
+     * @param convertView La vue réutilisable.
+     * @param parent      Le parent de la vue.
+     * @return La vue pour l'élément de la liste.
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -120,6 +157,11 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         return convertView;
     }
 
+    /**
+     * Retourne le filtre pour la recherche de clients.
+     *
+     * @return Le filtre pour la recherche de clients.
+     */
     @NonNull
     @Override
     public Filter getFilter() {
@@ -129,8 +171,17 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         return filteredClient;
     }
 
+    /**
+     * Classe interne pour filtrer les clients.
+     */
     private class filteredClient extends Filter {
 
+        /**
+         * Effectue le filtrage des clients en fonction de la contrainte.
+         *
+         * @param constraint La contrainte de filtrage.
+         * @return Les résultats du filtrage.
+         */
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
@@ -159,6 +210,12 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
             return results;
         }
 
+        /**
+         * Publie les résultats du filtrage et met à jour la liste affichée.
+         *
+         * @param constraint La contrainte de filtrage.
+         * @param results    Les résultats du filtrage.
+         */
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             filteredClients.clear();

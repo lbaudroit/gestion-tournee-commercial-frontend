@@ -22,32 +22,15 @@ import java.util.Objects;
 import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.disableView;
 import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
+/**
+ * Fragment de paramétrage de l'application.
+ */
 public class SettingFragment extends Fragment {
 
-    /**
-     * Expression régulière pour vérifier la validité d'une adresse email.
-     */
     private static final String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
-
-    /**
-     * Instance de la classe ApiRequest pour effectuer des requêtes API.
-     */
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-
-    /**
-     * EditText pour le nom, prénom et email de l'utilisateur.
-     */
     private EditText name, firstname, email;
-
-    /**
-     * Affichage pour mettre un Progress ou un message d'erreur
-     * pendant la récupération des données.
-     */
     private FullscreenFetchStatusDisplay status;
-
-    /**
-     * Le bouton "modifier"
-     */
     private Button modify;
 
     /**
@@ -109,6 +92,12 @@ public class SettingFragment extends Fragment {
         initializeFields();
     }
 
+    /**
+     * Initialise les champs de saisie avec les données de l'utilisateur.
+     * Fait une requête à l'API pour obtenir les informations de l'utilisateur.
+     * En cas de succès, les champs sont remplis avec les données reçues.
+     * En cas d'erreur, affiche un message d'erreur et désactive les champs de saisie.
+     */
     private void initializeFields() {
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
             status.hide();
@@ -126,6 +115,11 @@ public class SettingFragment extends Fragment {
         });
     }
 
+    /**
+     * Navigue vers le fragment de modification du mot de passe.
+     *
+     * @param view La vue qui a été cliquée.
+     */
     private void goToPasswordModification(View view) {
         ((MainActivity) requireContext()).navigateToFragment(MainActivity.PASSWORD_MODIFICATION_FRAGMENT, false);
     }

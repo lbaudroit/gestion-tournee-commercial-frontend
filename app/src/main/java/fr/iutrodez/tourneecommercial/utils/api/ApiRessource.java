@@ -33,15 +33,6 @@ public class ApiRessource {
     }
 
     /**
-     * Retourne la file de requêtes.
-     *
-     * @return la file de requêtes
-     */
-    public static RequestQueue getRequestQueue() {
-        return requestQueue;
-    }
-
-    /**
      * Récupère le token d'authentification.
      * Le rafraîchit de manière blocante s'il est expiré.
      *

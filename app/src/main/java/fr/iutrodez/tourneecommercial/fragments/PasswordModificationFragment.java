@@ -25,6 +25,14 @@ public class PasswordModificationFragment extends Fragment {
     private EditText newPassword;
     private EditText confirmPassword;
 
+    /**
+     * Crée et retourne la vue hiérarchique associée au fragment.
+     *
+     * @param inflater           L'objet LayoutInflater qui peut être utilisé pour gonfler n'importe quelle vue dans le fragment
+     * @param container          Si non-null, c'est la vue parente à laquelle la vue du fragment doit être attachée
+     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé
+     * @return La vue hiérarchique pour le fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

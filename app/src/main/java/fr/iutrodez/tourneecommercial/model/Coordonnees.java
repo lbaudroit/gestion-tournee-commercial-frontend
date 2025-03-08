@@ -1,6 +1,6 @@
-package fr.iutrodez.tourneecommercial.modeles;
+package fr.iutrodez.tourneecommercial.model;
 
-public class Coordonnees {
+public class Coordonnees implements java.io.Serializable {
 
     double latitude;
     double longitude;

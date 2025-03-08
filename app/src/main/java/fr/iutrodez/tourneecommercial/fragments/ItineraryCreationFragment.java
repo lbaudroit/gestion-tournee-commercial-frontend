@@ -11,28 +11,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.helper.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
-import fr.iutrodez.tourneecommercial.utils.helper.ViewHelper;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-
+/**
+ * Fragment pour la création d'un itinéraire.
+ */
 public class ItineraryCreationFragment extends Fragment {
 
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
@@ -60,12 +57,24 @@ public class ItineraryCreationFragment extends Fragment {
     private Client selectedClient;
     private Long modifiedItineraryId = null;
 
+    /**
+     * Méthode appelée lors de l'attachement du fragment au contexte.
+     *
+     * @param context le contexte auquel le fragment est attaché
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         parent = (MainActivity) context;
     }
 
+    /**
+     * Méthode appelée après la création de la vue du fragment.
+     * Initialise les éléments de la vue et les écouteurs.
+     *
+     * @param view               la vue créée
+     * @param savedInstanceState l'état sauvegardé du fragment
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -114,6 +123,14 @@ public class ItineraryCreationFragment extends Fragment {
         }
     }
 
+    /**
+     * Méthode appelée pour créer la vue du fragment.
+     *
+     * @param inflater           l'inflater pour créer la vue
+     * @param container          le conteneur de la vue
+     * @param savedInstanceState l'état sauvegardé du fragment
+     * @return la vue créée
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -121,6 +138,9 @@ public class ItineraryCreationFragment extends Fragment {
         return inflater.inflate(R.layout.itinerary_creation_fragment, container, false);
     }
 
+    /**
+     * Récupère tous les clients disponibles via une requête API.
+     */
     private void getAllClients() {
         API_REQUEST.client.getAll(getContext(),
                 response -> allClients = response,
@@ -129,6 +149,9 @@ public class ItineraryCreationFragment extends Fragment {
                         Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Crée et gère la recherche de clients via un dialog.
+     */
     private void createClientResearch() {
         clientSelector.setOnClickListener(v -> {
             // Préparer le dialog
@@ -178,6 +201,11 @@ public class ItineraryCreationFragment extends Fragment {
         });
     }
 
+    /**
+     * Supprime un client de la liste des clients de l'itinéraire.
+     *
+     * @param client le client à supprimer
+     */
     private void deleteClientFromList(Client client) {
         itineraryClients.remove(client);
         itineraryClientsAdapter.notifyDataSetChanged();
@@ -194,12 +222,22 @@ public class ItineraryCreationFragment extends Fragment {
         ViewHelper.disableView(validateItineraryButton);
     }
 
+    /**
+     * Récupère la liste des clients disponibles pour l'ajout à l'itinéraire.
+     *
+     * @return la liste des clients disponibles
+     */
     private List<Client> getFreeClients() {
         List<Client> free = new ArrayList<>(allClients);
         free.removeAll(itineraryClients);
         return free;
     }
 
+    /**
+     * Ajoute un client sélectionné à la liste des clients de l'itinéraire.
+     *
+     * @param view la vue du bouton cliqué
+     */
     private void add(View view) {
         Toast.makeText(getContext(),
                 R.string.add_client,
@@ -224,6 +262,11 @@ public class ItineraryCreationFragment extends Fragment {
         ViewHelper.disableView(validateItineraryButton);
     }
 
+    /**
+     * Génère un itinéraire basé sur les clients ajoutés.
+     *
+     * @param view la vue du bouton cliqué
+     */
     private void generate(View view) {
         API_REQUEST.itineraire.generate(getContext(), itineraryClients,
                 response -> {
@@ -278,6 +321,11 @@ public class ItineraryCreationFragment extends Fragment {
         }
     }
 
+    /**
+     * Crée un nouvel itinéraire via une requête API.
+     *
+     * @param onExceptionCallback le callback en cas d'erreur
+     */
     private void createItinerary(Consumer<Exception> onExceptionCallback) {
 
         String itineraryName = name.getText().toString();
@@ -289,6 +337,11 @@ public class ItineraryCreationFragment extends Fragment {
         }, onExceptionCallback::accept);
     }
 
+    /**
+     * Modifie un itinéraire existant via une requête API.
+     *
+     * @param onExceptionCallback le callback en cas d'erreur
+     */
     private void modifyItinerary(Consumer<Exception> onExceptionCallback) {
         if (modifiedItineraryId != null) {
             String itineraryName = name.getText().toString();
@@ -300,7 +353,6 @@ public class ItineraryCreationFragment extends Fragment {
             }, onExceptionCallback::accept);
         }
     }
-
 
     /**
      * Prépare les champs pour une modification d'itinéraire
