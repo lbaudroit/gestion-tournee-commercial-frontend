@@ -161,4 +161,8 @@
     <string name="type_entreprise">type: type</string>
     <string name="confirm_start_route_file_exists">\nATTENTION : Un parcours est déjà en cours, si vous acceptez de lancer cette itinéraire alors l\'ancien sera fini en enregistrer.</string>
     <string name="resume">Continuer le trajet</string>
+
+    <!-- Course -->
+    <string name="title_visits_isClient">Visité ?</string>
+    <string name="title_visits_name">Nom client</string>
 </resources>

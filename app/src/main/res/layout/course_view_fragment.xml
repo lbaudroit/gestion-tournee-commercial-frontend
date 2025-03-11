@@ -83,7 +83,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_marginHorizontal="10dp"
-                android:text="nom client"></TextView>
+                android:text="@string/title_visits_name"></TextView>
 
             <TextView
                 android:textSize="@dimen/text_size_default"
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:text="visité ?"></TextView>
+                android:text="@string/title_visits_isClient"></TextView>
 
         </TableRow>
 
