@@ -32,11 +32,14 @@ import fr.iutrodez.tourneecommercial.utils.adapter.ClientListCourseAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 
+/**
+ * Fragment affichant les détails d'un parcours.
+ */
 public class CourseFragment extends Fragment {
 
     public MainActivity parent;
 
-    private Marker point;
+    private MapView map;
     private FullscreenFetchStatusDisplay status;
     private ClientListCourseAdapter listClients;
 
@@ -82,12 +85,11 @@ public class CourseFragment extends Fragment {
         status = frag.findViewById(R.id.fetchStatus_status);
         status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
         status.setHideContentFunction(() -> setContentVisibility(View.GONE));
-        MapView mapView = frag.findViewById(R.id.mapView);
+        map = frag.findViewById(R.id.mapView);
 
-        mapHelper = new MapHelper(mapView);
+        mapHelper = new MapHelper(map);
 
-        initializeMapView(mapView);
-        initializePoints(mapView);
+        initializeMapView(map);
 
         // On récupère les arguments mis dans le fragment
         Bundle args = getArguments();
@@ -96,7 +98,7 @@ public class CourseFragment extends Fragment {
         if (args != null && args.containsKey("id")) {
             String idParcours = args.getString("id");
             // On récupère le client par rapport à l'id
-            getParcours(idParcours);
+            setParcours(idParcours);
 
         }
         return frag;
@@ -110,7 +112,12 @@ public class CourseFragment extends Fragment {
     public void setContentVisibility(int visibility) {
         setVisibilityFor(visibility,listView);
     }
-    private void getParcours(String id) {
+
+    /**
+     * Méthode pour mettre en place le parcours sur le fragment.
+     * @param id L'id du parcours à mettre en place.
+     */
+    private void setParcours(String id) {
         API_REQUEST.parcours.getWithId(requireContext(),id,response -> {
                     courseName.setText(response.getNom());
                     courseDuration.setText(response.getDuree());
@@ -118,21 +125,27 @@ public class CourseFragment extends Fragment {
                     courseHBegin.setText(response.getHeureDebut());
                     courseHEnd.setText(response.getHeureFin());
                     courseDistance.setText(response.getDistance());
+
+
                     listClients = new ClientListCourseAdapter(parent,R.layout.course_clients_items,response.getVisitList(),
-                            new ClientListCourseAdapter.OnClickList() {
-                                @Override
-                                public void OnClick(Visit visit) {
-                                    mapHelper.adjustZoomToMarker(new GeoPoint(visit.getCoordonnees().getLatitude(),visit.getCoordonnees().getLongitude()));
-                                }
-                            });
+                            // Lors d'un clic sur un client de la liste on ajuste le zoom
+                            this::zoomToClient);
+
                     listView.setAdapter(listClients);
 
                     loadMarkers();
                     loadPoints(response.getChemin());
+                    zoomMap();
                 },
                 error -> status.error(R.string.fetch_course_error));
     }
 
+    /**
+     *
+     * Initialise la vue de la carte.
+     *
+     * @param mapView Vue de la carte.
+     */
     @SuppressLint("ClickableViewAccessibility")
     private void initializeMapView(MapView mapView) {
         mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -140,15 +153,16 @@ public class CourseFragment extends Fragment {
 
     }
 
-    private void initializePoints(MapView mapView) {
-         point = new Marker(mapView);
-        point.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
-    }
-
+    /**
+     * Ajoute sur la map les marqueurs des clients visités ou non en les différenciant avec deux icones différentes.
+     */
     private void loadMarkers() {
         for(int i =0 ; i < listClients.getCount();i++) {
             Visit currentVisit = listClients.getItem(i);
-            Marker marker = new Marker(point.getInfoWindow().getMapView());
+
+            // création d'un nouveau marqueur pour chaque client
+            Marker marker = new Marker(map);
+
             if(currentVisit.isVisited()) {
                 marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
             } else {
@@ -157,10 +171,31 @@ public class CourseFragment extends Fragment {
 
             mapHelper.drawMarker(marker,new GeoPoint(currentVisit.getCoordonnees().getLatitude(),currentVisit.getCoordonnees().getLongitude())
                     ,currentVisit.getName());
-            mapHelper.adjustZoomToMarker(new GeoPoint(currentVisit.getCoordonnees().getLatitude(),currentVisit.getCoordonnees().getLongitude()));
         }
     }
 
+    /**
+     * Zoome la map vers un point spécifique.
+     */
+    private void zoomMap() {
+        // Ajustement de la map par rapport au dernier marqueur.
+        mapHelper.adjustZoomToMarker(new GeoPoint(listClients.getItem(listClients.getCount()-1).
+                getCoordonnees().getLatitude(),
+                listClients.getItem(listClients.getCount()-1).getCoordonnees().getLongitude()));
+    }
+
+    /**
+     * Ajuste le zoom de la map par rapport à un client sur la map.
+     * @param visit Le client sur la map.
+     */
+    private void zoomToClient(Visit visit) {
+        mapHelper.adjustZoomToMarker(new GeoPoint(visit.getCoordonnees().getLatitude(),visit.getCoordonnees().getLongitude()));
+    }
+
+    /**
+     * Charge les points d'une liste pour afficher le chemin effectué sur le parcours.
+     * @param pointList Le chemin effectué sur le parcours.
+     */
     private void loadPoints(List<GeoPoint> pointList) {
         mapHelper.loadGeoPointsList(pointList);
     }

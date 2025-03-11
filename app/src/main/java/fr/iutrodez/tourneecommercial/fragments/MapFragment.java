@@ -545,6 +545,9 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         parent.clearCache(MainActivity.MAP_FRAGMENT);
     }
 
+    /**
+     * Ajoute au parcours les clients qui ne sont pas ajoutés. Les clients ajoutés ne seront pas visités.
+     */
     public void addMissingClients() {
         while (parcours.markCurrentAsNotVisitedAndMoveToNext()) {
 

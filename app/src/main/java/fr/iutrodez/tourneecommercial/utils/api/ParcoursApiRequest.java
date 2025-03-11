@@ -131,11 +131,64 @@ public class ParcoursApiRequest extends ApiRessource {
         },errorCallback::onError);
     }
 
+    /**
+     * Extrait un parcours dans son ensemble et le transforme en un élément manipulable pour l'historique.
+     *
+     * @param jsonObject      Le parcours sous forme de jsonObject.
+     * @return                Le parcours manipulable pour l'historique.
+     * @throws JSONException  Renvoie cette erreur si un problème à un lieu lors de la transformation du json.
+     */
     private static HistoryDTO extractFullParcours(JSONObject jsonObject) throws JSONException {
+        List<Visit> visits = extractVisits(jsonObject.getJSONArray("etapes"));
+        List<GeoPoint> chemin = extractPath(jsonObject.getJSONObject("chemin").getJSONArray("coordinates"));
+
+        LocalDateTime dateDebut = extractLocalDateTime(jsonObject.getString("dateDebut"));
+        LocalDateTime dateFin = extractLocalDateTime(jsonObject.getString("dateFin"));
+
+        HistoryDTO historyDTO = new HistoryDTO(jsonObject.getString("nom"),visits,dateDebut,dateFin,chemin);
+        return historyDTO;
+    }
+
+    /**
+     * Extrait la date d'une chaine de caractères.
+     *
+     * @param date La chaine à extraire.
+     * @return     La date extraite.
+     */
+    private static LocalDateTime extractLocalDateTime(String date) {
+        return LocalDateTime.parse(date);
+    }
+
+    /**
+     * Extrait le chemin d'un tableau de json et le transforme en GeoPoints.
+     *
+     * @param coordinates    Les coordonnées à extraire.
+     * @return               Une liste de geoPoints.
+     * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation.
+     */
+    private static List<GeoPoint> extractPath(JSONArray coordinates) throws JSONException {
+        List<GeoPoint> chemin = new ArrayList<>();
+        JSONArray coordonneesChemin = coordinates;
+        for(int i = 0 ; i < coordonneesChemin.length();i++) {
+            JSONObject point = coordonneesChemin.getJSONObject(i);
+            chemin.add(new GeoPoint(point.getDouble("x"),point.getDouble("y")));
+
+        }
+        return chemin;
+    }
+
+    /**
+     * Extrait les clients visités ou non d'un tableau de json et transforme ce tableau en liste de clients visités ou non.
+     *
+     * @param jsonArray      Le tableau à extraire.
+     * @return               Une liste de Visit.
+     * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation.
+     */
+    private static List<Visit> extractVisits(JSONArray jsonArray) throws JSONException {
         Gson gson = new Gson();
         List<Visit> visits = new ArrayList<>();
 
-        JSONArray etapes = jsonObject.getJSONArray("etapes");
+        JSONArray etapes = jsonArray;
         for(int i = 0 ; i < etapes.length();i++) {
             JSONObject visit = etapes.getJSONObject(i);
             String name = visit.getString("nom");
@@ -144,19 +197,7 @@ public class ParcoursApiRequest extends ApiRessource {
 
             visits.add(new Visit(name,visite,coordinates));
         }
-        List<GeoPoint> chemin = new ArrayList<>();
-
-        JSONArray coordonneesChemin = jsonObject.getJSONObject("chemin").getJSONArray("coordinates");
-        for(int i = 0 ; i < coordonneesChemin.length();i++) {
-            JSONObject point = coordonneesChemin.getJSONObject(i);
-            chemin.add(new GeoPoint(point.getDouble("x"),point.getDouble("y")));
-
-        }
-        LocalDateTime dateDebut = LocalDateTime.parse(jsonObject.getString("dateDebut"));
-        LocalDateTime dateFin = LocalDateTime.parse(jsonObject.getString("dateFin"));
-
-        HistoryDTO historyDTO = new HistoryDTO(jsonObject.getString("nom"),visits,dateDebut,dateFin,chemin);
-        return historyDTO;
+        return visits;
     }
 
     /**

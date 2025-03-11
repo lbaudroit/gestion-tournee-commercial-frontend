@@ -16,9 +16,15 @@ import java.util.List;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.model.Visit;
 
+/**
+ * Adapteur permettant de gérer l’affichage des clients (sous forme de visite) dans l'historique.
+ */
 public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
 
 
+    /**
+     * Interface pour définir la loqique lors du clic sur un élément de la liste appartenant à cette adapteur.
+     */
     public interface OnClickList {
         public void OnClick(Visit visit);
     }
@@ -42,7 +48,7 @@ public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
      * @param context     Le contexte de l'application.
      * @param resource    L'identifiant de la vue pour chaque élément de la liste.
      * @param objects     La liste des objets Client à afficher.
-     * @param onClickList
+     * @param onClickList L'action à effectuer lors du click sur un élément de la liste.
      */
     public ClientListCourseAdapter(@NonNull Context context,
                                    int resource,
