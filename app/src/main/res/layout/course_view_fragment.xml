@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="false"
+    android:focusable="false">
+    <TableLayout
+        android:gravity="top"
+        android:stretchColumns="2"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_searchable_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow >
+
+            <TextView
+                android:id="@+id/course_name"
+                android:textSize="@dimen/text_size_default"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="nom Parcours"></TextView>
+
+            <TextView
+                android:id="@+id/course_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="date"
+                android:textSize="@dimen/text_size_default"></TextView>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/course_hBegin"
+                android:layout_weight="1"
+                android:textSize="@dimen/text_size_default"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="heureDebut"></TextView>
+
+            <TextView
+                android:id="@+id/course_hFin"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:text="heureFin"
+                android:textSize="@dimen/text_size_default"></TextView>
+
+
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/course_distance"
+                android:textSize="@dimen/text_size_default"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="distanceParcourue"></TextView>
+
+            <TextView
+                android:id="@+id/course_duration"
+                android:layout_width="137dp"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:text="durée heures"
+                android:textSize="@dimen/text_size_default"></TextView>
+
+
+        </TableRow>
+        <Space android:layout_margin="10dp"/>
+
+        <TableRow
+            android:paddingTop="10dp"
+           >
+
+            <TextView
+                android:textSize="@dimen/text_size_default"
+                android:layout_weight="1"
+
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginHorizontal="10dp"
+                android:text="nom client"></TextView>
+
+            <TextView
+                android:textSize="@dimen/text_size_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="visité ?"></TextView>
+
+        </TableRow>
+
+
+    </TableLayout>
+
+
+    <ListView
+        android:id="@+id/course_list_item_clients"
+        android:layout_width="match_parent"
+        android:layout_height="338dp"
+
+        ></ListView>
+
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay
+        android:id="@+id/fetchStatus_status"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

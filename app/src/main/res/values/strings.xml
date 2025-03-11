@@ -95,6 +95,7 @@
     <string name="create_itinerary_error">Erreur : impossible de créer l\'itinéraire</string>
     <string name="fetch_itinerary_error">Erreur lors de la récupérations des itinéraires</string>
     <string name="fetch_clients_error">Erreur : impossible de récupérer les clients disponibles</string>
+    <string name="fetch_course_error">Erreur : impossible de récupérer le parcours</string>
 
     <!-- Toast Success Messages -->
     <string name="add_client">Ajout d\'un client</string>

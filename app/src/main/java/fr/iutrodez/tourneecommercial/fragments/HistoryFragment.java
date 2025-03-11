@@ -135,6 +135,11 @@ public class HistoryFragment extends Fragment {
      */
     private void onclickList(int position) {
         System.out.println("CLICK " + parcours.get(position).getNom());
+        Bundle bundle = new Bundle();
+
+        bundle.putString("id", historyListAdapter.getItem(position).getId());
+        parent.navigateToFragment(MainActivity.COURSE_VIEW_FRAGMENT,false,bundle);
+
     }
 
     /**

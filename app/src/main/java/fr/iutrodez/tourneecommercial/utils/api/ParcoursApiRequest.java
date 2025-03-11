@@ -4,14 +4,17 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import fr.iutrodez.tourneecommercial.model.Parcours;
 import fr.iutrodez.tourneecommercial.model.Visit;
+import fr.iutrodez.tourneecommercial.model.dto.HistoryDTO;
 import fr.iutrodez.tourneecommercial.model.dto.ParcoursReducedDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +118,45 @@ public class ParcoursApiRequest extends ApiRessource {
         super.getWithTokenAsArray(context, url, response -> {
             successCallback.onSuccess(extractClients(response));
         }, errorCallback::onError);
+    }
+
+    public void getWithId(Context context,String id,SuccessCallback<HistoryDTO> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/?id="+id;
+        super.getWithToken(context,url,response-> {
+            try {
+                successCallback.onSuccess(extractFullParcours(response));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        },errorCallback::onError);
+    }
+
+    private static HistoryDTO extractFullParcours(JSONObject jsonObject) throws JSONException {
+        Gson gson = new Gson();
+        List<Visit> visits = new ArrayList<>();
+
+        JSONArray etapes = jsonObject.getJSONArray("etapes");
+        for(int i = 0 ; i < etapes.length();i++) {
+            JSONObject visit = etapes.getJSONObject(i);
+            String name = visit.getString("nom");
+            boolean visite = visit.getBoolean("visite");
+            Coordonnees coordinates = gson.fromJson(visit.getJSONObject("coordonnees").toString(),Coordonnees.class);
+
+            visits.add(new Visit(name,visite,coordinates));
+        }
+        List<GeoPoint> chemin = new ArrayList<>();
+
+        JSONArray coordonneesChemin = jsonObject.getJSONObject("chemin").getJSONArray("coordinates");
+        for(int i = 0 ; i < coordonneesChemin.length();i++) {
+            JSONObject point = coordonneesChemin.getJSONObject(i);
+            chemin.add(new GeoPoint(point.getDouble("x"),point.getDouble("y")));
+
+        }
+        LocalDateTime dateDebut = LocalDateTime.parse(jsonObject.getString("dateDebut"));
+        LocalDateTime dateFin = LocalDateTime.parse(jsonObject.getString("dateFin"));
+
+        HistoryDTO historyDTO = new HistoryDTO(jsonObject.getString("nom"),visits,dateDebut,dateFin,chemin);
+        return historyDTO;
     }
 
     /**

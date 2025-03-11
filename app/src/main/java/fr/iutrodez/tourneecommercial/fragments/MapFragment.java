@@ -525,7 +525,10 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         new AlertDialog.Builder(getContext())
                 .setTitle("Arrêter le parcours")
                 .setMessage("êtes vous sur de vouloir arrêter le parcours")
-                .setPositiveButton(R.string.yes, (dialog, which) -> enregistrerParcours())
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    addMissingClients();
+                    enregistrerParcours();
+                })
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
     }
@@ -540,6 +543,13 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
         parent.clearCache(MainActivity.MAP_FRAGMENT);
+    }
+
+    public void addMissingClients() {
+        while (parcours.markCurrentAsNotVisitedAndMoveToNext()) {
+
+        };
+
     }
 
     /**
