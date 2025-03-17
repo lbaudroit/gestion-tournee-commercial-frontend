@@ -16,25 +16,16 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.model.Client;
-import fr.iutrodez.tourneecommercial.model.Coordonnees;
-import fr.iutrodez.tourneecommercial.model.Parcours;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
-import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
-import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
-import nl.dionsegijn.konfetti.KonfettiView;
-import nl.dionsegijn.konfetti.models.Shape;
-import nl.dionsegijn.konfetti.models.Size;
+
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapAdapter;
 import org.osmdroid.events.ScrollEvent;
@@ -48,6 +39,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
+import fr.iutrodez.tourneecommercial.model.Parcours;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
+import nl.dionsegijn.konfetti.models.Size;
+
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
  */
@@ -58,11 +63,12 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private GeoPoint destinationPoint, startPoint;
     private Marker start, end;
     private boolean gotNotificationForClient = false;
-    List<Client> prospectNotified = new ArrayList<Client>();
+    List<Client> prospectNotified = new ArrayList<>();
     private NotificationHelper notificationHelper;
     private LocationHelper locationHelper;
-    private boolean userInteracted = false;
     private MapHelper mapHelper;
+    private SavedParcoursHelper savedParcoursHelper;
+    private boolean userInteracted = false;
     private boolean isUserInteraction = false;
     private boolean isPaused = false;
     private Parcours parcours;
@@ -86,6 +92,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         parent = (MainActivity) context;
         locationHelper = new LocationHelper(context);
         notificationHelper = new NotificationHelper(context, this);
+        savedParcoursHelper = new SavedParcoursHelper(context);
     }
 
     /**
@@ -160,7 +167,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     public void onPause() {
         super.onPause();
         if (parcours != null && !isParcoursFinished) {
-            mapHelper.serializeMapDataCached(parent, parcours);
+            savedParcoursHelper.serializeParcours(parcours);
         }
         Log.d("MapFragment", "onPause called");
         locationHelper.stopLocationUpdates(locationCallback);
@@ -193,16 +200,14 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         mapView.setMultiTouchControls(true);
         mapHelper = new MapHelper(mapView);
 
-        mapView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, android.view.MotionEvent event) {
-                isUserInteraction = event.getAction() == android.view.MotionEvent.ACTION_DOWN || event.getAction() == android.view.MotionEvent.ACTION_MOVE;
-                if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                    v.performClick();
-                }
-                return false;
-            }
-        });
+        mapView.setOnTouchListener(
+                (v, event) -> {
+                    isUserInteraction = event.getAction() == android.view.MotionEvent.ACTION_DOWN || event.getAction() == android.view.MotionEvent.ACTION_MOVE;
+                    if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                        v.performClick();
+                    }
+                    return false;
+                });
 
         mapView.addMapListener(new MapAdapter() {
             @Override
@@ -244,9 +249,9 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * enregistre l'ancien et initialise une nouvelle carte.
      */
     private void initializeItineraryMap() {
-        File file = new File(requireContext().getFilesDir(), "mapData.ser");
+        File file = savedParcoursHelper.getFileForLocalSave();
         if (parcours == null) {
-            if (file.exists()) {
+            if (file != null && file.exists()) {
                 handleItineraryFoundInStorage();
             } else {
                 initializeNewItineraryMap();
@@ -263,13 +268,13 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private void handleItineraryFoundInStorage() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Charger l'itinéraire")
-                .setMessage("Voulez-vous charger l'itinéraire précédent ? Si vous ne voulez pas, l'itinéraire précédent sera fini et enregistrer.")
+                .setMessage("Voulez-vous charger l'itinéraire précédent ? Si vous ne voulez pas, l'itinéraire précédent sera terminé et enregistré.")
                 .setPositiveButton("Oui", (dialog, which) -> initializeSerializedItineraryMap())
                 .setNegativeButton("Non", (dialog, which) -> {
-                    Parcours tmp = mapHelper.deserializeMapDataCached(parent);
+                    Parcours tmp = savedParcoursHelper.deserializeSavedParcours();
                     assert tmp != null;
                     tmp.registerAndSaveItineraire(requireContext());
-                    mapHelper.clearMapDataCached(parent);
+                    savedParcoursHelper.deleteSavedParcours();
                     initializeNewItineraryMap();
                 })
                 .show();
@@ -296,7 +301,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Prépare la carte en récupérant les données sérailisées de l'itinéraire.
      */
     private void initializeSerializedItineraryMap() {
-        parcours = mapHelper.deserializeMapDataCached(parent);
+        parcours = savedParcoursHelper.deserializeSavedParcours();
         mapHelper.loadGeoPointsList(parcours.getPath());
 
         locationHelper.getCurrentLocation(locationCallback);
@@ -330,13 +335,13 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
                 .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT, false))
                 .show();
-        removeButtonsAndTextViews();
+        hideButtonsAndTextView();
     }
 
     /**
      * Affiche ou cache les boutons.
      */
-    private void removeButtonsAndTextViews() {
+    private void hideButtonsAndTextView() {
         buttonVisit.setVisibility(View.GONE);
         buttonPass.setVisibility(View.GONE);
         buttonPause.setVisibility(View.GONE);
@@ -351,7 +356,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      */
     private final LocationCallback locationCallback = new LocationCallback() {
         @Override
-        public void onLocationResult(LocationResult locationResult) {
+        public void onLocationResult(@NonNull LocationResult locationResult) {
             if (!buttonVisit.isEnabled()) {
                 unlockButtons();
             }
@@ -534,9 +539,9 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Enregistre le parcours.
      */
     public void enregistrerParcours() {
-        mapHelper.clearMapDataCached(parent);
+        savedParcoursHelper.deleteSavedParcours();
         parcours.registerAndSaveItineraire(requireContext());
-        removeButtonsAndTextViews();
+        hideButtonsAndTextView();
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
         parent.clearCache(MainActivity.MAP_FRAGMENT);

@@ -1,12 +1,16 @@
 package fr.iutrodez.tourneecommercial.model;
 
+import static fr.iutrodez.tourneecommercial.fragments.ItineraryFragment.API_REQUEST;
+
 import android.content.Context;
+
 import org.osmdroid.util.GeoPoint;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import static fr.iutrodez.tourneecommercial.fragments.ItineraryFragment.API_REQUEST;
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 
 public class Parcours implements java.io.Serializable {
     private final String name;
@@ -15,6 +19,7 @@ public class Parcours implements java.io.Serializable {
     private final List<Visit> visited;
     private final List<GeoPoint> path;
     private final String startTime;
+    private String endTime;
 
     public Parcours(String name, List<Client> clients) {
         this.name = name;
@@ -22,6 +27,7 @@ public class Parcours implements java.io.Serializable {
         this.visited = new java.util.ArrayList<>();
         this.path = new java.util.ArrayList<>();
         this.startTime = getCurrentTime();
+        this.endTime = null;
     }
 
     public Coordonnees getCurrentClientCoordonnees() {
@@ -63,8 +69,16 @@ public class Parcours implements java.io.Serializable {
      * @param context Le contexte de l'application.
      */
     public void registerAndSaveItineraire(Context context) {
-        API_REQUEST.parcours.create(context, this, System.out::println
-                , error -> System.out.println(error.getMessage()));
+        SavedParcoursHelper SavedParcoursHelper = new SavedParcoursHelper(context);
+        this.endTime = getCurrentTime();
+
+        API_REQUEST.parcours.create(context, this,
+                System.out::println,
+                error -> {
+                    System.out.println(error.getMessage());
+                    SavedParcoursHelper.serializeToSendLater(this);
+                    System.out.println("Parcours saved to be sent later");
+                });
     }
 
     public String getItineraryName() {
@@ -109,7 +123,7 @@ public class Parcours implements java.io.Serializable {
     }
 
     public String getEnd() {
-        return getCurrentTime();
+        return endTime;
     }
 
     /**
@@ -118,6 +132,7 @@ public class Parcours implements java.io.Serializable {
      * @return L'heure actuelle.
      */
     private String getCurrentTime() {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.FRANCE).format(new java.util.Date());
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.FRANCE)
+                .format(new java.util.Date());
     }
 }

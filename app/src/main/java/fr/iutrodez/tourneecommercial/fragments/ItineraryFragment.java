@@ -20,7 +20,8 @@ import fr.iutrodez.tourneecommercial.model.Parcours;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -168,18 +169,18 @@ public class ItineraryFragment extends Fragment {
      */
     private void onclickList(int position) {
         Itineraire itineraire = itineraries.get(position); // Récupérer l'itinéraire cliqué
-        File file = new File(requireContext().getFilesDir(), "mapData.ser");
-        boolean fileExists = file.exists();
+        SavedParcoursHelper savedParcoursHelper = new SavedParcoursHelper(requireContext());
+        File file = savedParcoursHelper.getFileForLocalSave();
+        boolean fileExists = file != null && file.exists();
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.launch_route))
                 .setMessage(getString(R.string.confirm_add_route, itineraire.getNom()) + (fileExists ? getString(R.string.confirm_start_route_file_exists) : ""))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     if (fileExists) {
                         System.out.println("Deleting file");
-                        MapHelper mapHelper = new MapHelper(null);
-                        Parcours mapData = mapHelper.deserializeMapDataCached(parent);
+                        Parcours mapData = savedParcoursHelper.deserializeSavedParcours();
                         mapData.registerAndSaveItineraire(parent);
-                        mapHelper.clearMapDataCached(parent);
+                        savedParcoursHelper.deleteSavedParcours();
                         parent.clearCache(MainActivity.MAP_FRAGMENT);
                     }
                     itineraryToMap(itineraire);
