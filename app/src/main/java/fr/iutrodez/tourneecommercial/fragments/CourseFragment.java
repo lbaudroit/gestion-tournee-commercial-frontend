@@ -22,10 +22,12 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import fr.iutrodez.tourneecommercial.model.Visit;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ClientListCourseAdapter;
@@ -166,7 +168,7 @@ public class CourseFragment extends Fragment {
             if(currentVisit.isVisited()) {
                 marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
             } else {
-                marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.person, null));
+                marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_red, null));
             }
 
             mapHelper.drawMarker(marker,new GeoPoint(currentVisit.getCoordonnees().getLatitude(),currentVisit.getCoordonnees().getLongitude())
@@ -179,9 +181,12 @@ public class CourseFragment extends Fragment {
      */
     private void zoomMap() {
         // Ajustement de la map par rapport au dernier marqueur.
-        mapHelper.adjustZoomToMarker(new GeoPoint(listClients.getItem(listClients.getCount()-1).
-                getCoordonnees().getLatitude(),
-                listClients.getItem(listClients.getCount()-1).getCoordonnees().getLongitude()));
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        for(int i = 0; i< listClients.getCount(); i++) {
+            Coordonnees coordonnees = listClients.getItem(i).getCoordonnees();
+            geoPoints.add(new GeoPoint(coordonnees.getLatitude(),coordonnees.getLongitude()));
+        }
+        mapHelper.adjustZoomToListMarkers(geoPoints);
     }
 
     /**

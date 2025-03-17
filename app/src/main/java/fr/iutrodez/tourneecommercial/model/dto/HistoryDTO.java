@@ -45,7 +45,7 @@ public class HistoryDTO {
             distance += MapHelper.computeHaversineFormula(new Coordonnees(chemin.get(i).getLatitude(),chemin.get(i).getLongitude()),
                     new Coordonnees(chemin.get(i+1).getLatitude(),chemin.get(i+1).getLongitude()));
         }
-        this.distance = String.valueOf(distance ) + " m";
+        this.distance = String.valueOf(distance) + " m";
 
 
     }

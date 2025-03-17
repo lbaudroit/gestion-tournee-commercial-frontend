@@ -85,6 +85,50 @@ public class MapHelper {
     }
 
     /**
+     * Ajuste le zoom de la carte pour englober plusieurs points donnés.
+     *
+     * @param points Les points à englober.
+     */
+    public void adjustZoomToListMarkers(List<GeoPoint> points) {
+        double maxLat = Double.MIN_VALUE;
+        double maxLon = Double.MIN_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double deltaLat;
+        double deltaLon;
+        for(int i =0 ; i < points.size(); i++) {
+            double lat = points.get(i).getLatitude();
+            double lon = points.get(i).getLongitude();
+            if(maxLat < lat) {
+                maxLat = lat;
+            }
+            if(minLat > lat) {
+                minLat = lat;
+            }
+            if(maxLon < lon) {
+                maxLon = lon;
+            }
+            if(minLon > lon) {
+                minLon = lon;
+            }
+        }
+        deltaLon = maxLon - minLon;
+        deltaLat = maxLat - minLat;
+        double margin = 0.25 * Math.max(deltaLat, deltaLon);
+        try {
+            BoundingBox boundingBox = new BoundingBox(maxLat + margin,
+                    maxLon + margin,
+                    minLat - margin,
+                    minLon - margin
+            );
+            mapView.zoomToBoundingBox(boundingBox, true);
+            mapView.invalidate();
+        } catch (IllegalArgumentException e) {
+            adjustZoomToMarker(points.get(0));
+        }
+    }
+
+    /**
      * Ajuste le zoom de la carte pour englober un seul point donné.
      *
      * @param point Le point géographique à englober.
