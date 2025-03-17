@@ -51,6 +51,23 @@ public class ParcoursApiRequest extends ApiRessource {
     }
 
     /**
+     * supprime un parcours de l'historique via une requête API
+     *
+     * @param context
+     * @param idParcours
+     * @param successCallback
+     * @param errorCallback
+     */
+    public void delete(Context context , String idParcours,SuccessCallback<String> successCallback,
+                       ErrorCallback errorCallback){
+
+        String url = RESSOURCE_NAME + "/" + idParcours;
+        super.deleteWithToken(context, url, response -> {
+            successCallback.onSuccess(extractMessage(response));
+        }, errorCallback::onError);
+
+    }
+    /**
      * Récupère le nombre de pages de parcours disponibles via une requête API.
      *
      * @param context         le contexte de l'application
