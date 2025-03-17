@@ -177,10 +177,9 @@ public class CourseFragment extends Fragment {
     }
 
     /**
-     * Zoome la map vers un point spécifique.
+     * Zoome sur la map pour afficher tous les points.
      */
     private void zoomMap() {
-        // Ajustement de la map par rapport au dernier marqueur.
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
         for(int i = 0; i< listClients.getCount(); i++) {
             Coordonnees coordonnees = listClients.getItem(i).getCoordonnees();
