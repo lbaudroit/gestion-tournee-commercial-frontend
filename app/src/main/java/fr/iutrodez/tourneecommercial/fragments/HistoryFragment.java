@@ -1,5 +1,6 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -149,7 +152,27 @@ public class HistoryFragment extends Fragment {
      * @param integer            Un entier associé à l'élément à supprimer.
      */
     private void onDeleteButtonClick(ParcoursReducedDTO parcoursReducedDTO, Integer integer) {
-        System.out.println("DELETE " + parcoursReducedDTO.getNom());
+        String message = parent.getString(R.string.confirm_delete_parcours, parcoursReducedDTO.getNom());
+
+        new AlertDialog.Builder(parent)
+                .setTitle(R.string.delete_parcours)
+                .setMessage(message)
+                .setPositiveButton(R.string.yes, (dialog, which) -> delete(parcoursReducedDTO))
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    /**
+     * Fais appel à la suppression niveau de l'API
+     */
+    private void delete(ParcoursReducedDTO parcoursReducedDTO){
+        API_REQUEST.parcours.delete(requireContext(),parcoursReducedDTO.getId(),
+                response -> {
+                    parcours.remove(parcoursReducedDTO);
+                    historyListAdapter.notifyDataSetChanged();
+                    Toast.makeText(parent, R.string.parcours_delete_success, Toast.LENGTH_SHORT).show();
+                },
+                error -> status.error(R.string.parcours_deletion_error));
     }
 
     /**
