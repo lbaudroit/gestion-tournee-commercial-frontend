@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:clickable="true"
+    android:focusable="false"
+
+    android:padding="3dp">
+    <TextView
+            android:id="@+id/textView_course_client"
+            android:textSize="@dimen/text_size_default"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="nom client"></TextView>
+
+    <CheckBox
+        android:id="@+id/checkbox_course_client"
+        android:layout_width="43dp"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:gravity="center" />
+</LinearLayout>

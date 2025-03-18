@@ -11,6 +11,11 @@ public class Visit implements java.io.Serializable {
         this.visited = visited;
         this.coordonnees = client.getCoordonnees();
     }
+    public Visit(String name, boolean visited,Coordonnees coordonnees) {
+        this.name = name;
+        this.visited = visited;
+        this.coordonnees = coordonnees;
+    }
 
     public String getName() {
         return name;
@@ -23,4 +28,6 @@ public class Visit implements java.io.Serializable {
     public Coordonnees getCoordonnees() {
         return coordonnees;
     }
+
+
 }

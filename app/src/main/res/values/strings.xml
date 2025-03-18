@@ -95,6 +95,8 @@
     <string name="create_itinerary_error">Erreur : impossible de créer l\'itinéraire</string>
     <string name="fetch_itinerary_error">Erreur lors de la récupérations des itinéraires</string>
     <string name="fetch_clients_error">Erreur : impossible de récupérer les clients disponibles</string>
+    <string name="fetch_course_error">Erreur : impossible de récupérer le parcours</string>
+
 
     <!-- Toast Success Messages -->
     <string name="add_client">Ajout d\'un client</string>
@@ -160,4 +162,17 @@
     <string name="type_entreprise">type: type</string>
     <string name="confirm_start_route_file_exists">\nATTENTION : Un parcours est déjà en cours, si vous acceptez de lancer cette itinéraire alors l\'ancien sera fini en enregistrer.</string>
     <string name="resume">Continuer le trajet</string>
+
+    <!-- Course -->
+    <string name="title_visits_isClient">Visité ?</string>
+    <string name="title_visits_name">Nom client</string>
+
+    <!-- History -->
+    <string name="confirm_delete_parcours">
+        Êtes-vous sûr de vouloir supprimer le parcours \"%s\" ?
+    </string>
+    <string name="parcours_delete_success">Le parcours a bien été supprimé</string>
+    <string name="parcours_deletion_error">Le parcours n\'a pas pû être supprimé</string>
+    <string name="delete_parcours">Suppression du parcours</string>
+
 </resources>

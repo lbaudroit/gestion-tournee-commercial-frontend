@@ -4,14 +4,17 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import fr.iutrodez.tourneecommercial.model.Parcours;
 import fr.iutrodez.tourneecommercial.model.Visit;
+import fr.iutrodez.tourneecommercial.model.dto.HistoryDTO;
 import fr.iutrodez.tourneecommercial.model.dto.ParcoursReducedDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +50,23 @@ public class ParcoursApiRequest extends ApiRessource {
         }, errorCallback::onError);
     }
 
+    /**
+     * supprime un parcours de l'historique via une requête API
+     *
+     * @param context
+     * @param idParcours
+     * @param successCallback
+     * @param errorCallback
+     */
+    public void delete(Context context , String idParcours,SuccessCallback<String> successCallback,
+                       ErrorCallback errorCallback){
+
+        String url = RESSOURCE_NAME + "/" + idParcours;
+        super.deleteWithToken(context, url, response -> {
+            successCallback.onSuccess(extractMessage(response));
+        }, errorCallback::onError);
+
+    }
     /**
      * Récupère le nombre de pages de parcours disponibles via une requête API.
      *
@@ -115,6 +135,86 @@ public class ParcoursApiRequest extends ApiRessource {
         super.getWithTokenAsArray(context, url, response -> {
             successCallback.onSuccess(extractClients(response));
         }, errorCallback::onError);
+    }
+
+    public void getWithId(Context context,String id,SuccessCallback<HistoryDTO> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/?id="+id;
+        super.getWithToken(context,url,response-> {
+            try {
+                successCallback.onSuccess(extractFullParcours(response));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        },errorCallback::onError);
+    }
+
+    /**
+     * Extrait un parcours dans son ensemble et le transforme en un élément manipulable pour l'historique.
+     *
+     * @param jsonObject      Le parcours sous forme de jsonObject.
+     * @return                Le parcours manipulable pour l'historique.
+     * @throws JSONException  Renvoie cette erreur si un problème à un lieu lors de la transformation du json.
+     */
+    private static HistoryDTO extractFullParcours(JSONObject jsonObject) throws JSONException {
+        List<Visit> visits = extractVisits(jsonObject.getJSONArray("etapes"));
+        List<GeoPoint> chemin = extractPath(jsonObject.getJSONObject("chemin").getJSONArray("coordinates"));
+
+        LocalDateTime dateDebut = extractLocalDateTime(jsonObject.getString("dateDebut"));
+        LocalDateTime dateFin = extractLocalDateTime(jsonObject.getString("dateFin"));
+
+        HistoryDTO historyDTO = new HistoryDTO(jsonObject.getString("nom"),visits,dateDebut,dateFin,chemin);
+        return historyDTO;
+    }
+
+    /**
+     * Extrait la date d'une chaine de caractères.
+     *
+     * @param date La chaine à extraire.
+     * @return     La date extraite.
+     */
+    private static LocalDateTime extractLocalDateTime(String date) {
+        return LocalDateTime.parse(date);
+    }
+
+    /**
+     * Extrait le chemin d'un tableau de json et le transforme en GeoPoints.
+     *
+     * @param coordinates    Les coordonnées à extraire.
+     * @return               Une liste de geoPoints.
+     * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation.
+     */
+    private static List<GeoPoint> extractPath(JSONArray coordinates) throws JSONException {
+        List<GeoPoint> chemin = new ArrayList<>();
+        JSONArray coordonneesChemin = coordinates;
+        for(int i = 0 ; i < coordonneesChemin.length();i++) {
+            JSONObject point = coordonneesChemin.getJSONObject(i);
+            chemin.add(new GeoPoint(point.getDouble("x"),point.getDouble("y")));
+
+        }
+        return chemin;
+    }
+
+    /**
+     * Extrait les clients visités ou non d'un tableau de json et transforme ce tableau en liste de clients visités ou non.
+     *
+     * @param jsonArray      Le tableau à extraire.
+     * @return               Une liste de Visit.
+     * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation.
+     */
+    private static List<Visit> extractVisits(JSONArray jsonArray) throws JSONException {
+        Gson gson = new Gson();
+        List<Visit> visits = new ArrayList<>();
+
+        JSONArray etapes = jsonArray;
+        for(int i = 0 ; i < etapes.length();i++) {
+            JSONObject visit = etapes.getJSONObject(i);
+            String name = visit.getString("nom");
+            boolean visite = visit.getBoolean("visite");
+            Coordonnees coordinates = gson.fromJson(visit.getJSONObject("coordonnees").toString(),Coordonnees.class);
+
+            visits.add(new Visit(name,visite,coordinates));
+        }
+        return visits;
     }
 
     /**
