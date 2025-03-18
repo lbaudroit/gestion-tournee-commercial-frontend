@@ -1,19 +1,17 @@
 package fr.iutrodez.tourneecommercial.utils.helper;
 
-import android.content.Context;
 import android.graphics.Paint;
-import android.util.Log;
-import fr.iutrodez.tourneecommercial.model.Coordonnees;
-import fr.iutrodez.tourneecommercial.model.Parcours;
+
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
 
 /**
  * Classe utilitaire pour la gestion des cartes et des marqueurs avec OSMdroid.
@@ -31,7 +29,7 @@ public class MapHelper {
      */
     public MapHelper(MapView mapView) {
         this.mapView = mapView;
-        this.latestPolyline = createAndAddNormalPolylineToMap(new ArrayList<>());
+        this.latestPolyline = mapView != null ? createAndAddNormalPolylineToMap(new ArrayList<>()) : null;
     }
 
     /**
@@ -149,61 +147,6 @@ public class MapHelper {
      */
     public void updateMap() {
         mapView.invalidate();
-    }
-
-    /**
-     * Sérialise les données de la carte et les enregistre dans un fichier.
-     *
-     * @param context Le contexte de l'application.
-     * @param mapData Les données de la carte à sérialiser.
-     */
-    public void serializeMapDataCached(Context context, Parcours mapData) {
-        try (FileOutputStream fos = context.openFileOutput("mapData.ser", Context.MODE_PRIVATE);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(mapData);
-            oos.flush();
-            Log.d("MapFragment", "Serialized map data");
-        } catch (IOException e) {
-            Log.e("MapFragment", "Error serializing map data", e);
-        }
-    }
-
-    /**
-     * Désérialise les données de la carte à partir d'un fichier.
-     *
-     * @param context Le contexte de l'application.
-     * @return Les données de la carte désérialisées ou null si le fichier n'existe pas ou est vide.
-     */
-    public Parcours deserializeMapDataCached(Context context) {
-        File file = new File(context.getFilesDir(), "mapData.ser");
-        if (!file.exists()) {
-            System.out.println("File does not exist, skipping deserialization");
-            return null;
-        }
-        if (file.length() == 0) {
-            System.out.println("File is empty, skipping deserialization");
-            return null;
-        }
-        try (FileInputStream fileIn = context.openFileInput("mapData.ser");
-             ObjectInputStream in = new ObjectInputStream(fileIn)) {
-            System.out.println("Deserialized map data");
-            return (Parcours) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            Log.e("MapFragment", "Error deserializing map data", e);
-        }
-        return null;
-    }
-
-    /**
-     * Supprime les données de la carte sérialisées du cache.
-     *
-     * @param context Le contexte de l'application.
-     */
-    public void clearMapDataCached(Context context) {
-        File file = new File(context.getFilesDir(), "mapData.ser");
-        if (file.exists()) {
-            Log.e("MapFragment", file.delete() ? "Deleted map data" : "Failed to delete map data");
-        }
     }
 
     /**
