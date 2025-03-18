@@ -66,10 +66,7 @@ public class LocationHelper {
                 .setMaxUpdateDelayMillis(5000)
                 .build();
 
-        if (checkPermissions()) return;
-
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
@@ -93,8 +90,6 @@ public class LocationHelper {
                 .setMinUpdateIntervalMillis(1000)
                 .setMaxUpdateDelayMillis(5000)
                 .build();
-        if (checkPermissions()) return;
-
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }

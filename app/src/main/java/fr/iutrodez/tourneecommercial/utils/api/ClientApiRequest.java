@@ -110,6 +110,7 @@ public class ClientApiRequest extends ApiRessource {
     public void getOne(Context context, String id, SuccessCallback<Client> successCallback, ErrorCallback errorCallback) {
         String url = RESOURCE_NAME + "/" + id;
         super.getWithToken(context, url, response -> {
+
             Gson gson = new Gson();
             successCallback.onSuccess(gson.fromJson(response.toString(), Client.class));
         }, errorCallback::onError);

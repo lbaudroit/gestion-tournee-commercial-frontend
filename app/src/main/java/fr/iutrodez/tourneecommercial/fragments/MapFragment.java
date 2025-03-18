@@ -16,29 +16,13 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-
-import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapAdapter;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.model.Client;
@@ -52,6 +36,18 @@ import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapAdapter;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
@@ -130,13 +126,13 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         buttonPass.setOnClickListener(view -> markPassedAndGoToNext());
         buttonPause.setOnLongClickListener(view -> {
             pausePressed();
-            animateButton(view);
+            animateButtonWhileHold(view);
             return true;
         });
 
         buttonStop.setOnLongClickListener(view -> {
             stop();
-            animateButton(view);
+            animateButtonWhileHold(view);
             return true;
         });
         buttonCenter.setOnClickListener(view -> centerButtonPressed());
@@ -148,7 +144,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      *
      * @param view La vue du bouton à animer.
      */
-    private void animateButton(View view) {
+    private void animateButtonWhileHold(View view) {
         ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(
                 view,
                 PropertyValuesHolder.ofFloat("scaleX", 0.9f),
@@ -413,7 +409,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private void pausePressed() {
         isPaused = !isPaused;
         if (isPaused) {
-            buttonPause.setText(R.string.resume);
+            buttonPause.setText(R.string.resumeItinerary);
             locationHelper.stopLocationUpdates(locationCallback);
         } else {
             buttonPause.setText(R.string.pause);
@@ -556,7 +552,8 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     public void addMissingClients() {
         while (parcours.markCurrentAsNotVisitedAndMoveToNext()) {
 
-        };
+        }
+        ;
 
     }
 
