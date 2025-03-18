@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.VolleyError;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.model.Adresse;
 import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import org.json.JSONException;
@@ -49,6 +49,12 @@ public class ClientCreationFragment extends Fragment {
     private EditText businessName, name, firstname, phoneNumber, description;
     private String idModified;
 
+    /**
+     * Méthode appelée lorsque le fragment est attaché à son contexte.
+     *
+     * @param context Le contexte auquel le fragment est attaché.
+     * @throws ClassCastException si le contexte n'est pas une instance de MainActivity.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -59,6 +65,14 @@ public class ClientCreationFragment extends Fragment {
         }
     }
 
+    /**
+     * Méthode appelée pour créer et initialiser la vue du fragment.
+     *
+     * @param inflater           Le LayoutInflater utilisé pour gonfler la vue du fragment.
+     * @param container          Le conteneur parent auquel la vue du fragment est attachée.
+     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé.
+     * @return La vue créée pour le fragment.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,7 +90,6 @@ public class ClientCreationFragment extends Fragment {
         // Configuration des listeners
         clientOrProspect.setOnClickListener(this::changeStatut);
         Button save = view.findViewById(R.id.button_save);
-
 
         // On récupère les arguments mis dans le fragment
         Bundle args = getArguments();
@@ -98,10 +111,19 @@ public class ClientCreationFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Configure le champ d'adresse pour afficher un dialogue de recherche d'adresse.
+     */
     private void setupAddress() {
         address.setOnClickListener(this::onClickAddress);
     }
 
+    /**
+     * Méthode appelée lorsque le champ d'adresse est cliqué.
+     * Affiche un dialogue pour rechercher et sélectionner une adresse.
+     *
+     * @param v La vue qui a été cliquée.
+     */
     private void onClickAddress(View v) {
         // Préparer le dialog
         dialog = new Dialog(parent);
@@ -153,6 +175,12 @@ public class ClientCreationFragment extends Fragment {
         });
     }
 
+    /**
+     * Méthode appelée lorsque le bouton de sauvegarde est cliqué.
+     * Sauvegarde les informations du client ou du prospect.
+     *
+     * @param view La vue qui a été cliquée.
+     */
     private void save(View view) {
         if (areCorrectFields()) {
             String businessName = this.businessName.getText().toString();
@@ -175,10 +203,10 @@ public class ClientCreationFragment extends Fragment {
     }
 
     /**
-     * Méthode d'appel API pour récupérer "un" client
+     * Méthode d'appel API pour récupérer un client par son identifiant.
      *
-     * @param id du client à récupérer
-     * @throws JSONException si une erreur survient lors de la récupération
+     * @param id L'identifiant du client à récupérer.
+     * @throws JSONException si une erreur survient lors de la récupération.
      */
     private void getClient(String id) throws JSONException {
 
@@ -196,6 +224,11 @@ public class ClientCreationFragment extends Fragment {
                 + error.toString(), Toast.LENGTH_LONG).show());
     }
 
+    /**
+     * Méthode appelée lorsque le statut client/prospect est changé.
+     *
+     * @param view La vue qui a été cliquée.
+     */
     private void changeStatut(View view) {
         if (clientOrProspect.isChecked()) {
             clientOrProspect.setText(R.string.switch_item_client);
@@ -204,13 +237,22 @@ public class ClientCreationFragment extends Fragment {
         }
     }
 
+    /**
+     * Vérifie si les champs du formulaire sont correctement remplis.
+     *
+     * @return true si tous les champs sont corrects, false sinon.
+     */
     private boolean areCorrectFields() {
         return isCorrectBusinessName() &
                 isCorrectContact() &
                 isCorrectAddress();
-
     }
 
+    /**
+     * Vérifie si l'adresse sélectionnée est correcte.
+     *
+     * @return true si l'adresse est correcte, false sinon.
+     */
     private boolean isCorrectAddress() {
         if (selectedAddress == null) {
             address.setError(getString(R.string.empty_field_error));
@@ -221,6 +263,11 @@ public class ClientCreationFragment extends Fragment {
         }
     }
 
+    /**
+     * Vérifie si le nom de l'entreprise est correct.
+     *
+     * @return true si le nom de l'entreprise est correct, false sinon.
+     */
     private boolean isCorrectBusinessName() {
         if (businessName.getText().toString().trim().isEmpty()) {
             businessName.setError(getString(R.string.empty_field_error));
@@ -229,6 +276,11 @@ public class ClientCreationFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Vérifie si les informations de contact sont correctes.
+     *
+     * @return true si les informations de contact sont correctes, false sinon.
+     */
     private boolean isCorrectContact() {
         boolean isCorrect = true;
         if (isNotFilled(name.getText().toString())) {
@@ -252,10 +304,22 @@ public class ClientCreationFragment extends Fragment {
         return isCorrect;
     }
 
+    /**
+     * Vérifie si le numéro de téléphone est correct.
+     *
+     * @param phoneNumber Le numéro de téléphone à vérifier.
+     * @return true si le numéro de téléphone est correct, false sinon.
+     */
     private boolean isCorrectPhoneNumber(String phoneNumber) {
         return phoneNumber.matches("[0-9]{10}");
     }
 
+    /**
+     * Vérifie si un champ de texte est vide.
+     *
+     * @param text Le texte à vérifier.
+     * @return true si le texte est vide, false sinon.
+     */
     private boolean isNotFilled(String text) {
         return text.trim().isEmpty();
     }

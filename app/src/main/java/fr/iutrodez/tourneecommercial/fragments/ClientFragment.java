@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.model.Client;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
@@ -50,6 +50,12 @@ public class ClientFragment extends Fragment {
     private int numberOfPages = 0;
     private final List<Client> clients = new ArrayList<>();
 
+    /**
+     * Méthode appelée lorsque le fragment est attaché à son contexte.
+     *
+     * @param context Le contexte auquel le fragment est attaché.
+     * @throws ClassCastException si le contexte n'est pas une instance de MainActivity.
+     */
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
@@ -60,6 +66,14 @@ public class ClientFragment extends Fragment {
         }
     }
 
+    /**
+     * Méthode appelée pour créer et initialiser la vue du fragment.
+     *
+     * @param inflater           Le LayoutInflater utilisé pour gonfler la vue du fragment.
+     * @param container          Le conteneur parent auquel la vue du fragment est attachée.
+     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé.
+     * @return La vue créée pour le fragment.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,21 +117,22 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Callback lorsque le bouton modifier de l'adaptateur est cliqué
+     * Callback lorsque le bouton modifier de l'adaptateur est cliqué.
+     * Navigue vers le fragment de création de client avec les informations du client à modifier.
      *
-     * @param client le client appuyé
+     * @param client Le client à modifier.
      */
     public void modify(Client client) {
         Bundle bundle = new Bundle();
         bundle.putString("id", client.get_id());
         parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false, bundle);
-
     }
 
     /**
-     * Callback lorsque le bouton supprimer de l'adaptateur est cliqué
+     * Callback lorsque le bouton supprimer de l'adaptateur est cliqué.
+     * Affiche une boîte de dialogue de confirmation pour la suppression du client.
      *
-     * @param client le client appuyé
+     * @param client Le client à supprimer.
      */
     public void delete(Client client) {
         String message = parent.getString(R.string.confirm_delete_client, client.getNomEntreprise());
@@ -129,6 +144,11 @@ public class ClientFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Supprime le client de la base de données et met à jour la liste des clients.
+     *
+     * @param client Le client à supprimer.
+     */
     private void deleteClient(Client client) {
         API_REQUEST.client.delete(parent, client.get_id(), response -> {
             clients.remove(client);
@@ -137,6 +157,10 @@ public class ClientFragment extends Fragment {
         }, error -> Toast.makeText(parent, R.string.client_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Récupère le nombre total de pages de clients depuis l'API.
+     * Met à jour l'état de chargement et affiche une erreur en cas d'échec.
+     */
     private void fetchNumberOfClients() {
         status.loading();
 
@@ -148,6 +172,10 @@ public class ClientFragment extends Fragment {
                 error -> status.error(R.string.fetch_clients_count_error));
     }
 
+    /**
+     * Récupère une page de clients depuis l'API et met à jour la liste des clients.
+     * Met à jour l'état de chargement et affiche une erreur en cas d'échec.
+     */
     private void fetchClientsPage() {
         status.loading();
 
@@ -173,9 +201,9 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
      *
-     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     * @param visibility Un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}.
      */
     public void setContentVisibility(int visibility) {
         setVisibilityFor(visibility, add, list);

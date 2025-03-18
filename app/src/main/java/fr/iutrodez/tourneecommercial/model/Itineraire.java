@@ -1,8 +1,8 @@
-package fr.iutrodez.tourneecommercial.modeles;
+package fr.iutrodez.tourneecommercial.model;
 
 public class Itineraire {
 
-    private long id;
+    private final long id;
 
     String nom;
 

@@ -1,18 +1,19 @@
 package fr.iutrodez.tourneecommercial.fragments;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -24,14 +25,14 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.modeles.Coordonnees;
-import fr.iutrodez.tourneecommercial.modeles.Parcours;
-import fr.iutrodez.tourneecommercial.modeles.Visit;
+import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
+import fr.iutrodez.tourneecommercial.model.Parcours;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
 import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
@@ -44,6 +45,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,20 +57,20 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private KonfettiView konfettiView;
     private final ApiRequest API_REQUEST = ApiRequest.getInstance();
     private GeoPoint destinationPoint, startPoint;
-    private List<Client> clients;
-    private int clientsIndex = 0;
     private Marker start, end;
     private boolean gotNotificationForClient = false;
-    List<Client> prospectNotified = new ArrayList<Client>();
+    List<Client> prospectNotified = new ArrayList<>();
     private NotificationHelper notificationHelper;
     private LocationHelper locationHelper;
-    private boolean userInteracted = false;
     private MapHelper mapHelper;
+    private SavedParcoursHelper savedParcoursHelper;
+    private boolean userInteracted = false;
     private boolean isUserInteraction = false;
+    private boolean isPaused = false;
+    private Parcours parcours;
     private TextView companyName;
     private TextView companyAddress;
     private TextView companyType;
-    private Parcours parcours;
     private Button buttonVisit;
     private Button buttonPass;
     private boolean isParcoursFinished;
@@ -86,6 +88,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         parent = (MainActivity) context;
         locationHelper = new LocationHelper(context);
         notificationHelper = new NotificationHelper(context, this);
+        savedParcoursHelper = new SavedParcoursHelper(context);
     }
 
     /**
@@ -117,16 +120,40 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
 
         initializeMapView(mapView);
         initializeStartEnd(mapView);
-        initializeParcours();
         initializeItineraryMap();
 
-        buttonVisit.setOnClickListener(view -> markVisited());
-        buttonPass.setOnClickListener(view -> pass());
-        //TODO: handle pause
-        buttonStop.setOnClickListener(view -> stop());
-        buttonCenter.setOnClickListener(view -> centerButtonPressed());
+        buttonVisit.setOnClickListener(view -> markVisitedAndGoToNext());
+        buttonPass.setOnClickListener(view -> markPassedAndGoToNext());
+        buttonPause.setOnLongClickListener(view -> {
+            pausePressed();
+            animateButtonWhileHold(view);
+            return true;
+        });
 
+        buttonStop.setOnLongClickListener(view -> {
+            stop();
+            animateButtonWhileHold(view);
+            return true;
+        });
+        buttonCenter.setOnClickListener(view -> centerButtonPressed());
         return frag;
+    }
+
+    /**
+     * Anime un bouton en réduisant sa taille puis en la restaurant.
+     *
+     * @param view La vue du bouton à animer.
+     */
+    private void animateButtonWhileHold(View view) {
+        ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(
+                view,
+                PropertyValuesHolder.ofFloat("scaleX", 0.9f),
+                PropertyValuesHolder.ofFloat("scaleY", 0.9f));
+        scaleDown.setDuration(300);
+        scaleDown.setRepeatCount(1);
+        scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
+        scaleDown.setInterpolator(new AccelerateDecelerateInterpolator());
+        scaleDown.start();
     }
 
     /**
@@ -135,6 +162,10 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     @Override
     public void onPause() {
         super.onPause();
+        if (parcours != null && !isParcoursFinished) {
+            savedParcoursHelper.serializeParcours(parcours);
+        }
+        Log.d("MapFragment", "onPause called");
         locationHelper.stopLocationUpdates(locationCallback);
         destinationPoint = null;
         startPoint = null;
@@ -146,7 +177,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     @Override
     public void onResume() {
         super.onResume();
-        if (!locationHelper.checkPermissions()) {
+        if (locationHelper.checkPermissions()) {
             ActivityCompat.requestPermissions(parent, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }
@@ -154,6 +185,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     }
 
     /**
+     * /**
      * Initialise la vue de la carte.
      *
      * @param mapView Vue de la carte.
@@ -164,16 +196,14 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         mapView.setMultiTouchControls(true);
         mapHelper = new MapHelper(mapView);
 
-        mapView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, android.view.MotionEvent event) {
-                isUserInteraction = event.getAction() == android.view.MotionEvent.ACTION_DOWN || event.getAction() == android.view.MotionEvent.ACTION_MOVE;
-                if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                    v.performClick();
-                }
-                return false;
-            }
-        });
+        mapView.setOnTouchListener(
+                (v, event) -> {
+                    isUserInteraction = event.getAction() == android.view.MotionEvent.ACTION_DOWN || event.getAction() == android.view.MotionEvent.ACTION_MOVE;
+                    if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                        v.performClick();
+                    }
+                    return false;
+                });
 
         mapView.addMapListener(new MapAdapter() {
             @Override
@@ -202,39 +232,83 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private void initializeStartEnd(MapView mapView) {
         start = new Marker(mapView);
         start.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_my_location_24, null));
-
+        start.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
         end = new Marker(mapView);
         end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
     }
 
     /**
-     * Initialise le parcours.
+     * Si un fichier de données sérialisées existe, propose de le charger.
+     * Si un fichier de données sérialisées n'existe pas, initialise une nouvelle carte.
+     * Si un fichier de données sérialisées existe et l'utilisateur accepte de le charger, le charge.
+     * Si un fichier de données sérialisées existe et l'utilisateur refuse de le charger,
+     * enregistre l'ancien et initialise une nouvelle carte.
      */
-    private void initializeParcours() {
+    private void initializeItineraryMap() {
+        File file = savedParcoursHelper.getFileForLocalSave();
         if (parcours == null) {
-            parcours = new Parcours();
-        } else {
-            if (isParcoursFinished) {
-                removeButtons();
-                mapHelper.dropMarker(end);
+            if (file != null && file.exists()) {
+                handleItineraryFoundInStorage();
+            } else {
+                initializeNewItineraryMap();
             }
         }
     }
 
     /**
+     * Gère le cas où un itinéraire sérialisé est trouvé dans le stockage.
+     * Affiche une boîte de dialogue pour demander à l'utilisateur s'il souhaite charger l'itinéraire précédent.
+     * Si l'utilisateur accepte, l'itinéraire sérialisé est chargé.
+     * Si l'utilisateur refuse, l'itinéraire précédent est enregistré et un nouvel itinéraire est initialisé.
+     */
+    private void handleItineraryFoundInStorage() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Charger l'itinéraire")
+                .setMessage("Voulez-vous charger l'itinéraire précédent ? Si vous ne voulez pas, l'itinéraire précédent sera terminé et enregistré.")
+                .setPositiveButton("Oui", (dialog, which) -> initializeSerializedItineraryMap())
+                .setNegativeButton("Non", (dialog, which) -> {
+                    Parcours tmp = savedParcoursHelper.deserializeSavedParcours();
+                    assert tmp != null;
+                    tmp.registerAndSaveItineraire(requireContext());
+                    savedParcoursHelper.deleteSavedParcours();
+                    initializeNewItineraryMap();
+                })
+                .show();
+    }
+
+    /**
      * Prépare la carte en récupérant les données de l'itinéraire.
      */
-    private void initializeItineraryMap() {
+    private void initializeNewItineraryMap() {
         Bundle args = getArguments();
         if (args != null && args.containsKey("id")) {
             long itineraireId = args.getLong("id");
-            parcours.setName(args.getString("name"));
-            API_REQUEST.itineraire.getOne(parent, itineraireId, response -> clients = response.getClients(),
-                    error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
+            API_REQUEST.itineraire.getOne(parent, itineraireId, response -> {
+                List<Client> clients = response.getClients();
+                parcours = new Parcours(args.getString("name"), clients);
+                mapHelper.loadGeoPointsList(parcours.getPath());
+            }, error -> Log.e("MapFragment", "Erreur de récupération de l'itinéraire", error));
         } else {
             handleNoItinerary();
         }
+    }
 
+    /**
+     * Prépare la carte en récupérant les données sérailisées de l'itinéraire.
+     */
+    private void initializeSerializedItineraryMap() {
+        parcours = savedParcoursHelper.deserializeSavedParcours();
+        mapHelper.loadGeoPointsList(parcours.getPath());
+
+        locationHelper.getCurrentLocation(locationCallback);
+        clientMarker();
+        if (parcours == null) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Erreur")
+                    .setMessage("Erreur lors de la récupération des données de l'itinéraire")
+                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
     }
 
     /**
@@ -257,20 +331,20 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .setPositiveButton(R.string.yes, (dialog, which) -> dialog.dismiss())
                 .setNegativeButton(R.string.no, (dialog, which) -> parent.navigateToNavbarItem(MainActivity.ITINERARY_FRAGMENT, false))
                 .show();
-        companyName.setVisibility(View.GONE);
-        companyAddress.setVisibility(View.GONE);
-        companyType.setVisibility(View.GONE);
-        removeButtons();
+        hideButtonsAndTextView();
     }
 
     /**
      * Affiche ou cache les boutons.
      */
-    private void removeButtons() {
+    private void hideButtonsAndTextView() {
         buttonVisit.setVisibility(View.GONE);
         buttonPass.setVisibility(View.GONE);
         buttonPause.setVisibility(View.GONE);
         buttonStop.setVisibility(View.GONE);
+        companyName.setVisibility(View.GONE);
+        companyAddress.setVisibility(View.GONE);
+        companyType.setVisibility(View.GONE);
     }
 
     /**
@@ -278,45 +352,84 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      */
     private final LocationCallback locationCallback = new LocationCallback() {
         @Override
-        public void onLocationResult(LocationResult locationResult) {
+        public void onLocationResult(@NonNull LocationResult locationResult) {
             if (!buttonVisit.isEnabled()) {
                 unlockButtons();
             }
             Location location = locationResult.getLastLocation();
-            if (location != null) {
-                boolean positionChanged = startPoint == null
-                        || startPoint.getLongitude() != location.getLongitude()
-                        || startPoint.getLatitude() != location.getLatitude();
-                if (positionChanged) {
-                    startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
-                    if (clients != null) {
-                        notificationHelper.locationChanged(new Coordonnees(location.getLatitude(), location.getLongitude()),
-                                new Coordonnees(clients.get(clientsIndex).getCoordonnees().getLatitude(),
-                                        clients.get(clientsIndex).getCoordonnees().getLongitude()));
-                    }
-                    if (clients != null && destinationPoint == null && !isParcoursFinished) {
-                        clientMarker();
-                    }
-                    centerView();
-                }
+            if (location != null && (startPoint == null
+                    || startPoint.getLongitude() != location.getLongitude()
+                    || startPoint.getLatitude() != location.getLatitude())) {
+                handlePathAndNotifications(location);
+                mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
             }
         }
     };
 
     /**
+     * Gère le chemin et les notifications en fonction de la localisation actuelle.
+     *
+     * @param location La localisation actuelle.
+     */
+    private void handlePathAndNotifications(Location location) {
+        startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+        if (isItineraryRunning()) {
+            Coordonnees coordinates = new Coordonnees(location.getLatitude(), location.getLongitude());
+            if (mapHelper.isLastRecordedCoordinates20MetersAway(coordinates)) {
+                mapHelper.addNewGeoPoint(new GeoPoint(coordinates.getLatitude(), coordinates.getLongitude()));
+                parcours.addPointToPath(new GeoPoint(coordinates.getLatitude(), coordinates.getLongitude()));
+            }
+            if (mapHelper.isLastRecordedCoordinates200MetersAway(coordinates)) {
+                notificationHelper.checkProspectNotification(coordinates);
+            }
+            if (mapHelper.isClientWithin200Meters(coordinates, parcours.getCurrentClientCoordonnees())) {
+                onClientNotification();
+            }
+            if (destinationPoint == null) {
+                clientMarker();
+            }
+        }
+        centerView();
+    }
+
+    /**
+     * Vérifie si l'itinéraire est en cours d'exécution.
+     *
+     * @return true si l'itinéraire est en cours d'exécution, false sinon.
+     */
+    private boolean isItineraryRunning() {
+        return parcours != null && !isParcoursFinished && !isPaused;
+    }
+
+    /**
+     * Gère l'appui sur le bouton de pause.
+     * Inverse l'état de pause et met à jour le texte du bouton.
+     * Arrête ou démarre les mises à jour de localisation en fonction de l'état de pause.
+     */
+    private void pausePressed() {
+        isPaused = !isPaused;
+        if (isPaused) {
+            buttonPause.setText(R.string.resumeItinerary);
+            locationHelper.stopLocationUpdates(locationCallback);
+        } else {
+            buttonPause.setText(R.string.pause);
+            locationHelper.startContinuousLocationUpdates(locationCallback);
+        }
+    }
+
+    /**
      * Place un marqueur pour le client actuel.
      */
     private void clientMarker() {
-        destinationPoint = new GeoPoint(
-                clients.get(clientsIndex).getCoordonnees().getLatitude(),
-                clients.get(clientsIndex).getCoordonnees().getLongitude());
+        destinationPoint = parcours.getCurrentClientGeoPoint();
 
-        companyAddress.setText(clients.get(clientsIndex).getAdresse().toString());
-        companyName.setText(clients.get(clientsIndex).getNomEntreprise());
-        companyType.setText(getString(R.string.type, clients.get(clientsIndex).isClientEffectif() ? "Client" : "Prospect"));
+        companyAddress.setText(parcours.getCurrentAddress());
+        companyName.setText(parcours.getCurrentClientName());
+        companyType.setText(getString(R.string.type, parcours.getCurrentType()));
         mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
-        mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
+        if (startPoint != null) {
+            mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
+        }
     }
 
     /**
@@ -339,30 +452,30 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     /**
      * Marque le client actuel comme "visité" et passe au suivant.
      */
-    private void markVisited() {
-        goToNext(true);
+    private void markVisitedAndGoToNext() {
+        if (parcours.markCurrentAsVisitedAndMoveToNext()) {
+            gotNotificationForClient = false;
+            mapHelper.dropMarker(end);
+            clientMarker();
+        } else {
+            destinationPoint = null;
+            centerView();
+            finish();
+        }
     }
 
     /**
      * Passe au client suivant sans le marquer comme visité.
      */
-    private void pass() {
-        goToNext(false);
-    }
-
-    /**
-     * Passe au client suivant.
-     *
-     * @param visited Indique si le client a été visité.
-     */
-    private void goToNext(boolean visited) {
-        parcours.addVisite(new Visit(clients.get(clientsIndex), visited));
-        destinationPoint = null;
-        if (clientsIndex + 1 == clients.size()) {
-            finish();
-        } else {
-            clientsIndex++;
+    private void markPassedAndGoToNext() {
+        if (parcours.markCurrentAsNotVisitedAndMoveToNext()) {
+            gotNotificationForClient = false;
+            mapHelper.dropMarker(end);
             clientMarker();
+        } else {
+            destinationPoint = null;
+            centerView();
+            finish();
         }
     }
 
@@ -382,6 +495,10 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .show();
     }
 
+    /**
+     * Centre la vue sur la carte lorsque le bouton de recentrage est pressé.
+     * Réinitialise l'état d'interaction de l'utilisateur.
+     */
     private void centerButtonPressed() {
         userInteracted = false;
         centerView();
@@ -409,7 +526,10 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         new AlertDialog.Builder(getContext())
                 .setTitle("Arrêter le parcours")
                 .setMessage("êtes vous sur de vouloir arrêter le parcours")
-                .setPositiveButton(R.string.yes, (dialog, which) -> enregistrerParcours())
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    addMissingClients();
+                    enregistrerParcours();
+                })
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
     }
@@ -418,17 +538,23 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Enregistre le parcours.
      */
     public void enregistrerParcours() {
-        parent.markMapAs(false);
-        API_REQUEST.parcours.create(getContext(), parcours, System.out::println
-                , error -> System.out.println(error.getMessage()));
-
-        removeButtons();
-        companyAddress.setVisibility(View.GONE);
-        companyType.setVisibility(View.GONE);
-        companyName.setText(R.string.route_finished);
+        savedParcoursHelper.deleteSavedParcours();
+        parcours.registerAndSaveItineraire(requireContext());
+        hideButtonsAndTextView();
         mapHelper.dropMarker(end);
         isParcoursFinished = true;
         parent.clearCache(MainActivity.MAP_FRAGMENT);
+    }
+
+    /**
+     * Ajoute au parcours les clients qui ne sont pas ajoutés. Les clients ajoutés ne seront pas visités.
+     */
+    public void addMissingClients() {
+        while (parcours.markCurrentAsNotVisitedAndMoveToNext()) {
+
+        }
+        ;
+
     }
 
     /**
@@ -445,14 +571,14 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     public void onProspectNotification(List<Client> prospects) {
         StringBuilder message = new StringBuilder();
         for (Client prospect : prospects) {
-            if (!(prospectNotified.contains(prospect) || clients.contains(prospect))) {
+            if (!(prospectNotified.contains(prospect) || parcours.clientInItinerary(prospect))) {
                 prospectNotified.add(prospect);
                 message.append(getString(R.string.prospect_nearby_sub_message, prospect.getNomEntreprise(),
                         prospect.getAdresse(), prospect.getContact().getNumeroTelephone()));
             }
         }
         if (message.length() > 0) {
-            triggerNotification(getString(R.string.prospect_nearby), getString(R.string.prospect_nearby_message, message.toString()));
+            notificationHelper.triggerNotification(getString(R.string.prospect_nearby), getString(R.string.prospect_nearby_message, message.toString()));
         }
     }
 
@@ -463,57 +589,12 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Nom de l'entreprise
      * Numéro de téléphone : xx xx xx xx xx".
      */
-    @Override
     public void onClientNotification() {
         if (!gotNotificationForClient) {
             gotNotificationForClient = true;
             String message = getString(R.string.client_notification_message,
-                    clients.get(clientsIndex).getNomEntreprise(),
-                    clients.get(clientsIndex).getContact().getNumeroTelephone());
-            triggerNotification(getString(R.string.destination_reached), message);
+                    parcours.getCurrentClientName(), parcours.getCurrentClientPhoneNumber());
+            notificationHelper.triggerNotification(getString(R.string.destination_reached), message);
         }
-    }
-
-    /**
-     * Affiche un pop up de notification.
-     * Celui-ci joue un son et affiche un message pendant 10 secondes.
-     * L'utilisateur est informé toutes les secondes du temps restant.
-     * L'utilisateur peut également fermer la notification manuellement en appuyant sur le bouton "Fermer".
-     *
-     * @param contenue le message à afficher
-     */
-    private void triggerNotification(String title, String contenue) {
-        notificationHelper.playNotificationSound();
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle(title)
-                .setMessage(contenue)
-                .setPositiveButton("Fermer", (dialogInterface, which) -> dialogInterface.dismiss())
-                .create();
-        dialog.show();
-        handleAutoCloseNotification(dialog, contenue);
-    }
-
-    /**
-     * Affiche un message pendant 20 secondes.
-     *
-     * @param dialog   le dialog affiché
-     * @param contenue le message à afficher
-     */
-    private void handleAutoCloseNotification(AlertDialog dialog, String contenue) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        final int[] secondsLeft = {20};
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (secondsLeft[0] > 0) {
-                    dialog.setMessage(contenue + "\n" + getString(R.string.time_remaining, secondsLeft[0]));
-                    secondsLeft[0]--;
-                    handler.postDelayed(this, 1000);
-                } else {
-                    dialog.dismiss();
-                }
-            }
-        };
-        handler.post(runnable);
     }
 }

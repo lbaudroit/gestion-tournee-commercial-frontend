@@ -1,16 +1,14 @@
-package fr.iutrodez.tourneecommercial.modeles;
+package fr.iutrodez.tourneecommercial.model;
 
 import androidx.annotation.NonNull;
 
-public class Adresse {
+public class Adresse implements java.io.Serializable {
 
-    private String libelle;
-    private String codePostal;
-    private String ville;
-
+    private final String libelle;
+    private final String codePostal;
+    private final String ville;
 
     public Adresse(String libelle, String codePostal, String ville) {
-
         this.libelle = libelle;
         this.codePostal = codePostal;
         this.ville = ville;

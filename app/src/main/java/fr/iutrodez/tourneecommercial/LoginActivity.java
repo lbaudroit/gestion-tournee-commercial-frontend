@@ -1,20 +1,18 @@
 package fr.iutrodez.tourneecommercial;
 
-import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import fr.iutrodez.tourneecommercial.model.dto.JwtToken;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
 import java.util.Objects;
 
-import fr.iutrodez.tourneecommercial.modeles.dto.JwtToken;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
 
 /**
  * Activité de connexion pour l'application Tournée Commerciale.
@@ -53,9 +51,9 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.button_signup).setOnClickListener(this::onClickGoToInscription);
         apiRequest = ApiRequest.buildInstance(this);
         //TODO : Supprimer les lignes suivantes
-        //email.setText("en@cl.fr");
-        //password.setText("Enzo_123");
-        //findViewById(R.id.button_login).performClick();
+        email.setText("en@cl.fr");
+        password.setText("Enzo_123");
+        findViewById(R.id.button_login).performClick();
     }
 
     /**
@@ -118,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Enregistre le token d'authentification et les informations de connexion dans les SharedPreferences.
+     *
      * @param jwtToken les informations du token d'authentification
      */
     private void setSharedPreferences(JwtToken jwtToken) {

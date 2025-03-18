@@ -1,6 +1,6 @@
-package fr.iutrodez.tourneecommercial.modeles;
+package fr.iutrodez.tourneecommercial.model;
 
-public class Contact {
+public class Contact implements java.io.Serializable {
     private String nom;
     private String prenom;
     private String numeroTelephone;

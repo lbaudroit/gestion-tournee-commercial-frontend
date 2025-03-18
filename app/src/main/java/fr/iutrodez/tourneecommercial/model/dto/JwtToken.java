@@ -1,8 +1,8 @@
-package fr.iutrodez.tourneecommercial.modeles.dto;
+package fr.iutrodez.tourneecommercial.model.dto;
 
 public class JwtToken {
-    private String token;
-    private long expiration;
+    private final String token;
+    private final long expiration;
 
     public JwtToken(String token, long expiration) {
         this.token = token;

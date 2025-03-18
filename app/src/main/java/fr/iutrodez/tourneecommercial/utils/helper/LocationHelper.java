@@ -4,15 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Looper;
-
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
+import com.google.android.gms.location.*;
 
 /**
  * Classe utilitaire permettant de gérer la localisation de l'utilisateur.
@@ -23,6 +17,7 @@ public class LocationHelper {
 
     /**
      * Constructeur de LocationHelper.
+     *
      * @param context Le contexte de l'application.
      */
     public LocationHelper(Context context) {
@@ -32,21 +27,21 @@ public class LocationHelper {
 
     /**
      * Vérifie si l'application dispose des permissions de localisation.
+     *
      * @return true si les permissions sont accordées, false sinon.
      */
     public boolean checkPermissions() {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context,Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED ;
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
     /**
      * Récupère la dernière localisation connue.
+     *
      * @param callback Le callback qui reçoit la localisation.
      */
     public void getCurrentLocation(LocationCallback callback) {
-        if (!checkPermissions()) return;
+        if (checkPermissions()) return;
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -62,6 +57,7 @@ public class LocationHelper {
 
     /**
      * Demande une mise à jour de la localisation.
+     *
      * @param callback Le callback qui reçoit la nouvelle localisation.
      */
     public void refreshLocation(LocationCallback callback) {
@@ -70,12 +66,13 @@ public class LocationHelper {
                 .setMaxUpdateDelayMillis(5000)
                 .build();
 
-        if (!checkPermissions()) return;
-
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult != null && !locationResult.getLocations().isEmpty()) {
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                if (!locationResult.getLocations().isEmpty()) {
                     callback.onLocationResult(locationResult);
                     fusedLocationClient.removeLocationUpdates(this);
                 }
@@ -85,6 +82,7 @@ public class LocationHelper {
 
     /**
      * Démarre la mise à jour continue de la localisation.
+     *
      * @param callback Le callback qui reçoit les mises à jour de localisation.
      */
     public void startContinuousLocationUpdates(LocationCallback callback) {
@@ -92,13 +90,15 @@ public class LocationHelper {
                 .setMinUpdateIntervalMillis(1000)
                 .setMaxUpdateDelayMillis(5000)
                 .build();
-        if (!checkPermissions()) return;
-
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         fusedLocationClient.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper());
     }
 
     /**
      * Arrête les mises à jour de localisation en cours.
+     *
      * @param callback Le callback associé aux mises à jour à stopper.
      */
     public void stopLocationUpdates(LocationCallback callback) {

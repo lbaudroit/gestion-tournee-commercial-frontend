@@ -10,27 +10,32 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
+import fr.iutrodez.tourneecommercial.model.Itineraire;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
+/**
+ * Adapter for the list of itineraries
+ */
 public class ItineraryListAdapter extends ArrayAdapter<Itineraire> {
 
-    /**
-     * Identifiant de la vue permettant d’afficher chaque item de la liste
-     */
     private final int viewIdentifier;
-
-    /**
-     * Objet utilitaire permettant de dé-sérialiser une vue
-     */
     private final LayoutInflater inflater;
 
     BiConsumer<Itineraire, Integer> onClickButtonDelete;
 
     BiConsumer<Itineraire, Integer> onClickButtonModify;
 
+    /**
+     * Constructeur de l'adaptateur pour la liste des itinéraires.
+     *
+     * @param context             Le contexte de l'application.
+     * @param resource            L'identifiant de la vue de l'élément de la liste.
+     * @param objects             La liste des itinéraires à afficher.
+     * @param onClickButtonModify Action à exécuter lors du clic sur le bouton de modification.
+     * @param onClickButtonDelete Action à exécuter lors du clic sur le bouton de suppression.
+     */
     public ItineraryListAdapter(@NonNull Context context,
                                 int resource,
                                 @NonNull List<Itineraire> objects,
@@ -44,6 +49,14 @@ public class ItineraryListAdapter extends ArrayAdapter<Itineraire> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    /**
+     * Méthode pour obtenir la vue d'un élément de la liste.
+     *
+     * @param position    La position de l'élément dans la liste.
+     * @param convertView La vue réutilisable de l'élément.
+     * @param parent      Le parent auquel cette vue sera attachée.
+     * @return La vue de l'élément à la position spécifiée.
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

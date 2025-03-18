@@ -8,14 +8,24 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.model.Adresse;
 
 import java.util.List;
 
+/**
+ * Adapter for the Address class
+ */
 public class AddressAdapter extends ArrayAdapter<Adresse> {
     private final int viewIdentifier;
     private final LayoutInflater inflater;
 
+    /**
+     * Constructeur de l'AddressAdapter.
+     *
+     * @param context  Le contexte de l'application.
+     * @param resource L'identifiant de la vue à utiliser pour chaque élément.
+     * @param objects  La liste des objets Adresse à afficher.
+     */
     public AddressAdapter(@NonNull Context context,
                           int resource,
                           @NonNull List<Adresse> objects) {
@@ -25,6 +35,14 @@ public class AddressAdapter extends ArrayAdapter<Adresse> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    /**
+     * Méthode pour obtenir la vue d'un élément à une position spécifique.
+     *
+     * @param position    La position de l'élément dans la liste.
+     * @param convertView La vue réutilisable (peut être null).
+     * @param parent      Le parent auquel cette vue sera attachée.
+     * @return La vue pour l'élément de la position spécifiée.
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

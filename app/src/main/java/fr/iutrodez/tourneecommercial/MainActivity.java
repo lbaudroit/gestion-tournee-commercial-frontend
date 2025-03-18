@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationBarView.OnItemSelectedListener {
     private FragmentManager fragmentManager;
     private NavigationBarView navigationBar;
-    private boolean mapIsUsed = false;
     public final static int CLIENT_FRAGMENT = 0;
     public final static int MAP_FRAGMENT = 1;
     public final static int HISTORY_FRAGMENT = 2;
@@ -31,6 +30,8 @@ public class MainActivity extends AppCompatActivity
     public final static int CLIENT_CREATION_FRAGMENT = 5;
     public final static int ITINERARY_CREATION_FRAGMENT = 6;
     public final static int PASSWORD_MODIFICATION_FRAGMENT = 7;
+
+    public final static int COURSE_VIEW_FRAGMENT = 8;
 
     List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
 
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         fragments.add(ClientCreationFragment.class);
         fragments.add(ItineraryCreationFragment.class);
         fragments.add(PasswordModificationFragment.class);
+        fragments.add(CourseFragment.class);
     }
 
     HashMap<Integer, Fragment> cache = new HashMap<>();
@@ -121,14 +123,6 @@ public class MainActivity extends AppCompatActivity
         }
         navigateToFragment(id, cache);
         return true;
-    }
-
-    public void markMapAs(boolean mapIsUsed) {
-        this.mapIsUsed = mapIsUsed;
-    }
-
-    public boolean isMapUsed() {
-        return mapIsUsed;
     }
 
     /**
