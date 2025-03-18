@@ -153,8 +153,8 @@
     <string name="destination_reached">Vous êtes arrivé !</string>
     <string name="prospect_nearby">Prospect(s) à proximité :</string>
     <string name="prospect_nearby_message">Ce(s) prospect(s) sont à proximiter ::\n%s</string>
-    <string name="prospect_nearby_sub_message">\n%s\n%s\n%s\n----------</string>
-    <string name="client_notification_message">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
+    <string name="prospect_nearby_sub_message" formatted="false">\n%s\n%s\n%s\n----------</string>
+    <string name="client_notification_message" formatted="false">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
     <string name="time_remaining">Fermeture dans %d secondes.</string>
     <string name="ok">ok\n</string>
     <string name="unable_to_launch_route">Un itinéraire est déjà en cours, veuillez le finir avant d\'en lancer un nouveau.</string>
