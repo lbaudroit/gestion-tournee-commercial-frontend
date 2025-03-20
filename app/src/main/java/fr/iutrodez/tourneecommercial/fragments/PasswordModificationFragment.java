@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
@@ -61,6 +62,7 @@ public class PasswordModificationFragment extends Fragment {
                         pref.edit().putString("password", passwordValue).apply();
                         String email = pref.getString("email", "");
                         new Thread(() -> API_REQUEST.auth.refreshToken(requireContext(), email, passwordValue)).start();
+                        ((MainActivity) context).navigateToFragment(MainActivity.SETTING_FRAGMENT, false);
                     },
                     error -> Toast.makeText(context, R.string.modify_password_error, Toast.LENGTH_LONG).show());
         }

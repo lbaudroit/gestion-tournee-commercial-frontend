@@ -48,7 +48,6 @@ public class HistoryListAdapter extends ArrayAdapter<ParcoursReducedDTO> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        System.out.println("getView: " + position);
         if (convertView == null) {
             convertView = inflater.inflate(viewIdentifier, parent, false);
         }
@@ -65,7 +64,6 @@ public class HistoryListAdapter extends ArrayAdapter<ParcoursReducedDTO> {
             ListView listView = (ListView) parent;
             listView.performItemClick(v, position, listView.getItemIdAtPosition(position));
         });
-        System.out.println("getView: " + position);
         return convertView;
     }
 }

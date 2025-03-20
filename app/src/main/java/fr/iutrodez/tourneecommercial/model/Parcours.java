@@ -1,6 +1,7 @@
 package fr.iutrodez.tourneecommercial.model;
 
 import android.content.Context;
+import android.util.Log;
 import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 import org.osmdroid.util.GeoPoint;
 
@@ -128,13 +129,15 @@ public class Parcours implements java.io.Serializable {
     public void registerAndSaveItineraire(Context context) {
         SavedParcoursHelper SavedParcoursHelper = new SavedParcoursHelper(context);
         this.endTime = getCurrentTime();
-
+        boolean done = clients.size() > currentClientIndex;
+        while (done) {
+            done = this.markCurrentAsNotVisitedAndMoveToNext();
+        }
         API_REQUEST.parcours.create(context, this,
                 System.out::println,
                 error -> {
-                    System.out.println(error.getMessage());
+                    Log.e("ERROR", error.getMessage());
                     SavedParcoursHelper.serializeToSendLater(this);
-                    System.out.println("Parcours saved to be sent later");
                 });
     }
 

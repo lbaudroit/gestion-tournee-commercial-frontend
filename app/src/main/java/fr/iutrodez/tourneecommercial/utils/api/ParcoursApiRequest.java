@@ -125,8 +125,6 @@ public class ParcoursApiRequest extends ApiRessource {
 
                     visiteObj.put("coordonnees", coordinates);
                     etapesArray.put(visiteObj);
-                } else {
-                    System.out.println("Visite est null !");
                 }
             }
             JSONArray coordinatesArray = new JSONArray();
@@ -189,10 +187,8 @@ public class ParcoursApiRequest extends ApiRessource {
      */
     public void getNumberOfPages(Context context, SuccessCallback<Integer> successCallback, ErrorCallback errorCallback) {
         String url = RESSOURCE_NAME + "/count";
-        System.out.println(url);
         super.getWithToken(context, url, response -> {
             try {
-                System.out.println(response);
                 successCallback.onSuccess(response.getInt("nombre"));
             } catch (JSONException e) {
                 throw new RuntimeException(e);

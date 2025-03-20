@@ -36,7 +36,7 @@ import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilit
  *
  * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
-public class CourseFragment extends Fragment {
+public class HistoryDetailFragment extends Fragment {
 
     public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
     public MainActivity parent;
@@ -116,13 +116,14 @@ public class CourseFragment extends Fragment {
                     courseHEnd.setText(response.getHeureFin());
                     courseDistance.setText(response.getDistance());
 
-
                     listClients = new ClientListCourseAdapter(parent, R.layout.course_clients_items, response.getVisitList(),
                             // Lors d'un clic sur un client de la liste on ajuste le zoom
                             this::zoomToClient);
 
                     listView.setAdapter(listClients);
-
+                    ViewGroup.LayoutParams params = listView.getLayoutParams();
+                    params.height = listClients.getCount() * 42 + 40;
+                    listView.setLayoutParams(params);
                     loadMarkers();
                     loadPoints(response.getChemin());
                     zoomMap();

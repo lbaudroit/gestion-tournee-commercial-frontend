@@ -95,16 +95,13 @@ public class SavedParcoursHelper {
      */
     public Parcours deserializeParcoursFromFile(File file) {
         if (!file.exists()) {
-            System.out.println("File does not exist, skipping deserialization");
             return null;
         }
         if (file.length() == 0) {
-            System.out.println("File is empty, skipping deserialization");
             return null;
         }
         try (FileInputStream fileIn = context.openFileInput(file.getName());
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
-            System.out.println("Deserialized map data");
             return (Parcours) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MapFragment", "Error deserializing map data", e);

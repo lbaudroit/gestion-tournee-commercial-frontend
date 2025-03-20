@@ -104,7 +104,6 @@ public class ItineraryCreationFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             Long itineraryId = bundle.getLong("idItineraire");
-            System.out.println("Modification de l'itinéraire " + itineraryId);
             prepareForModification(itineraryId);
         }
     }
