@@ -27,7 +27,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class ApiRessource {
 
-    private static final String BASE_URL = "http://10.0.2.2:9090/";
+    private static final String BASE_URL = "http://direct.bennybean.fr:9090/";
     private static RequestQueue requestQueue;
 
     /**
