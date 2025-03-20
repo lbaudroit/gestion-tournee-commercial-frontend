@@ -12,6 +12,15 @@
             android:backgroundTint="@color/black"
             tools:listitem="@layout/list_of_history_items"/>
 
+    <TextView
+            android:id="@+id/no_entries_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/no_entry"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"/>
+
     <fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay
             android:id="@+id/fetchStatus_status"
             android:layout_width="match_parent"

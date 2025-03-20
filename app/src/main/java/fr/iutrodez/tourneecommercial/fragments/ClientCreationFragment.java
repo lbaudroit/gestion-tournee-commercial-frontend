@@ -173,10 +173,16 @@ public class ClientCreationFragment extends Fragment {
             boolean isClient = clientOrProspect.isChecked();
             if (idModified != null) {
                 API_REQUEST.client.update(parent, idModified, businessName, addressLabel, postalCode, city, description, contactName,
-                        contactFirstname, contactPhone, isClient, response -> Toast.makeText(parent, response, Toast.LENGTH_LONG).show(), error -> Toast.makeText(parent, R.string.create_client_error, Toast.LENGTH_LONG).show());
+                        contactFirstname, contactPhone, isClient, response -> {
+                            Toast.makeText(parent, response, Toast.LENGTH_LONG).show();
+                            parent.navigateToFragment(MainActivity.CLIENT_FRAGMENT, false);
+                        }, error -> Toast.makeText(parent, R.string.create_client_error, Toast.LENGTH_LONG).show());
             } else {
                 API_REQUEST.client.create(parent, businessName, addressLabel, postalCode, city, description, contactName,
-                        contactFirstname, contactPhone, isClient, response -> Toast.makeText(parent, response, Toast.LENGTH_LONG).show(), error -> Toast.makeText(parent, R.string.create_client_error, Toast.LENGTH_LONG).show());
+                        contactFirstname, contactPhone, isClient, response -> {
+                            Toast.makeText(parent, response, Toast.LENGTH_LONG).show();
+                            parent.navigateToFragment(MainActivity.CLIENT_FRAGMENT, false);
+                        }, error -> Toast.makeText(parent, R.string.create_client_error, Toast.LENGTH_LONG).show());
             }
         }
     }

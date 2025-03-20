@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
         fragments.add(ClientCreationFragment.class);
         fragments.add(ItineraryCreationFragment.class);
         fragments.add(PasswordModificationFragment.class);
-        fragments.add(CourseFragment.class);
+        fragments.add(HistoryDetailFragment.class);
     }
 
     {

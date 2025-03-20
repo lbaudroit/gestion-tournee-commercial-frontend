@@ -41,7 +41,6 @@ public class NotificationHelper {
         ApiRequest.getInstance().parcours.getProspectsForNotifications(context, coordinates.getLatitude(), coordinates.getLongitude(),
                 prospects -> {
                     if (!prospects.isEmpty()) {
-                        System.out.println("Prospects à proximité : " + prospects.get(0).getCoordonnees().getLongitude());
                         listener.onProspectNotification(prospects);
                     }
                 }, error -> {

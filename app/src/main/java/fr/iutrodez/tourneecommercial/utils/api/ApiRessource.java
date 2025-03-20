@@ -2,6 +2,7 @@ package fr.iutrodez.tourneecommercial.utils.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -212,8 +213,7 @@ public class ApiRessource {
                                 "Couldn't delete file");
                         savedParcoursHelper.unlockForSending();
                     }, error -> {
-                        System.out.println(error.getMessage());
-                        System.out.println("Parcours saved to be sent later");
+                        Log.e("ApiRessource", "Couldn't send parcours, saving for later");
 
                         savedParcoursHelper.serializeToSendLater(parcours);
                         savedParcoursHelper.unlockForSending();

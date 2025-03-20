@@ -21,15 +21,13 @@
                     android:textSize="@dimen/text_size_default"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="nom Parcours"/>
+                    android:layout_marginHorizontal="10dp"/>
 
             <TextView
                     android:id="@+id/course_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:text="date"
                     android:textSize="@dimen/text_size_default"/>
         </TableRow>
 
@@ -40,15 +38,13 @@
                     android:layout_weight="1"
                     android:textSize="@dimen/text_size_default"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="heureDebut"/>
+                    android:layout_marginHorizontal="10dp"/>
 
             <TextView
                     android:id="@+id/course_hFin"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="end"
-                    android:text="heureFin"
                     android:textSize="@dimen/text_size_default"/>
 
 
@@ -61,15 +57,13 @@
                     android:textSize="@dimen/text_size_default"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="distanceParcourue"/>
+                    android:layout_marginHorizontal="10dp"/>
 
             <TextView
                     android:id="@+id/course_duration"
                     android:layout_width="137dp"
                     android:layout_height="match_parent"
                     android:gravity="end"
-                    android:text="durée heures"
                     android:textSize="@dimen/text_size_default"/>
 
 
@@ -108,8 +102,7 @@
     <ListView
             android:id="@+id/course_list_item_clients"
             android:layout_width="match_parent"
-            android:layout_height="338dp"/>
-
+            android:layout_height="0dp"/>
 
     <org.osmdroid.views.MapView
             android:id="@+id/mapView"

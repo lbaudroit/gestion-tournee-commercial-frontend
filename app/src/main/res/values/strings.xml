@@ -180,5 +180,6 @@
     <string name="parcours_delete_success">Le parcours a bien été supprimé</string>
     <string name="parcours_deletion_error">Le parcours n\'a pas pû être supprimé</string>
     <string name="delete_parcours">Suppression du parcours</string>
+    <string name="no_entry">Il n\'y a actuellement aucune entrée</string>
 
 </resources>

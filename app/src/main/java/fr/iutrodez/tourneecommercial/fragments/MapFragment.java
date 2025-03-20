@@ -29,10 +29,7 @@ import fr.iutrodez.tourneecommercial.model.Client;
 import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import fr.iutrodez.tourneecommercial.model.Parcours;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import fr.iutrodez.tourneecommercial.utils.helper.LocationHelper;
-import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
-import fr.iutrodez.tourneecommercial.utils.helper.NotificationHelper;
-import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
+import fr.iutrodez.tourneecommercial.utils.helper.*;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
@@ -214,17 +211,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     }
 
     /**
-     * Ajoute au parcours les clients qui ne sont pas ajoutés. Les clients ajoutés ne seront pas visités.
-     */
-    private void addMissingClients() {
-        boolean done;
-        do {
-            done = parcours.markCurrentAsNotVisitedAndMoveToNext();
-        } while (done);
-
-    }
-
-    /**
      * Appelé lorsque le client est à moins de 200 mètres.
      * La notification ressemble à ceci :
      * "Vous êtes à moins de 200 mètres du client :
@@ -371,10 +357,10 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Déverrouille les boutons de visite, de passage, de pause et d'arrêt.
      */
     private void unlockButtons() {
-        buttonVisit.setEnabled(true);
-        buttonPass.setEnabled(true);
-        buttonPause.setEnabled(true);
-        buttonStop.setEnabled(true);
+        ViewHelper.enableView(buttonVisit);
+        ViewHelper.enableView(buttonPass);
+        ViewHelper.enableView(buttonPause);
+        ViewHelper.enableView(buttonStop);
     }
 
     /**
@@ -394,13 +380,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
      * Affiche ou cache les boutons.
      */
     private void hideButtonsAndTextView() {
-        buttonVisit.setVisibility(View.GONE);
-        buttonPass.setVisibility(View.GONE);
-        buttonPause.setVisibility(View.GONE);
-        buttonStop.setVisibility(View.GONE);
-        companyName.setVisibility(View.GONE);
-        companyAddress.setVisibility(View.GONE);
-        companyType.setVisibility(View.GONE);
+        ViewHelper.setVisibilityFor(View.GONE, buttonVisit, buttonPass, buttonPause, buttonStop, companyName, companyAddress, companyType);
     }
 
     /**
@@ -446,9 +426,13 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private void pausePressed() {
         isPaused = !isPaused;
         if (isPaused) {
+            ViewHelper.disableView(buttonVisit);
+            ViewHelper.disableView(buttonPass);
             buttonPause.setText(R.string.resumeItinerary);
             locationHelper.stopLocationUpdates(locationCallback);
         } else {
+            ViewHelper.enableView(buttonVisit);
+            ViewHelper.enableView(buttonPass);
             buttonPause.setText(R.string.pause);
             locationHelper.startContinuousLocationUpdates(locationCallback);
         }
@@ -564,7 +548,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 .setTitle("Arrêter le parcours")
                 .setMessage("êtes vous sur de vouloir arrêter le parcours")
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    addMissingClients();
                     enregistrerParcours();
                 })
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())

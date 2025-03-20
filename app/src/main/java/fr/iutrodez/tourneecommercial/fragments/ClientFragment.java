@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -39,6 +36,7 @@ public class ClientFragment extends Fragment {
     public MainActivity parent;
     private ListView list;
     private ClientListAdapter clientListAdapter;
+    private TextView noEntry;
     private Button add;
     private FullscreenFetchStatusDisplay status;
     private boolean isLoading = false;
@@ -60,6 +58,7 @@ public class ClientFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_client_fragment, container, false);
         list = frag.findViewById(R.id.listitem_client);
+        noEntry = frag.findViewById(R.id.no_entries_text);
 
         status = frag.findViewById(R.id.fetchStatus_status);
         status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
@@ -153,6 +152,9 @@ public class ClientFragment extends Fragment {
         API_REQUEST.client.delete(parent, client.get_id(), response -> {
             clients.remove(client);
             clientListAdapter.notifyDataSetChanged();
+            if (clientListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             Toast.makeText(parent, R.string.client_deleted_success, Toast.LENGTH_SHORT).show();
         }, error -> Toast.makeText(parent, R.string.client_deletion_error, Toast.LENGTH_SHORT).show());
     }
@@ -178,13 +180,14 @@ public class ClientFragment extends Fragment {
      */
     private void fetchClientsPage() {
         status.loading();
-
         isLoading = true;
         API_REQUEST.client.getPage(parent, currentPage, clients -> {
             this.clients.addAll(clients);
             clientListAdapter.notifyDataSetChanged();
+            if (clientListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             currentPage++;
-
             status.hide();
         }, error -> status.error(R.string.fetch_client_error));
         isLoading = false;

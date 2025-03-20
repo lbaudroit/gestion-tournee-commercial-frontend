@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -40,6 +37,7 @@ public class ItineraryFragment extends Fragment {
     public MainActivity parent;
     private ItineraryListAdapter itineraryListAdapter;
     private Button add;
+    private TextView noEntry;
     private ListView list;
     private FullscreenFetchStatusDisplay status;
     private boolean isLoading = false;
@@ -62,6 +60,7 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_itinerary_fragment, container, false);
         list = frag.findViewById(R.id.listView_itinerary);
+        noEntry = frag.findViewById(R.id.no_entries_text);
         add = frag.findViewById(R.id.button_add);
 
         status = frag.findViewById(R.id.fetchStatus_status);
@@ -118,7 +117,9 @@ public class ItineraryFragment extends Fragment {
             itineraries.addAll(response);
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
-
+            if (itineraryListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             status.hide();
         }, error -> status.error(R.string.fetch_itinerary_error));
     }
@@ -148,6 +149,9 @@ public class ItineraryFragment extends Fragment {
         API_REQUEST.itineraire.delete(parent, itinerary.getId(), response -> {
             itineraries.remove(itinerary);
             itineraryListAdapter.notifyDataSetChanged();
+            if (itineraryListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             Toast.makeText(getContext(), R.string.itinerary_deleted_success, Toast.LENGTH_SHORT).show();
         }, error -> Toast.makeText(getContext(), R.string.itinerary_deletion_error, Toast.LENGTH_SHORT).show());
     }
@@ -167,7 +171,6 @@ public class ItineraryFragment extends Fragment {
                 .setMessage(getString(R.string.confirm_add_route, itineraire.getNom()) + (fileExists ? getString(R.string.confirm_start_route_file_exists) : ""))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     if (fileExists) {
-                        System.out.println("Deleting file");
                         Parcours mapData = savedParcoursHelper.deserializeSavedParcours();
                         mapData.registerAndSaveItineraire(parent);
                         savedParcoursHelper.deleteSavedParcours();
@@ -202,7 +205,6 @@ public class ItineraryFragment extends Fragment {
     private void onClickModify(Itineraire itinerary, int position) {
         Bundle bundle = new Bundle();
         bundle.putLong("idItineraire", itinerary.getId());
-        System.out.println("Navigating to FragmentCreationItineraire with id: " + itinerary.getId());
 
         parent.navigateToFragment(MainActivity.ITINERARY_CREATION_FRAGMENT, false, bundle);
     }

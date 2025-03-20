@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,7 @@ public class HistoryFragment extends Fragment {
     public MainActivity parent;
     private HistoryListAdapter historyListAdapter;
     private FullscreenFetchStatusDisplay status;
+    private TextView noEntry;
     private ListView list;
     private boolean isLoading = false;
     private int currentPage = 0;
@@ -53,6 +55,7 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_history_fragment, container, false);
         list = frag.findViewById(R.id.listView_history);
+        noEntry = frag.findViewById(R.id.no_entries_text);
 
         status = frag.findViewById(R.id.fetchStatus_status);
         status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
@@ -120,7 +123,6 @@ public class HistoryFragment extends Fragment {
      * @param position La position de l'élément cliqué dans la liste.
      */
     private void onclickList(int position) {
-        System.out.println("CLICK " + parcours.get(position).getNom());
         Bundle bundle = new Bundle();
 
         bundle.putString("id", historyListAdapter.getItem(position).getId());
@@ -153,6 +155,9 @@ public class HistoryFragment extends Fragment {
                 response -> {
                     parcours.remove(parcoursReducedDTO);
                     historyListAdapter.notifyDataSetChanged();
+                    if (historyListAdapter.isEmpty()) {
+                        noEntry.setVisibility(View.VISIBLE);
+                    }
                     Toast.makeText(parent, R.string.parcours_delete_success, Toast.LENGTH_SHORT).show();
                 },
                 error -> status.error(R.string.parcours_deletion_error));
@@ -182,7 +187,10 @@ public class HistoryFragment extends Fragment {
             status.hide();
             parcours.addAll(response);
             historyListAdapter.notifyDataSetChanged();
-            System.out.println("size : " + historyListAdapter.getCount());
+
+            if (historyListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             currentPage++;
             status.hide();
         }, error -> status.error(R.string.fetch_itinerary_error));
