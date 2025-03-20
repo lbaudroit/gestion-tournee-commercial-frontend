@@ -1,51 +1,54 @@
 package fr.iutrodez.tourneecommercial.model.dto;
 
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
+import fr.iutrodez.tourneecommercial.model.Visit;
+import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 import org.osmdroid.util.GeoPoint;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
-import fr.iutrodez.tourneecommercial.model.Coordonnees;
-import fr.iutrodez.tourneecommercial.model.Visit;
-import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
-
+/**
+ * DTO pour l'historique des itinéraires.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class HistoryDTO {
 
-    private String nom;
-    private List<Visit> visitList;
+    private final String nom;
+    private final List<Visit> visitList;
 
-    private String dateDebut;
-    private String dateFin;
+    private final String dateDebut;
 
-    private String heureFin;
+    private final String heureFin;
 
-    private String heureDebut;
+    private final String heureDebut;
 
-    private String distance;
+    private final String distance;
 
-    private String duree;
+    private final String duree;
 
-    private List<GeoPoint> chemin;
+    private final List<GeoPoint> chemin;
 
-    public HistoryDTO(String nom, List<Visit> visitList, LocalDateTime dateDebut, LocalDateTime dateFin,List<GeoPoint> chemin) {
+    public HistoryDTO(String nom, List<Visit> visitList, LocalDateTime dateDebut, LocalDateTime dateFin, List<GeoPoint> chemin) {
         this.nom = nom;
         this.visitList = visitList;
-        this.dateDebut = dateDebut.getYear() +"/"+ String.format("%02d",dateDebut.getMonthValue()) +"/"+ String.format("%02d",dateDebut.getDayOfMonth());
-        this.dateFin = dateFin.getYear() +"/"+ String.format("%02d",dateFin.getMonthValue()) +"/"+ String.format("%02d",dateFin.getDayOfMonth());
-        this.heureDebut = String.format("%02d",dateDebut.getHour())+"h"+String.format("%02d",dateDebut.getMinute());
-        this.heureFin = String.format("%02d",dateFin.getHour())+"h"+String.format("%02d",dateFin.getMinute());
-        long seconds = Duration.between(dateDebut,dateFin).getSeconds();
-        long minutes = seconds /60 %60;
-        long heures = seconds/3600;
-        this.duree = String.format("%02d",heures)+"h"+String.format("%02d",minutes);
+        this.dateDebut = String.format(Locale.FRANCE, "%d/%02d/%02d", dateDebut.getYear(), dateDebut.getMonthValue(), dateDebut.getDayOfMonth());
+        this.heureDebut = String.format(Locale.FRANCE, "%02dh%02d", dateDebut.getHour(), dateDebut.getMinute());
+        this.heureFin = String.format(Locale.FRANCE, "%02dh%02d", dateFin.getHour(), dateFin.getMinute());
+        long seconds = Duration.between(dateDebut, dateFin).getSeconds();
+        long minutes = seconds / 60 % 60;
+        long heures = seconds / 3600;
+        this.duree = String.format(Locale.FRANCE, "%02dh%02d", heures, minutes);
         this.chemin = chemin;
         int distance = 0;
-        for(int i =0; i<chemin.size()-1 ; i++) {
-            distance += MapHelper.computeHaversineFormula(new Coordonnees(chemin.get(i).getLatitude(),chemin.get(i).getLongitude()),
-                    new Coordonnees(chemin.get(i+1).getLatitude(),chemin.get(i+1).getLongitude()));
+        for (int i = 0; i < chemin.size() - 1; i++) {
+            distance += MapHelper.computeHaversineFormula(new Coordonnees(chemin.get(i).getLatitude(), chemin.get(i).getLongitude()),
+                    new Coordonnees(chemin.get(i + 1).getLatitude(), chemin.get(i + 1).getLongitude()));
         }
-        this.distance = String.valueOf(distance) + " m";
+        this.distance = distance + " m";
 
 
     }
@@ -60,10 +63,6 @@ public class HistoryDTO {
 
     public String getDateDebut() {
         return dateDebut;
-    }
-
-    public String getDateFin() {
-        return dateFin;
     }
 
     public String getDistance() {

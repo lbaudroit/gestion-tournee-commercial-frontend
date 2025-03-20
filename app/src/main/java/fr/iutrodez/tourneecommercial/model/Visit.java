@@ -1,5 +1,10 @@
 package fr.iutrodez.tourneecommercial.model;
 
+/**
+ * Classe représentant une visite.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class Visit implements java.io.Serializable {
 
     private final String name;
@@ -11,7 +16,8 @@ public class Visit implements java.io.Serializable {
         this.visited = visited;
         this.coordonnees = client.getCoordonnees();
     }
-    public Visit(String name, boolean visited,Coordonnees coordonnees) {
+
+    public Visit(String name, boolean visited, Coordonnees coordonnees) {
         this.name = name;
         this.visited = visited;
         this.coordonnees = coordonnees;

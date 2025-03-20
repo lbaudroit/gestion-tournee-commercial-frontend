@@ -2,15 +2,9 @@ package fr.iutrodez.tourneecommercial.utils.helper;
 
 import android.content.Context;
 import android.util.Log;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import fr.iutrodez.tourneecommercial.model.Parcours;
+
+import java.io.*;
 
 /**
  * Cette classe permet de gérer la sérialisation et désérialisation des parcours.
@@ -20,16 +14,15 @@ import fr.iutrodez.tourneecommercial.model.Parcours;
  * <p>
  * Elle contient également les utilitaires pour un système de verrou, permettant que deux
  * requêtes vers l'API ne soient pas faites en simultané pour envoyer les parcours en attente.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class SavedParcoursHelper {
 
-    /** Le fichier de sauvegarde d'un parcours en cours */
     public static final String SAVED_FILE_NAME = "localsave.ser";
 
-    /** Le fichier de sauvegarde d'un parcours qui n'a pas pu être envoyé */
     private static final String TO_SEND_FILE_NAME = "tosend.ser";
 
-    /** Le verrou pour qu'une seule requête API à la fois puisse envoyer le parcours qui n'a pu être envoyé */
     private static final String TO_SEND_LOCK_FILE_NAME = "send.lock";
 
     private final Context context;
@@ -40,28 +33,25 @@ public class SavedParcoursHelper {
 
     /**
      * Verrouille l'envoi de fichiers.
-     *
-     * @return true si le verrouillage a réussi, sinon false
      */
-    public boolean lockForSending() {
+    public void lockForSending() {
         try {
-            return new File(context.getFilesDir(), TO_SEND_LOCK_FILE_NAME).createNewFile();
+            System.out.println(new File(context.getFilesDir(), TO_SEND_LOCK_FILE_NAME).createNewFile() ? "Lock created" : "Lock already exists");
         } catch (IOException e) {
-            return false;
+            Log.e("Error", e.getMessage());
         }
     }
 
     /**
      * Supprime le fichier de verrouillage pour l'envoi de fichiers.
-     *
-     * @return true si le fichier a été supprimé, sinon false
      */
-    public boolean unlockForSending() {
-        return new File(context.getFilesDir(), TO_SEND_LOCK_FILE_NAME).delete();
+    public void unlockForSending() {
+        System.out.println(new File(context.getFilesDir(), TO_SEND_LOCK_FILE_NAME).delete() ? "Lock deleted" : "Lock does not exist");
     }
 
     /**
      * Vérifie que l'on a la main pour envoyer le fichier de parcours non envoyé
+     *
      * @return true si la modification est verrouillée, false sinon
      */
     public boolean isLockedForSending() {
@@ -77,6 +67,7 @@ public class SavedParcoursHelper {
 
     /**
      * Sérialise un parcours pour l'envoyer plus tard.
+     *
      * @param parcours le parcours à sérialiser
      */
     public void serializeToSendLater(Parcours parcours) {
@@ -99,7 +90,7 @@ public class SavedParcoursHelper {
     /**
      * Déserialise un parcours à partir d'un fichier.
      *
-     * @param file    le fichier à désérialiser
+     * @param file le fichier à désérialiser
      * @return le parcours désérialisé, ou null si le fichier n'existe pas ou est vide
      */
     public Parcours deserializeParcoursFromFile(File file) {
@@ -132,7 +123,8 @@ public class SavedParcoursHelper {
 
     /**
      * Sérialise un parcours et l'ajoute dans le fichier au nom correspondant
-     * @param context le contexte  de l'application
+     *
+     * @param context  le contexte  de l'application
      * @param filename le nom du fichier à créer
      * @param parcours le parcours à sérialiser
      */

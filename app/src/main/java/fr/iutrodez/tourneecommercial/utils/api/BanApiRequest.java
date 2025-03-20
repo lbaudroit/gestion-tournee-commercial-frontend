@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 /**
  * Classe permettant de faire des requêtes à l'API de la BAN (Base Adresse Nationale)
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class BanApiRequest {
     private final RequestQueue requestQueue;

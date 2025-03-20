@@ -16,16 +16,18 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
- * Adapter for the list of itineraries
+ * Adapteur for the list of itineraries
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ItineraryListAdapter extends ArrayAdapter<Itineraire> {
 
     private final int viewIdentifier;
     private final LayoutInflater inflater;
 
-    BiConsumer<Itineraire, Integer> onClickButtonDelete;
+    final BiConsumer<Itineraire, Integer> onClickButtonDelete;
 
-    BiConsumer<Itineraire, Integer> onClickButtonModify;
+    final BiConsumer<Itineraire, Integer> onClickButtonModify;
 
     /**
      * Constructeur de l'adaptateur pour la liste des itinéraires.
@@ -49,14 +51,6 @@ public class ItineraryListAdapter extends ArrayAdapter<Itineraire> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    /**
-     * Méthode pour obtenir la vue d'un élément de la liste.
-     *
-     * @param position    La position de l'élément dans la liste.
-     * @param convertView La vue réutilisable de l'élément.
-     * @param parent      Le parent auquel cette vue sera attachée.
-     * @return La vue de l'élément à la position spécifiée.
-     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

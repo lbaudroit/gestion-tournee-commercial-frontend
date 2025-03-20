@@ -1,24 +1,27 @@
 package fr.iutrodez.tourneecommercial.model;
 
-import static fr.iutrodez.tourneecommercial.fragments.ItineraryFragment.API_REQUEST;
-
 import android.content.Context;
-
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 import org.osmdroid.util.GeoPoint;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
+import static fr.iutrodez.tourneecommercial.fragments.ItineraryFragment.API_REQUEST;
 
+/**
+ * Classe représentant un itinéraire.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class Parcours implements java.io.Serializable {
     private final String name;
     private final List<Client> clients;
-    private int currentClientIndex;
     private final List<Visit> visited;
     private final List<GeoPoint> path;
     private final String startTime;
+    private int currentClientIndex;
     private String endTime;
 
     public Parcours(String name, List<Client> clients) {
@@ -34,11 +37,6 @@ public class Parcours implements java.io.Serializable {
         return clients.get(currentClientIndex).getCoordonnees();
     }
 
-    public GeoPoint getCurrentClientGeoPoint() {
-        return new GeoPoint(clients.get(currentClientIndex).getCoordonnees().getLatitude(),
-                clients.get(currentClientIndex).getCoordonnees().getLongitude());
-    }
-
     public String getCurrentClientName() {
         return clients.get(currentClientIndex).getNomEntreprise();
     }
@@ -47,20 +45,79 @@ public class Parcours implements java.io.Serializable {
         return clients.get(currentClientIndex).getAdresse().toString();
     }
 
+
+    public List<Visit> getClientsVisited() {
+        return visited;
+    }
+
+    public String getItineraryName() {
+        return name;
+    }
+
+    public boolean clientInItinerary(Client client) {
+        return clients.contains(client);
+    }
+
+    public void addPointToPath(GeoPoint point) {
+        path.add(point);
+    }
+
+    public List<GeoPoint> getPath() {
+        return path;
+    }
+
+    public String getStart() {
+        return startTime;
+    }
+
+    public String getEnd() {
+        return endTime;
+    }
+
+    /**
+     * Récupère le client actuel.
+     *
+     * @return Le client actuel.
+     */
+    public GeoPoint getCurrentClientGeoPoint() {
+        return new GeoPoint(clients.get(currentClientIndex).getCoordonnees().getLatitude(),
+                clients.get(currentClientIndex).getCoordonnees().getLongitude());
+    }
+
+    /**
+     * Récupère le type du client actuel.
+     *
+     * @return String du type du client actuel.
+     */
     public String getCurrentType() {
         return clients.get(currentClientIndex).isClientEffectif() ? "Client" : "Prospect";
     }
 
+    /**
+     * Récupère le numéro de téléphone du client actuel.
+     *
+     * @return Le numéro de téléphone du client actuel.
+     */
+    public String getCurrentClientPhoneNumber() {
+        return clients.get(currentClientIndex).getContact().getNumeroTelephone();
+    }
+
+    /**
+     * Marque le client actuel comme visité et passe au suivant.
+     *
+     * @return true si le client suivant existe, false sinon.
+     */
     public boolean markCurrentAsVisitedAndMoveToNext() {
         return markCurrentAsAndMoveToNext(true);
     }
 
+    /**
+     * Marque le client actuel comme non visité et passe au suivant.
+     *
+     * @return true si le client suivant existe, false sinon.
+     */
     public boolean markCurrentAsNotVisitedAndMoveToNext() {
         return markCurrentAsAndMoveToNext(false);
-    }
-
-    public List<Visit> getClientsVisited() {
-        return visited;
     }
 
     /**
@@ -81,14 +138,6 @@ public class Parcours implements java.io.Serializable {
                 });
     }
 
-    public String getItineraryName() {
-        return name;
-    }
-
-    public boolean clientInItinerary(Client client) {
-        return clients.contains(client);
-    }
-
     /**
      * Marque le client actuel comme visité et passe au suivant.
      *
@@ -99,31 +148,6 @@ public class Parcours implements java.io.Serializable {
         visited.add(new Visit(clients.get(currentClientIndex), isVisited));
         currentClientIndex++;
         return currentClientIndex < clients.size();
-    }
-
-    /**
-     * Récupère le numéro de téléphone du client actuel.
-     *
-     * @return Le numéro de téléphone du client actuel.
-     */
-    public String getCurrentClientPhoneNumber() {
-        return clients.get(currentClientIndex).getContact().getNumeroTelephone();
-    }
-
-    public void addPointToPath(GeoPoint point) {
-        path.add(point);
-    }
-
-    public List<GeoPoint> getPath() {
-        return path;
-    }
-
-    public String getStart() {
-        return startTime;
-    }
-
-    public String getEnd() {
-        return endTime;
     }
 
     /**

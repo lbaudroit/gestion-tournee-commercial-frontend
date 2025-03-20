@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 /**
  * Gère les requêtes API relatives à l'utilisateur.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class UtilisateurApiRequest extends ApiRessource {
     private static final String RESOURCE_NAME = "utilisateur";

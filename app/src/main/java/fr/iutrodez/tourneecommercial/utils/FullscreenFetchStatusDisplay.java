@@ -17,14 +17,11 @@ import fr.iutrodez.tourneecommercial.R;
  * - loading : affiche une barre de chargement
  * - error : affiche un message d'erreur (nécessite de fournir un message d'erreur)
  *
- * @author Benjamin NICOL
- * @author Leïla BAUDROIT
- * @author Enzo CLUZEL
- * @author Ahmed BRIBACH
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class FullscreenFetchStatusDisplay extends LinearLayout {
     private ProgressBar progressBar;
-    private TextView error;
+    private TextView errorTV;
     private Runnable hideContentFunction;
     private Runnable showContentFunction;
 
@@ -66,10 +63,10 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
      *
      * @param context le contexte d'inflation du Layout
      */
-    public void init(Context context) {
+    private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_fetch_status, this, true);
         progressBar = findViewById(R.id.progressBar_loading);
-        error = findViewById(R.id.textView_error);
+        errorTV = findViewById(R.id.textView_error);
     }
 
     /**
@@ -96,7 +93,7 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
     public void loading() {
         hideContentFunction.run();
         progressBar.setVisibility(VISIBLE);
-        error.setVisibility(GONE);
+        errorTV.setVisibility(GONE);
     }
 
     /**
@@ -107,8 +104,8 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
     public void error(int message) {
         hideContentFunction.run();
         progressBar.setVisibility(GONE);
-        error.setText(getContext().getString(message));
-        error.setVisibility(VISIBLE);
+        errorTV.setText(getContext().getString(message));
+        errorTV.setVisibility(VISIBLE);
     }
 
     /**
@@ -118,6 +115,6 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
     public void hide() {
         showContentFunction.run();
         progressBar.setVisibility(GONE);
-        error.setVisibility(GONE);
+        errorTV.setVisibility(GONE);
     }
 }

@@ -29,52 +29,38 @@ import java.util.function.Consumer;
 
 /**
  * Fragment pour la création d'un itinéraire.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ItineraryCreationFragment extends Fragment {
 
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-
+    //Autres variables
+    private final static int MAX_CLIENTS = 8;
+    public MainActivity parent;
     //Elements de la vue
     private EditText name;
     private TextView clientSelector;
     private Button addClientButton;
     private Button generateItineraryButton;
     private Button validateItineraryButton;
-    public MainActivity parent;
-
     //Listes
     private List<Client> itineraryClients;
     private List<Client> allClients;
-
     //Elements secondaires de la vue
     private ClientListAdapter itineraryClientsAdapter;
     private ClientListAdapter freeClientsAdapter;
     private Dialog dialog;
-
-    //Autres variables
-    private final static int MAX_CLIENTS = 8;
     private Integer distance;
     private Client selectedClient;
     private Long modifiedItineraryId = null;
 
-    /**
-     * Méthode appelée lors de l'attachement du fragment au contexte.
-     *
-     * @param context le contexte auquel le fragment est attaché
-     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         parent = (MainActivity) context;
     }
 
-    /**
-     * Méthode appelée après la création de la vue du fragment.
-     * Initialise les éléments de la vue et les écouteurs.
-     *
-     * @param view               la vue créée
-     * @param savedInstanceState l'état sauvegardé du fragment
-     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -123,14 +109,6 @@ public class ItineraryCreationFragment extends Fragment {
         }
     }
 
-    /**
-     * Méthode appelée pour créer la vue du fragment.
-     *
-     * @param inflater           l'inflater pour créer la vue
-     * @param container          le conteneur de la vue
-     * @param savedInstanceState l'état sauvegardé du fragment
-     * @return la vue créée
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

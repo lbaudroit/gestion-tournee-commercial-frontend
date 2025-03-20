@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -28,9 +27,13 @@ import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilit
 
 /**
  * Fragment affichant l'historique des parcours.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class HistoryFragment extends Fragment {
 
+    public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
+    private final List<ParcoursReducedDTO> parcours = new ArrayList<>();
     public MainActivity parent;
     private HistoryListAdapter historyListAdapter;
     private FullscreenFetchStatusDisplay status;
@@ -38,28 +41,13 @@ public class HistoryFragment extends Fragment {
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
-    private final List<ParcoursReducedDTO> parcours = new ArrayList<>();
-    public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
 
-    /**
-     * Appelé lorsque le fragment est attaché à son contexte.
-     *
-     * @param context Le contexte auquel le fragment est attaché.
-     */
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         parent = (MainActivity) context;
     }
 
-    /**
-     * Crée et retourne la vue hiérarchique associée au fragment.
-     *
-     * @param inflater           L'objet LayoutInflater qui peut être utilisé pour gonfler les vues dans le fragment.
-     * @param container          Si non-null, c'est le parent auquel la vue du fragment est attachée.
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé.
-     * @return La vue hiérarchique associée au fragment.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,11 +65,6 @@ public class HistoryFragment extends Fragment {
         return frag;
     }
 
-    /**
-     * Appelé pour faire la première création du fragment.
-     *
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +75,7 @@ public class HistoryFragment extends Fragment {
      *
      * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
      */
-    public void setContentVisibility(int visibility) {
+    private void setContentVisibility(int visibility) {
         setVisibilityFor(visibility, list);
     }
 
@@ -141,7 +124,7 @@ public class HistoryFragment extends Fragment {
         Bundle bundle = new Bundle();
 
         bundle.putString("id", historyListAdapter.getItem(position).getId());
-        parent.navigateToFragment(MainActivity.COURSE_VIEW_FRAGMENT,false,bundle);
+        parent.navigateToFragment(MainActivity.COURSE_VIEW_FRAGMENT, false, bundle);
 
     }
 
@@ -165,8 +148,8 @@ public class HistoryFragment extends Fragment {
     /**
      * Fais appel à la suppression niveau de l'API
      */
-    private void delete(ParcoursReducedDTO parcoursReducedDTO){
-        API_REQUEST.parcours.delete(requireContext(),parcoursReducedDTO.getId(),
+    private void delete(ParcoursReducedDTO parcoursReducedDTO) {
+        API_REQUEST.parcours.delete(requireContext(), parcoursReducedDTO.getId(),
                 response -> {
                     parcours.remove(parcoursReducedDTO);
                     historyListAdapter.notifyDataSetChanged();

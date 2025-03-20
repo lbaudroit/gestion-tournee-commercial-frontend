@@ -26,6 +26,8 @@ import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapa
 
 /**
  * Activité de création de compte
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class SignupActivity extends AppCompatActivity {
 
@@ -47,12 +49,6 @@ public class SignupActivity extends AppCompatActivity {
 
     private Adresse selectedAddress;
 
-    /**
-     * Méthode appelée lors de la création de l'activité.
-     * Initialise les vues et les écouteurs.
-     *
-     * @param savedInstanceState État sauvegardé de l'activité.
-     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +83,7 @@ public class SignupActivity extends AppCompatActivity {
      * @param view La vue qui a été cliquée.
      */
     private void onClickSignup(View view) {
-        if (!hasInternetCapability(this)) {
+        if (hasInternetCapability(this)) {
             Toast.makeText(this, R.string.no_internet_error, Toast.LENGTH_LONG).show();
         } else if (checkFields()) {
             String name = this.name.getText().toString();

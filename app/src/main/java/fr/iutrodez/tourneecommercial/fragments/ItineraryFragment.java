@@ -21,7 +21,6 @@ import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -32,50 +31,32 @@ import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilit
 
 /**
  * Fragment pour afficher et gérer la liste des itinéraires.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ItineraryFragment extends Fragment {
+    public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
+    private final List<Itineraire> itineraries = new ArrayList<>();
+    public MainActivity parent;
     private ItineraryListAdapter itineraryListAdapter;
     private Button add;
-
-    public MainActivity parent;
     private ListView list;
-
     private FullscreenFetchStatusDisplay status;
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
-    private final List<Itineraire> itineraries = new ArrayList<>();
-    public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
 
-    /**
-     * Appelé lorsque le fragment est attaché à son contexte.
-     *
-     * @param context le contexte auquel le fragment est attaché
-     */
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         parent = (MainActivity) context;
     }
 
-    /**
-     * Appelé lors de la création du fragment.
-     *
-     * @param savedInstanceState l'état sauvegardé du fragment
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    /**
-     * Crée et retourne la vue hiérarchique associée au fragment.
-     *
-     * @param inflater           l'objet LayoutInflater qui peut être utilisé pour gonfler les vues dans le fragment
-     * @param container          le conteneur auquel le fragment appartient
-     * @param savedInstanceState l'état sauvegardé du fragment
-     * @return la vue hiérarchique associée au fragment
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -92,6 +73,15 @@ public class ItineraryFragment extends Fragment {
 
         setupList(list, add);
         return frag;
+    }
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
+     *
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    private void setContentVisibility(int visibility) {
+        setVisibilityFor(visibility, add, list);
     }
 
     /**
@@ -251,14 +241,5 @@ public class ItineraryFragment extends Fragment {
                 }
             }
         });
-    }
-
-    /**
-     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
-     *
-     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
-     */
-    public void setContentVisibility(int visibility) {
-        setVisibilityFor(visibility, add, list);
     }
 }

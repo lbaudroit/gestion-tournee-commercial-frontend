@@ -1,5 +1,10 @@
 package fr.iutrodez.tourneecommercial.model;
 
+/**
+ * Classe représentant l'entité Client.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class Client implements java.io.Serializable {
     private final String _id;
     private final String nomEntreprise;

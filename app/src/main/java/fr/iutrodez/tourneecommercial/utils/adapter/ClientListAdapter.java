@@ -16,38 +16,15 @@ import java.util.List;
 
 /**
  * Adapter permettant de gérer l’affichage des clients dans une ListView
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ClientListAdapter extends ArrayAdapter<Client> {
 
-    /**
-     * Interface permettant de définir une action à effectuer lorsqu’un client est modifié
-     */
-    public interface OnClickModifyCallback {
-
-        void onClickModifyClient(Client client);
-    }
-
-    /**
-     * Interface permettant de définir une action à effectuer lorsqu’un client est supprimé
-     */
-    public interface OnClickSupprimerCallback {
-
-        void onClickDeleteClient(Client client);
-    }
-
-    /**
-     * Identifiant de la vue permettant d’afficher chaque item de la liste
-     */
     private final int viewIdentifier;
-
-    /**
-     * Objet utilitaire permettant de dé-sérialiser une vue
-     */
     private final LayoutInflater inflater;
-
     private final OnClickModifyCallback onClickModify;
     private final OnClickSupprimerCallback onClickDelete;
-
     private final List<Client> originalClients;
     private final List<Client> filteredClients;
     private ClientListAdapter.filteredClient filteredClient;
@@ -76,36 +53,17 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         this.onClickDelete = onClickDelete;
     }
 
-    /**
-     * Retourne le nombre d'éléments dans la liste filtrée.
-     *
-     * @return Le nombre d'éléments dans la liste filtrée.
-     */
     @Override
     public int getCount() {
         return filteredClients.size();
     }
 
-    /**
-     * Retourne l'objet Client à la position spécifiée.
-     *
-     * @param position La position de l'élément dans la liste.
-     * @return L'objet Client à la position spécifiée.
-     */
     @Nullable
     @Override
     public Client getItem(int position) {
         return filteredClients.get(position);
     }
 
-    /**
-     * Retourne la vue pour un élément de la liste à la position spécifiée.
-     *
-     * @param position    La position de l'élément dans la liste.
-     * @param convertView La vue réutilisable.
-     * @param parent      Le parent de la vue.
-     * @return La vue pour l'élément de la liste.
-     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -157,11 +115,6 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         return convertView;
     }
 
-    /**
-     * Retourne le filtre pour la recherche de clients.
-     *
-     * @return Le filtre pour la recherche de clients.
-     */
     @NonNull
     @Override
     public Filter getFilter() {
@@ -169,6 +122,22 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
             filteredClient = new filteredClient();
         }
         return filteredClient;
+    }
+
+    /**
+     * Interface permettant de définir une action à effectuer lorsqu’un client est modifié
+     */
+    public interface OnClickModifyCallback {
+
+        void onClickModifyClient(Client client);
+    }
+
+    /**
+     * Interface permettant de définir une action à effectuer lorsqu’un client est supprimé
+     */
+    public interface OnClickSupprimerCallback {
+
+        void onClickDeleteClient(Client client);
     }
 
     /**
@@ -211,17 +180,14 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         }
 
         /**
-         * Publie les résultats du filtrage et met à jour la liste affichée.
-         *
-         * @param constraint La contrainte de filtrage.
-         * @param results    Les résultats du filtrage.
+         * @noinspection unchecked
          */
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             filteredClients.clear();
+            //noinspection rawtypes
             filteredClients.addAll((List) results.values);
             notifyDataSetChanged();
         }
     }
-
 }

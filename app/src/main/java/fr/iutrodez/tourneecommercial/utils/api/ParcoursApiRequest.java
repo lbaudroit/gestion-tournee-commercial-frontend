@@ -20,6 +20,8 @@ import java.util.List;
 
 /**
  * Classe pour gérer les requêtes API pour les parcours.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ParcoursApiRequest extends ApiRessource {
 
@@ -35,125 +37,11 @@ public class ParcoursApiRequest extends ApiRessource {
     }
 
     /**
-     * Crée un nouveau parcours via une requête API.
-     *
-     * @param context         le contexte de l'application
-     * @param mapData         l'objet Parcours à créer
-     * @param successCallback le callback en cas de succès
-     * @param errorCallback   le callback en cas d'erreur
-     */
-    public void create(Context context, Parcours mapData, SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
-        String url = RESSOURCE_NAME + "/";
-        JSONObject body = parcoursDTOCreation(mapData);
-        super.postWithToken(context, url, body, response -> {
-            successCallback.onSuccess(extractMessage(response));
-        }, errorCallback::onError);
-    }
-
-    /**
-     * supprime un parcours de l'historique via une requête API
-     *
-     * @param context
-     * @param idParcours
-     * @param successCallback
-     * @param errorCallback
-     */
-    public void delete(Context context , String idParcours,SuccessCallback<String> successCallback,
-                       ErrorCallback errorCallback){
-
-        String url = RESSOURCE_NAME + "/" + idParcours;
-        super.deleteWithToken(context, url, response -> {
-            successCallback.onSuccess(extractMessage(response));
-        }, errorCallback::onError);
-
-    }
-    /**
-     * Récupère le nombre de pages de parcours disponibles via une requête API.
-     *
-     * @param context         le contexte de l'application
-     * @param successCallback le callback en cas de succès, retourne le nombre de pages
-     * @param errorCallback   le callback en cas d'erreur
-     */
-    public void getNumberOfPages(Context context, SuccessCallback<Integer> successCallback, ErrorCallback errorCallback) {
-        String url = RESSOURCE_NAME + "/count";
-        System.out.println(url);
-        super.getWithToken(context, url, response -> {
-            try {
-                System.out.println(response);
-                successCallback.onSuccess(response.getInt("nombre"));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }, errorCallback::onError);
-    }
-
-    /**
-     * Récupère une page de parcours via une requête API.
-     *
-     * @param context         le contexte de l'application
-     * @param page            le numéro de la page à récupérer
-     * @param successCallback le callback en cas de succès, retourne une liste de ParcoursReducedDTO
-     * @param errorCallback   le callback en cas d'erreur
-     */
-    public void getPage(Context context, int page, SuccessCallback<List<ParcoursReducedDTO>> successCallback, ErrorCallback errorCallback) {
-        String url = RESSOURCE_NAME + "/lazy?page=" + page;
-        super.getWithTokenAsArray(context, url, response -> {
-            successCallback.onSuccess(extractParcours(response));
-        }, errorCallback::onError);
-    }
-
-    /**
-     * Extrait une liste de ParcoursReducedDTO à partir d'un JSONArray.
-     *
-     * @param response le JSONArray contenant les données des parcours
-     * @return une liste de ParcoursReducedDTO
-     */
-    private List<ParcoursReducedDTO> extractParcours(JSONArray response) {
-        Gson gson = new Gson();
-        ArrayList<ParcoursReducedDTO> parcoursList = new ArrayList<>();
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                parcoursList.add(gson.fromJson(response.getJSONObject(i).toString(), ParcoursReducedDTO.class));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return parcoursList;
-    }
-
-    /**
-     * Récupère les prospects pour les notifications via une requête API.
-     *
-     * @param context         le contexte de l'application
-     * @param latitude        la latitude de la position actuelle
-     * @param longitude       la longitude de la position actuelle
-     * @param successCallback le callback en cas de succès, retourne une liste de clients
-     * @param errorCallback   le callback en cas d'erreur
-     */
-    public void getProspectsForNotifications(Context context, double latitude, double longitude, SuccessCallback<List<Client>> successCallback, ErrorCallback errorCallback) {
-        String url = RESSOURCE_NAME + "/prospects/notifications?latitude=" + latitude + "&longitude=" + longitude;
-        super.getWithTokenAsArray(context, url, response -> {
-            successCallback.onSuccess(extractClients(response));
-        }, errorCallback::onError);
-    }
-
-    public void getWithId(Context context,String id,SuccessCallback<HistoryDTO> successCallback, ErrorCallback errorCallback) {
-        String url = RESSOURCE_NAME + "/?id="+id;
-        super.getWithToken(context,url,response-> {
-            try {
-                successCallback.onSuccess(extractFullParcours(response));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        },errorCallback::onError);
-    }
-
-    /**
      * Extrait un parcours dans son ensemble et le transforme en un élément manipulable pour l'historique.
      *
-     * @param jsonObject      Le parcours sous forme de jsonObject.
-     * @return                Le parcours manipulable pour l'historique.
-     * @throws JSONException  Renvoie cette erreur si un problème à un lieu lors de la transformation du json.
+     * @param jsonObject Le parcours sous forme de jsonObject.
+     * @return Le parcours manipulable pour l'historique.
+     * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation du json.
      */
     private static HistoryDTO extractFullParcours(JSONObject jsonObject) throws JSONException {
         List<Visit> visits = extractVisits(jsonObject.getJSONArray("etapes"));
@@ -162,15 +50,14 @@ public class ParcoursApiRequest extends ApiRessource {
         LocalDateTime dateDebut = extractLocalDateTime(jsonObject.getString("dateDebut"));
         LocalDateTime dateFin = extractLocalDateTime(jsonObject.getString("dateFin"));
 
-        HistoryDTO historyDTO = new HistoryDTO(jsonObject.getString("nom"),visits,dateDebut,dateFin,chemin);
-        return historyDTO;
+        return new HistoryDTO(jsonObject.getString("nom"), visits, dateDebut, dateFin, chemin);
     }
 
     /**
      * Extrait la date d'une chaine de caractères.
      *
      * @param date La chaine à extraire.
-     * @return     La date extraite.
+     * @return La date extraite.
      */
     private static LocalDateTime extractLocalDateTime(String date) {
         return LocalDateTime.parse(date);
@@ -179,16 +66,15 @@ public class ParcoursApiRequest extends ApiRessource {
     /**
      * Extrait le chemin d'un tableau de json et le transforme en GeoPoints.
      *
-     * @param coordinates    Les coordonnées à extraire.
-     * @return               Une liste de geoPoints.
+     * @param coordinates Les coordonnées à extraire.
+     * @return Une liste de geoPoints.
      * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation.
      */
     private static List<GeoPoint> extractPath(JSONArray coordinates) throws JSONException {
         List<GeoPoint> chemin = new ArrayList<>();
-        JSONArray coordonneesChemin = coordinates;
-        for(int i = 0 ; i < coordonneesChemin.length();i++) {
-            JSONObject point = coordonneesChemin.getJSONObject(i);
-            chemin.add(new GeoPoint(point.getDouble("x"),point.getDouble("y")));
+        for (int i = 0; i < coordinates.length(); i++) {
+            JSONObject point = coordinates.getJSONObject(i);
+            chemin.add(new GeoPoint(point.getDouble("x"), point.getDouble("y")));
 
         }
         return chemin;
@@ -197,22 +83,21 @@ public class ParcoursApiRequest extends ApiRessource {
     /**
      * Extrait les clients visités ou non d'un tableau de json et transforme ce tableau en liste de clients visités ou non.
      *
-     * @param jsonArray      Le tableau à extraire.
-     * @return               Une liste de Visit.
+     * @param jsonArray Le tableau à extraire.
+     * @return Une liste de Visit.
      * @throws JSONException Renvoie cette erreur si un problème à un lieu lors de la transformation.
      */
     private static List<Visit> extractVisits(JSONArray jsonArray) throws JSONException {
         Gson gson = new Gson();
         List<Visit> visits = new ArrayList<>();
 
-        JSONArray etapes = jsonArray;
-        for(int i = 0 ; i < etapes.length();i++) {
-            JSONObject visit = etapes.getJSONObject(i);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject visit = jsonArray.getJSONObject(i);
             String name = visit.getString("nom");
             boolean visite = visit.getBoolean("visite");
-            Coordonnees coordinates = gson.fromJson(visit.getJSONObject("coordonnees").toString(),Coordonnees.class);
+            Coordonnees coordinates = gson.fromJson(visit.getJSONObject("coordonnees").toString(), Coordonnees.class);
 
-            visits.add(new Visit(name,visite,coordinates));
+            visits.add(new Visit(name, visite, coordinates));
         }
         return visits;
     }
@@ -263,6 +148,113 @@ public class ParcoursApiRequest extends ApiRessource {
             throw new RuntimeException(e);
         }
         return parcoursData;
+    }
+
+    /**
+     * Crée un nouveau parcours via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param mapData         l'objet Parcours à créer
+     * @param successCallback le callback en cas de succès
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void create(Context context, Parcours mapData, SuccessCallback<String> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/";
+        JSONObject body = parcoursDTOCreation(mapData);
+        super.postWithToken(context, url, body, response -> successCallback.onSuccess(extractMessage(response)), errorCallback::onError);
+    }
+
+    /**
+     * supprime un parcours de l'historique via une requête API
+     *
+     * @param context         le contexte de l'application
+     * @param idParcours      l'id du parcours à supprimer
+     * @param successCallback le callback en cas de succès
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void delete(Context context, String idParcours, SuccessCallback<String> successCallback,
+                       ErrorCallback errorCallback) {
+
+        String url = RESSOURCE_NAME + "/" + idParcours;
+        super.deleteWithToken(context, url, response -> successCallback.onSuccess(extractMessage(response)), errorCallback::onError);
+
+    }
+
+    /**
+     * Récupère le nombre de pages de parcours disponibles via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param successCallback le callback en cas de succès, retourne le nombre de pages
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void getNumberOfPages(Context context, SuccessCallback<Integer> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/count";
+        System.out.println(url);
+        super.getWithToken(context, url, response -> {
+            try {
+                System.out.println(response);
+                successCallback.onSuccess(response.getInt("nombre"));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }, errorCallback::onError);
+    }
+
+    /**
+     * Récupère une page de parcours via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param page            le numéro de la page à récupérer
+     * @param successCallback le callback en cas de succès, retourne une liste de ParcoursReducedDTO
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void getPage(Context context, int page, SuccessCallback<List<ParcoursReducedDTO>> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/lazy?page=" + page;
+        super.getWithTokenAsArray(context, url, response -> successCallback.onSuccess(extractParcours(response)), errorCallback::onError);
+    }
+
+    /**
+     * Extrait une liste de ParcoursReducedDTO à partir d'un JSONArray.
+     *
+     * @param response le JSONArray contenant les données des parcours
+     * @return une liste de ParcoursReducedDTO
+     */
+    private List<ParcoursReducedDTO> extractParcours(JSONArray response) {
+        Gson gson = new Gson();
+        ArrayList<ParcoursReducedDTO> parcoursList = new ArrayList<>();
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                parcoursList.add(gson.fromJson(response.getJSONObject(i).toString(), ParcoursReducedDTO.class));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return parcoursList;
+    }
+
+    /**
+     * Récupère les prospects pour les notifications via une requête API.
+     *
+     * @param context         le contexte de l'application
+     * @param latitude        la latitude de la position actuelle
+     * @param longitude       la longitude de la position actuelle
+     * @param successCallback le callback en cas de succès, retourne une liste de clients
+     * @param errorCallback   le callback en cas d'erreur
+     */
+    public void getProspectsForNotifications(Context context, double latitude, double longitude, SuccessCallback<List<Client>> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/prospects/notifications?latitude=" + latitude + "&longitude=" + longitude;
+        super.getWithTokenAsArray(context, url, response -> successCallback.onSuccess(extractClients(response)), errorCallback::onError);
+    }
+
+    public void getWithId(Context context, String id, SuccessCallback<HistoryDTO> successCallback, ErrorCallback errorCallback) {
+        String url = RESSOURCE_NAME + "/?id=" + id;
+        super.getWithToken(context, url, response -> {
+            try {
+                successCallback.onSuccess(extractFullParcours(response));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }, errorCallback::onError);
     }
 
     /**

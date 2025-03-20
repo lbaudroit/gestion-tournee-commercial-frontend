@@ -2,6 +2,11 @@ package fr.iutrodez.tourneecommercial.model;
 
 import androidx.annotation.NonNull;
 
+/**
+ * Classe représentant l'entité Adresse.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class Adresse implements java.io.Serializable {
 
     private final String libelle;

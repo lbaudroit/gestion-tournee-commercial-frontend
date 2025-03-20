@@ -16,18 +16,10 @@ import java.util.List;
 
 /**
  * Classe utilitaire pour gérer les notifications basées sur la localisation.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class NotificationHelper {
-    /**
-     * Interface pour écouter les notifications de prospects et de clients.
-     */
-    public interface NotificationListener {
-        /**
-         * Appelé lorsque au moins un prospect est à moins de 1 Km.
-         */
-        void onProspectNotification(List<Client> prospects);
-    }
-
     private final Context context;
     private final NotificationListener listener;
 
@@ -112,5 +104,12 @@ public class NotificationHelper {
             }
         };
         handler.post(runnable);
+    }
+
+    /**
+     * Interface pour écouter les notifications de prospects et de clients.
+     */
+    public interface NotificationListener {
+        void onProspectNotification(List<Client> prospects);
     }
 }

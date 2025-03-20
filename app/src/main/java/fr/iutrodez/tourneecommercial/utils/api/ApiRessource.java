@@ -1,19 +1,16 @@
 package fr.iutrodez.tourneecommercial.utils.api;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
-
+import fr.iutrodez.tourneecommercial.model.Parcours;
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,11 +18,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.iutrodez.tourneecommercial.model.Parcours;
-import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Classe ApiRessource pour gérer les requêtes API.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ApiRessource {
 
@@ -48,7 +46,7 @@ public class ApiRessource {
      * @param context le contexte de l'application
      * @return le token d'authentification
      */
-    public static String getToken(Context context) {
+    private static String getToken(Context context) {
         SharedPreferences pref = context.getSharedPreferences("user", MODE_PRIVATE);
         long expirationTime = pref.getLong("expiration", 0);
 
@@ -61,39 +59,6 @@ public class ApiRessource {
     }
 
     /**
-     * Envoie à l'API les parcours qui n'ont pas pu être envoyés précédemment.
-     *
-     * @param context le contexte de l'application
-     */
-    private void sendAnyUnsentParcours(Context context) {
-        SavedParcoursHelper savedParcoursHelper = new SavedParcoursHelper(context);
-        if (savedParcoursHelper.isLockedForSending()) {
-            return;
-        }
-        savedParcoursHelper.lockForSending();
-        File f = savedParcoursHelper.getFileToSend();
-        Parcours parcours = savedParcoursHelper.deserializeParcoursFromFile(f);
-        if (parcours != null) {
-            ApiRequest.getInstance().parcours.create(context, parcours,
-                    response -> {
-                        boolean succeeded = f.delete();
-                        System.out.println(succeeded ?
-                                "Parcours sent and deleted" :
-                                "Couldn't delete file");
-                        savedParcoursHelper.unlockForSending();
-                    }, error -> {
-                        System.out.println(error.getMessage());
-                        System.out.println("Parcours saved to be sent later");
-
-                        savedParcoursHelper.serializeToSendLater(parcours);
-                        savedParcoursHelper.unlockForSending();
-                    });
-        } else {
-            savedParcoursHelper.unlockForSending();
-        }
-    }
-
-    /**
      * Envoie une requête en attendant un objet JSON en retour, en envoyant le token au backend
      *
      * @param context   le contexte de l'application
@@ -103,12 +68,12 @@ public class ApiRessource {
      * @param onSuccess le listener en cas de réussite de la requête, prend en argument un JSONObject
      * @param onError   le listener en cas d'erreur
      */
-    public void jsonObjectRequestWithToken(@NonNull Context context,
-                                           int method,
-                                           String url,
-                                           JSONObject body,
-                                           Response.Listener<JSONObject> onSuccess,
-                                           Response.ErrorListener onError) {
+    private void jsonObjectRequestWithToken(@NonNull Context context,
+                                            int method,
+                                            String url,
+                                            JSONObject body,
+                                            Response.Listener<JSONObject> onSuccess,
+                                            Response.ErrorListener onError) {
         JsonRequest<JSONObject> request = new JsonObjectRequest(method,
                 BASE_URL + url,
                 body,
@@ -131,19 +96,15 @@ public class ApiRessource {
      * Envoie une requête en attendant un tableau JSON en retour, en envoyant le token au backend
      *
      * @param context   le contexte de l'application
-     * @param method    le verbe HTTP utilisé
      * @param url       le chemin du endpoint et les paramètres utilisés
-     * @param body      le corps de la requête
      * @param onSuccess le listener en cas de réussite de la requête, prend en argument un JSONArray
      * @param onError   le listener en cas d'erreur
      */
-    public void jsonArrayRequestWithToken(@NonNull Context context,
-                                          int method,
-                                          String url,
-                                          JSONArray body,
-                                          Response.Listener<JSONArray> onSuccess,
-                                          Response.ErrorListener onError) {
-        JsonRequest<JSONArray> request = new JsonArrayRequest(method, BASE_URL + url, body, onSuccess, onError) {
+    private void jsonArrayRequestWithToken(@NonNull Context context,
+                                           String url,
+                                           Response.Listener<JSONArray> onSuccess,
+                                           Response.ErrorListener onError) {
+        JsonRequest<JSONArray> request = new JsonArrayRequest(Request.Method.GET, BASE_URL + url, null, onSuccess, onError) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -188,7 +149,7 @@ public class ApiRessource {
      * @param onError   le listener pour l'erreur
      */
     public void getWithTokenAsArray(Context context, String url, Response.Listener<JSONArray> onSuccess, Response.ErrorListener onError) {
-        jsonArrayRequestWithToken(context, Request.Method.GET, url, null, onSuccess, onError);
+        jsonArrayRequestWithToken(context, url, onSuccess, onError);
     }
 
     /**
@@ -229,4 +190,36 @@ public class ApiRessource {
         jsonObjectRequestWithToken(context, Request.Method.DELETE, url, null, onSuccess, onError);
     }
 
+    /**
+     * Envoie à l'API les parcours qui n'ont pas pu être envoyés précédemment.
+     *
+     * @param context le contexte de l'application
+     */
+    private void sendAnyUnsentParcours(Context context) {
+        SavedParcoursHelper savedParcoursHelper = new SavedParcoursHelper(context);
+        if (savedParcoursHelper.isLockedForSending()) {
+            return;
+        }
+        savedParcoursHelper.lockForSending();
+        File f = savedParcoursHelper.getFileToSend();
+        Parcours parcours = savedParcoursHelper.deserializeParcoursFromFile(f);
+        if (parcours != null) {
+            ApiRequest.getInstance().parcours.create(context, parcours,
+                    response -> {
+                        boolean succeeded = f.delete();
+                        System.out.println(succeeded ?
+                                "Parcours sent and deleted" :
+                                "Couldn't delete file");
+                        savedParcoursHelper.unlockForSending();
+                    }, error -> {
+                        System.out.println(error.getMessage());
+                        System.out.println("Parcours saved to be sent later");
+
+                        savedParcoursHelper.serializeToSendLater(parcours);
+                        savedParcoursHelper.unlockForSending();
+                    });
+        } else {
+            savedParcoursHelper.unlockForSending();
+        }
+    }
 }

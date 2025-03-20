@@ -9,16 +9,32 @@ import com.android.volley.toolbox.Volley;
 /**
  * ApiRequest est une classe singleton qui gère divers objets de requêtes API.
  * Elle initialise différentes classes de requêtes API avec une RequestQueue partagée.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ApiRequest {
-    public AuthApiRequest auth;
-    public ClientApiRequest client;
-    public ItineraireApiRequest itineraire;
-    public ParcoursApiRequest parcours;
-    public UtilisateurApiRequest utilisateur;
-    public BanApiRequest ban;
-
     private static ApiRequest instance = null;
+    public final AuthApiRequest auth;
+    public final ClientApiRequest client;
+    public final ItineraireApiRequest itineraire;
+    public final ParcoursApiRequest parcours;
+    public final UtilisateurApiRequest utilisateur;
+    public final BanApiRequest ban;
+
+    /**
+     * Constructeur privé qui initialise les objets de requêtes API avec une RequestQueue partagée.
+     *
+     * @param context le contexte de l'application
+     */
+    private ApiRequest(Context context) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        auth = new AuthApiRequest(requestQueue);
+        client = new ClientApiRequest(requestQueue);
+        itineraire = new ItineraireApiRequest(requestQueue);
+        parcours = new ParcoursApiRequest(requestQueue);
+        utilisateur = new UtilisateurApiRequest(requestQueue);
+        ban = new BanApiRequest(requestQueue);
+    }
 
     /**
      * Retourne l'instance singleton de ApiRequest.
@@ -41,21 +57,6 @@ public class ApiRequest {
     }
 
     /**
-     * Constructeur privé qui initialise les objets de requêtes API avec une RequestQueue partagée.
-     *
-     * @param context le contexte de l'application
-     */
-    private ApiRequest(Context context) {
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        auth = new AuthApiRequest(requestQueue);
-        client = new ClientApiRequest(requestQueue);
-        itineraire = new ItineraireApiRequest(requestQueue);
-        parcours = new ParcoursApiRequest(requestQueue);
-        utilisateur = new UtilisateurApiRequest(requestQueue);
-        ban = new BanApiRequest(requestQueue);
-    }
-
-    /**
      * Vérifie si l'appareil a la capacité de se connecter à Internet.
      *
      * @param context le contexte de l'application
@@ -64,6 +65,6 @@ public class ApiRequest {
     public static boolean hasInternetCapability(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        return capabilities == null || !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 }

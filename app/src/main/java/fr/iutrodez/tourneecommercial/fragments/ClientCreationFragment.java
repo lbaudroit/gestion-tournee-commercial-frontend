@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.model.Adresse;
 import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +28,7 @@ import java.util.List;
 /**
  * Fragment pour afficher l'interface de création client ou de modification client
  *
- * @author Ahmed BRIBACH
- * Leila Baudroit
- * Enzo CLUZEL
- * Benjamin NICOL
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ClientCreationFragment extends Fragment {
 
@@ -49,12 +44,7 @@ public class ClientCreationFragment extends Fragment {
     private EditText businessName, name, firstname, phoneNumber, description;
     private String idModified;
 
-    /**
-     * Méthode appelée lorsque le fragment est attaché à son contexte.
-     *
-     * @param context Le contexte auquel le fragment est attaché.
-     * @throws ClassCastException si le contexte n'est pas une instance de MainActivity.
-     */
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -65,14 +55,7 @@ public class ClientCreationFragment extends Fragment {
         }
     }
 
-    /**
-     * Méthode appelée pour créer et initialiser la vue du fragment.
-     *
-     * @param inflater           Le LayoutInflater utilisé pour gonfler la vue du fragment.
-     * @param container          Le conteneur parent auquel la vue du fragment est attachée.
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé.
-     * @return La vue créée pour le fragment.
-     */
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -98,12 +81,8 @@ public class ClientCreationFragment extends Fragment {
         if (args != null && args.containsKey("id")) {
             // Modification
             idModified = args.getString("id");
-            try {
-                // On récupère le client par rapport à l'id
-                getClient(idModified);
-            } catch (JSONException exception) {
-                Log.e("ClientCreationFragment", "Error while getting client", exception);
-            }
+            // On récupère le client par rapport à l'id
+            getClient(idModified);
         }
         save.setOnClickListener(this::save);
         suggestedAddress = new ArrayList<>();
@@ -206,9 +185,8 @@ public class ClientCreationFragment extends Fragment {
      * Méthode d'appel API pour récupérer un client par son identifiant.
      *
      * @param id L'identifiant du client à récupérer.
-     * @throws JSONException si une erreur survient lors de la récupération.
      */
-    private void getClient(String id) throws JSONException {
+    private void getClient(String id) {
 
         API_REQUEST.client.getOne(parent, id, client -> {
             clientOrProspect.setChecked(client.isClientEffectif());

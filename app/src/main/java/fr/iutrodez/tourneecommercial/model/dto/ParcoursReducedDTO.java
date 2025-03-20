@@ -1,9 +1,14 @@
 package fr.iutrodez.tourneecommercial.model.dto;
 
+/**
+ * DTO pour les parcours réduits.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class ParcoursReducedDTO {
-    String id;
-    String nom;
-    String date;
+    final String id;
+    final String nom;
+    final String date;
 
     public ParcoursReducedDTO(String id, String nom, String date) {
         this.id = id;

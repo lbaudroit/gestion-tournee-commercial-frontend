@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 /**
  * Classe permettant de faire des requêtes à l'API pour les itinéraires
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ItineraireApiRequest extends ApiRessource {
     private static final String RESOURCE_NAME = "itineraire";
@@ -26,6 +28,30 @@ public class ItineraireApiRequest extends ApiRessource {
      */
     public ItineraireApiRequest(RequestQueue requestQueue) {
         super(requestQueue);
+    }
+
+    /**
+     * Crée un JSONObject représentant un ItineraireDTO.
+     *
+     * @param nom      Le nom de l'itinéraire.
+     * @param clients  La liste des clients associés.
+     * @param distance La distance de l'itinéraire.
+     * @return Le JSONObject représentant l'itinéraire.
+     */
+    private static JSONObject itinerartyDTOCreation(String nom, List<Client> clients, int distance) {
+        // Création de l'objet avec les données
+        JSONObject itineraireData = new JSONObject();
+        List<String> clientIds = clients.stream()
+                .map(Client::get_id)
+                .collect(Collectors.toList());
+        try {
+            itineraireData.put("nom", nom);
+            itineraireData.put("idClients", new JSONArray(clientIds));
+            itineraireData.put("distance", distance);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return itineraireData;
     }
 
     /**
@@ -198,30 +224,6 @@ public class ItineraireApiRequest extends ApiRessource {
             throw new RuntimeException(e);
         }
         return new ItineraireDTO(clientsTmp, kilometres);
-    }
-
-    /**
-     * Crée un JSONObject représentant un ItineraireDTO.
-     *
-     * @param nom      Le nom de l'itinéraire.
-     * @param clients  La liste des clients associés.
-     * @param distance La distance de l'itinéraire.
-     * @return Le JSONObject représentant l'itinéraire.
-     */
-    private static JSONObject itinerartyDTOCreation(String nom, List<Client> clients, int distance) {
-        // Création de l'objet avec les données
-        JSONObject itineraireData = new JSONObject();
-        List<String> clientIds = clients.stream()
-                .map(Client::get_id)
-                .collect(Collectors.toList());
-        try {
-            itineraireData.put("nom", nom);
-            itineraireData.put("idClients", new JSONArray(clientIds));
-            itineraireData.put("distance", distance);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        return itineraireData;
     }
 
     /**

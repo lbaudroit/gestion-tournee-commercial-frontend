@@ -51,15 +51,17 @@ import java.util.List;
 
 /**
  * Fragment affichant une carte et permettant de suivre un itinéraire de clients.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class MapFragment extends Fragment implements NotificationHelper.NotificationListener {
+    private final ApiRequest API_REQUEST = ApiRequest.getInstance();
+    final List<Client> prospectNotified = new ArrayList<>();
     private MainActivity parent;
     private KonfettiView konfettiView;
-    private final ApiRequest API_REQUEST = ApiRequest.getInstance();
     private GeoPoint destinationPoint, startPoint;
     private Marker start, end;
     private boolean gotNotificationForClient = false;
-    List<Client> prospectNotified = new ArrayList<>();
     private NotificationHelper notificationHelper;
     private LocationHelper locationHelper;
     private MapHelper mapHelper;
@@ -76,12 +78,25 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
     private boolean isParcoursFinished;
     private Button buttonPause;
     private Button buttonStop;
-
     /**
-     * Attache le fragment au contexte de l'activité principale.
-     *
-     * @param context Contexte de l'application.
+     * Callback appelé à chaque mise à jour de la localisation.
      */
+    private final LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@NonNull LocationResult locationResult) {
+            if (!buttonVisit.isEnabled()) {
+                unlockButtons();
+            }
+            Location location = locationResult.getLastLocation();
+            if (location != null && (startPoint == null
+                    || startPoint.getLongitude() != location.getLongitude()
+                    || startPoint.getLatitude() != location.getLatitude())) {
+                handlePathAndNotifications(location);
+                mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
+            }
+        }
+    };
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -91,14 +106,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         savedParcoursHelper = new SavedParcoursHelper(context);
     }
 
-    /**
-     * Crée et retourne la vue associée au fragment.
-     *
-     * @param inflater           LayoutInflater pour gonfler la vue.
-     * @param container          Vue parente.
-     * @param savedInstanceState État précédent du fragment.
-     * @return Vue créée.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -156,9 +163,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         scaleDown.start();
     }
 
-    /**
-     * Arrête la mise à jour continue de la localisation pour économiser la batterie.
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -171,9 +175,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         startPoint = null;
     }
 
-    /**
-     * Démarre la mise à jour continue de la localisation lorsque le fragment est visible.
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -182,6 +183,61 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
             return;
         }
         locationHelper.startContinuousLocationUpdates(locationCallback);
+    }
+
+    @Override
+    public void onProspectNotification(List<Client> prospects) {
+        StringBuilder message = new StringBuilder();
+        for (Client prospect : prospects) {
+            if (!(prospectNotified.contains(prospect) || parcours.clientInItinerary(prospect))) {
+                prospectNotified.add(prospect);
+                message.append(getString(R.string.prospect_nearby_sub_message, prospect.getNomEntreprise(),
+                        prospect.getAdresse(), prospect.getContact().getNumeroTelephone()));
+            }
+        }
+        if (message.length() > 0) {
+            notificationHelper.triggerNotification(getString(R.string.prospect_nearby), getString(R.string.prospect_nearby_message, message.toString()));
+        }
+    }
+
+
+    /**
+     * Enregistre le parcours.
+     */
+    private void enregistrerParcours() {
+        savedParcoursHelper.deleteSavedParcours();
+        parcours.registerAndSaveItineraire(requireContext());
+        hideButtonsAndTextView();
+        mapHelper.dropMarker(end);
+        isParcoursFinished = true;
+        parent.clearCache(MainActivity.MAP_FRAGMENT);
+    }
+
+    /**
+     * Ajoute au parcours les clients qui ne sont pas ajoutés. Les clients ajoutés ne seront pas visités.
+     */
+    private void addMissingClients() {
+        boolean done;
+        do {
+            done = parcours.markCurrentAsNotVisitedAndMoveToNext();
+        } while (done);
+
+    }
+
+    /**
+     * Appelé lorsque le client est à moins de 200 mètres.
+     * La notification ressemble à ceci :
+     * "Vous êtes à moins de 200 mètres du client :
+     * Nom de l'entreprise
+     * Numéro de téléphone : xx xx xx xx xx".
+     */
+    private void onClientNotification() {
+        if (!gotNotificationForClient) {
+            gotNotificationForClient = true;
+            String message = getString(R.string.client_notification_message,
+                    parcours.getCurrentClientName(), parcours.getCurrentClientPhoneNumber());
+            notificationHelper.triggerNotification(getString(R.string.destination_reached), message);
+        }
     }
 
     /**
@@ -346,25 +402,6 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         companyAddress.setVisibility(View.GONE);
         companyType.setVisibility(View.GONE);
     }
-
-    /**
-     * Callback appelé à chaque mise à jour de la localisation.
-     */
-    private final LocationCallback locationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(@NonNull LocationResult locationResult) {
-            if (!buttonVisit.isEnabled()) {
-                unlockButtons();
-            }
-            Location location = locationResult.getLastLocation();
-            if (location != null && (startPoint == null
-                    || startPoint.getLongitude() != location.getLongitude()
-                    || startPoint.getLatitude() != location.getLatitude())) {
-                handlePathAndNotifications(location);
-                mapHelper.drawMarker(start, startPoint, getString(R.string.start_point));
-            }
-        }
-    };
 
     /**
      * Gère le chemin et les notifications en fonction de la localisation actuelle.
@@ -532,69 +569,5 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
                 })
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
-    }
-
-    /**
-     * Enregistre le parcours.
-     */
-    public void enregistrerParcours() {
-        savedParcoursHelper.deleteSavedParcours();
-        parcours.registerAndSaveItineraire(requireContext());
-        hideButtonsAndTextView();
-        mapHelper.dropMarker(end);
-        isParcoursFinished = true;
-        parent.clearCache(MainActivity.MAP_FRAGMENT);
-    }
-
-    /**
-     * Ajoute au parcours les clients qui ne sont pas ajoutés. Les clients ajoutés ne seront pas visités.
-     */
-    public void addMissingClients() {
-        while (parcours.markCurrentAsNotVisitedAndMoveToNext()) {
-
-        }
-        ;
-
-    }
-
-    /**
-     * Appelé lorsque au moins un prospect est à moins de 1 Km.
-     * La notification ressemble à ceci :
-     * Vous êtes à proximité de ce(s) prospect(s)
-     * Nom de l'entreprise
-     * Adresse
-     * Numéro de téléphone
-     * --------
-     * et ainsi de suite pour chaque prospect.
-     */
-    @Override
-    public void onProspectNotification(List<Client> prospects) {
-        StringBuilder message = new StringBuilder();
-        for (Client prospect : prospects) {
-            if (!(prospectNotified.contains(prospect) || parcours.clientInItinerary(prospect))) {
-                prospectNotified.add(prospect);
-                message.append(getString(R.string.prospect_nearby_sub_message, prospect.getNomEntreprise(),
-                        prospect.getAdresse(), prospect.getContact().getNumeroTelephone()));
-            }
-        }
-        if (message.length() > 0) {
-            notificationHelper.triggerNotification(getString(R.string.prospect_nearby), getString(R.string.prospect_nearby_message, message.toString()));
-        }
-    }
-
-    /**
-     * Appelé lorsque le client est à moins de 200 mètres.
-     * La notification ressemble à ceci :
-     * "Vous êtes à moins de 200 mètres du client :
-     * Nom de l'entreprise
-     * Numéro de téléphone : xx xx xx xx xx".
-     */
-    public void onClientNotification() {
-        if (!gotNotificationForClient) {
-            gotNotificationForClient = true;
-            String message = getString(R.string.client_notification_message,
-                    parcours.getCurrentClientName(), parcours.getCurrentClientPhoneNumber());
-            notificationHelper.triggerNotification(getString(R.string.destination_reached), message);
-        }
     }
 }

@@ -13,7 +13,9 @@ import fr.iutrodez.tourneecommercial.model.Adresse;
 import java.util.List;
 
 /**
- * Adapter for the Address class
+ * Adapteur pour les adresses.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class AddressAdapter extends ArrayAdapter<Adresse> {
     private final int viewIdentifier;
@@ -35,14 +37,6 @@ public class AddressAdapter extends ArrayAdapter<Adresse> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    /**
-     * Méthode pour obtenir la vue d'un élément à une position spécifique.
-     *
-     * @param position    La position de l'élément dans la liste.
-     * @param convertView La vue réutilisable (peut être null).
-     * @param parent      Le parent auquel cette vue sera attachée.
-     * @return La vue pour l'élément de la position spécifiée.
-     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

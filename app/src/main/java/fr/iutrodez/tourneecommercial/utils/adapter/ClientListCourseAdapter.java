@@ -7,39 +7,24 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.List;
-
 import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.model.Visit;
 
+import java.util.List;
+
 /**
  * Adapteur permettant de gérer l’affichage des clients (sous forme de visite) dans l'historique.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
 
 
-    /**
-     * Interface pour définir la loqique lors du clic sur un élément de la liste appartenant à cette adapteur.
-     */
-    public interface OnClickList {
-        public void OnClick(Visit visit);
-    }
-    /**
-     * Identifiant de la vue permettant d’afficher chaque item de la liste
-     */
     private final int viewIdentifier;
-
-    /**
-     * Objet utilitaire permettant de dé-sérialiser une vue
-     */
     private final LayoutInflater inflater;
-
     private final List<Visit> Visit;
-
     private final OnClickList onClickList;
 
     /**
@@ -61,36 +46,17 @@ public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    /**
-     * Retourne le nombre d'éléments dans la liste filtrée.
-     *
-     * @return Le nombre d'éléments dans la liste filtrée.
-     */
     @Override
     public int getCount() {
         return Visit.size();
     }
 
-    /**
-     * Retourne l'objet Client à la position spécifiée.
-     *
-     * @param position La position de l'élément dans la liste.
-     * @return L'objet Client à la position spécifiée.
-     */
     @Nullable
     @Override
     public Visit getItem(int position) {
         return Visit.get(position);
     }
 
-    /**
-     * Retourne la vue pour un élément de la liste à la position spécifiée.
-     *
-     * @param position    La position de l'élément dans la liste.
-     * @param convertView La vue réutilisable.
-     * @param parent      Le parent de la vue.
-     * @return La vue pour l'élément de la liste.
-     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -114,9 +80,16 @@ public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
         visited.setChecked(etapeInfos.isVisited());
 
         if (onClickList != null) {
-            convertView.setOnClickListener((View v)->onClickList.OnClick(etapeInfos));
+            convertView.setOnClickListener((View v) -> onClickList.OnClick(etapeInfos));
         }
 
         return convertView;
+    }
+
+    /**
+     * Interface pour définir la loqique lors du clic sur un élément de la liste appartenant à cette adapteur.
+     */
+    public interface OnClickList {
+        void OnClick(Visit visit);
     }
 }

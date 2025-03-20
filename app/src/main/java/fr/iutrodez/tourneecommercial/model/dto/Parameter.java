@@ -1,9 +1,14 @@
 package fr.iutrodez.tourneecommercial.model.dto;
 
+/**
+ * Classe représentant les paramètres de l'utilisateur.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class Parameter {
-    String nom;
-    String prenom;
-    String email;
+    final String nom;
+    final String prenom;
+    final String email;
 
     public Parameter(String nom, String prenom, String email) {
         this.nom = nom;

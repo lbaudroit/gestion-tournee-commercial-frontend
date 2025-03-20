@@ -10,6 +10,8 @@ import com.google.android.gms.location.*;
 
 /**
  * Classe utilitaire permettant de gérer la localisation de l'utilisateur.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class LocationHelper {
     private final Context context;

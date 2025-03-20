@@ -30,32 +30,21 @@ import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilit
  * Fragment de la navBar pour afficher la liste des clients
  * et pour soit modifier, créer ou supprimer un client
  *
- * @author Ahmed BRIBACH
- * Leila Baudroit
- * Enzo CLUZEL
- * Benjamin NICOL
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ClientFragment extends Fragment {
 
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-    private ListView list;
-
+    private final List<Client> clients = new ArrayList<>();
     public MainActivity parent;
+    private ListView list;
     private ClientListAdapter clientListAdapter;
     private Button add;
     private FullscreenFetchStatusDisplay status;
-
     private boolean isLoading = false;
     private int currentPage = 0;
     private int numberOfPages = 0;
-    private final List<Client> clients = new ArrayList<>();
 
-    /**
-     * Méthode appelée lorsque le fragment est attaché à son contexte.
-     *
-     * @param context Le contexte auquel le fragment est attaché.
-     * @throws ClassCastException si le contexte n'est pas une instance de MainActivity.
-     */
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
@@ -66,14 +55,6 @@ public class ClientFragment extends Fragment {
         }
     }
 
-    /**
-     * Méthode appelée pour créer et initialiser la vue du fragment.
-     *
-     * @param inflater           Le LayoutInflater utilisé pour gonfler la vue du fragment.
-     * @param container          Le conteneur parent auquel la vue du fragment est attachée.
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir d'un état précédemment sauvegardé.
-     * @return La vue créée pour le fragment.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -122,7 +103,7 @@ public class ClientFragment extends Fragment {
      *
      * @param client Le client à modifier.
      */
-    public void modify(Client client) {
+    private void modify(Client client) {
         Bundle bundle = new Bundle();
         bundle.putString("id", client.get_id());
         parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false, bundle);
@@ -134,7 +115,7 @@ public class ClientFragment extends Fragment {
      *
      * @param client Le client à supprimer.
      */
-    public void delete(Client client) {
+    private void delete(Client client) {
         String message = parent.getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(parent)
                 .setTitle(R.string.delete_client)
@@ -142,6 +123,25 @@ public class ClientFragment extends Fragment {
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteClient(client))
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    /**
+     * Méthode appelée quand le bouton "Ajouter" est cliqué.
+     * Navigue vers le fragment de création de client.
+     *
+     * @param view La vue qui a été cliquée.
+     */
+    private void add(View view) {
+        parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
+    }
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
+     *
+     * @param visibility Un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}.
+     */
+    private void setContentVisibility(int visibility) {
+        setVisibilityFor(visibility, add, list);
     }
 
     /**
@@ -188,24 +188,5 @@ public class ClientFragment extends Fragment {
             status.hide();
         }, error -> status.error(R.string.fetch_client_error));
         isLoading = false;
-    }
-
-    /**
-     * Méthode appelée quand le bouton "Ajouter" est cliqué.
-     * Navigue vers le fragment de création de client.
-     *
-     * @param view La vue qui a été cliquée.
-     */
-    public void add(View view) {
-        parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
-    }
-
-    /**
-     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
-     *
-     * @param visibility Un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}.
-     */
-    public void setContentVisibility(int visibility) {
-        setVisibilityFor(visibility, add, list);
     }
 }

@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * Class to make requests to the API for the Client resource
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ClientApiRequest extends ApiRessource {
     private static final String RESOURCE_NAME = "client";

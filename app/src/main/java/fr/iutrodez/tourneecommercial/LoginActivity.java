@@ -18,26 +18,17 @@ import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapa
  * Activité de connexion pour l'application Tournée Commerciale.
  * Permet à l'utilisateur de se connecter en vérifiant ses identifiants.
  *
- * @author Benjamin NICOL,
- * Leïla BAUDROIT,
- * Enzo CLUZEL,
- * Ahmed BRIBACH
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private final static String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
     public static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=_]).+$";
+    private final static String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
     private static ApiRequest apiRequest;
     private EditText email;
 
     private EditText password;
 
-    /**
-     * Méthode appelée lors de la création de l'activité.
-     * Initialise les composants de l'interface utilisateur.
-     *
-     * @param savedInstanceState État sauvegardé de l'activité.
-     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,18 +41,8 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.button_login).setOnClickListener(this::onClickEnvoyer);
         findViewById(R.id.button_signup).setOnClickListener(this::onClickGoToInscription);
         apiRequest = ApiRequest.buildInstance(this);
-        //TODO : Supprimer les lignes suivantes
-        email.setText("en@cl.fr");
-        password.setText("Enzo_123");
-        findViewById(R.id.button_login).performClick();
     }
 
-    /**
-     * Méthode appelée lors du clic sur le bouton "Envoyer".
-     * Vérifie la validité des champs et envoie les données à l'API pour authentification.
-     *
-     * @param view Vue qui a déclenché l'événement.
-     */
     private void onClickEnvoyer(View view) {
         boolean inputsValid = true;
         String extracted_email = this.email.getText().toString();
@@ -89,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             password.setError(getString(R.string.password_pattern_error));
             inputsValid = false;
         }
-        if (!hasInternetCapability(this)) {
+        if (hasInternetCapability(this)) {
             Toast.makeText(this, R.string.no_internet_error, Toast.LENGTH_LONG).show();
             inputsValid = false;
         }

@@ -1,7 +1,7 @@
 package fr.iutrodez.tourneecommercial.utils.helper;
 
 import android.graphics.Paint;
-
+import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -11,15 +11,15 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.iutrodez.tourneecommercial.model.Coordonnees;
-
 /**
  * Classe utilitaire pour la gestion des cartes et des marqueurs avec OSMdroid.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class MapHelper {
+    private final MapView mapView;
     private Coordonnees lastChangedCoordinates20Meters;
     private Coordonnees lastChangedCoordinates200Meters;
-    private final MapView mapView;
     private Polyline latestPolyline;
 
     /**
@@ -30,6 +30,28 @@ public class MapHelper {
     public MapHelper(MapView mapView) {
         this.mapView = mapView;
         this.latestPolyline = mapView != null ? createAndAddNormalPolylineToMap(new ArrayList<>()) : null;
+    }
+
+    /**
+     * Calcule la distance entre deux points géographiques en utilisant la formule de Haversine.
+     *
+     * @param coordinates      les coordonnées du premier point
+     * @param otherCoordinates les coordonnées du second point
+     * @return la distance entre les deux points en mètres
+     */
+    public static int computeHaversineFormula(Coordonnees coordinates, Coordonnees otherCoordinates) {
+        double earthRadiusInKm = 6371.0;
+        double deltaLat = Math.toRadians(otherCoordinates.getLatitude() - coordinates.getLatitude());
+        double deltaLon = Math.toRadians(otherCoordinates.getLongitude() - coordinates.getLongitude());
+        double startLat = Math.toRadians(coordinates.getLatitude());
+        double endLat = Math.toRadians(otherCoordinates.getLatitude());
+
+        double a = Math.pow(Math.sin(deltaLat / 2), 2)
+                + Math.cos(startLat) * Math.cos(endLat)
+                * Math.pow(Math.sin(deltaLon / 2), 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return (int) Math.round(earthRadiusInKm * c * 1000);
     }
 
     /**
@@ -94,19 +116,19 @@ public class MapHelper {
         double minLon = Double.MAX_VALUE;
         double deltaLat;
         double deltaLon;
-        for(int i =0 ; i < points.size(); i++) {
-            double lat = points.get(i).getLatitude();
-            double lon = points.get(i).getLongitude();
-            if(maxLat < lat) {
+        for (GeoPoint point : points) {
+            double lat = point.getLatitude();
+            double lon = point.getLongitude();
+            if (maxLat < lat) {
                 maxLat = lat;
             }
-            if(minLat > lat) {
+            if (minLat > lat) {
                 minLat = lat;
             }
-            if(maxLon < lon) {
+            if (maxLon < lon) {
                 maxLon = lon;
             }
-            if(minLon > lon) {
+            if (minLon > lon) {
                 minLon = lon;
             }
         }
@@ -194,28 +216,6 @@ public class MapHelper {
      */
     public boolean isClientWithin200Meters(Coordonnees coordinates, Coordonnees clientCoordinates) {
         return computeHaversineFormula(coordinates, clientCoordinates) < 200;
-    }
-
-    /**
-     * Calcule la distance entre deux points géographiques en utilisant la formule de Haversine.
-     *
-     * @param coordinates      les coordonnées du premier point
-     * @param otherCoordinates les coordonnées du second point
-     * @return la distance entre les deux points en mètres
-     */
-    public static int computeHaversineFormula(Coordonnees coordinates, Coordonnees otherCoordinates) {
-        double earthRadiusInKm = 6371.0;
-        double deltaLat = Math.toRadians(otherCoordinates.getLatitude() - coordinates.getLatitude());
-        double deltaLon = Math.toRadians(otherCoordinates.getLongitude() - coordinates.getLongitude());
-        double startLat = Math.toRadians(coordinates.getLatitude());
-        double endLat = Math.toRadians(otherCoordinates.getLatitude());
-
-        double a = Math.pow(Math.sin(deltaLat / 2), 2)
-                + Math.cos(startLat) * Math.cos(endLat)
-                * Math.pow(Math.sin(deltaLon / 2), 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (int) Math.round(earthRadiusInKm * c * 1000);
     }
 
     /**

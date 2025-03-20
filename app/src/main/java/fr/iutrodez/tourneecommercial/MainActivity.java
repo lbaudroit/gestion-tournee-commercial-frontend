@@ -17,11 +17,11 @@ import java.util.*;
 
 /**
  * Classe principale de l'activité qui gère la navigation entre différents fragments.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class MainActivity extends AppCompatActivity
         implements NavigationBarView.OnItemSelectedListener {
-    private FragmentManager fragmentManager;
-    private NavigationBarView navigationBar;
     public final static int CLIENT_FRAGMENT = 0;
     public final static int MAP_FRAGMENT = 1;
     public final static int HISTORY_FRAGMENT = 2;
@@ -30,10 +30,13 @@ public class MainActivity extends AppCompatActivity
     public final static int CLIENT_CREATION_FRAGMENT = 5;
     public final static int ITINERARY_CREATION_FRAGMENT = 6;
     public final static int PASSWORD_MODIFICATION_FRAGMENT = 7;
-
     public final static int COURSE_VIEW_FRAGMENT = 8;
-
-    List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
+    final List<Class<? extends Fragment>> fragments = new ArrayList<>(5);
+    final HashMap<Integer, Fragment> cache = new HashMap<>();
+    final HashMap<Integer, Integer> menuId = new HashMap<>();
+    final Stack<Integer> commits = new Stack<>();
+    private FragmentManager fragmentManager;
+    private NavigationBarView navigationBar;
 
     {
         fragments.add(ClientFragment.class);
@@ -47,12 +50,6 @@ public class MainActivity extends AppCompatActivity
         fragments.add(CourseFragment.class);
     }
 
-    HashMap<Integer, Fragment> cache = new HashMap<>();
-
-    HashMap<Integer, Integer> menuId = new HashMap<>();
-
-    Stack<Integer> commits = new Stack<>();
-
     {
         menuId.put(R.id.bottom_bar_client, CLIENT_FRAGMENT);
         menuId.put(R.id.bottom_bar_map, MAP_FRAGMENT);
@@ -61,11 +58,6 @@ public class MainActivity extends AppCompatActivity
         menuId.put(R.id.bottom_bar_setting, SETTING_FRAGMENT);
     }
 
-    /**
-     * Appelé lors de la création de l'activité.
-     *
-     * @param savedInstanceState Si l'activité est recréée après avoir été précédemment arrêtée, ce Bundle contient les données les plus récentes fournies dans onSaveInstanceState(Bundle).
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,12 +97,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    /**
-     * Appelé lorsqu'un élément de la barre de navigation est sélectionné.
-     *
-     * @param item L'élément sélectionné.
-     * @return true pour afficher l'élément comme sélectionné, false pour ne rien faire.
-     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         boolean cache = false;
@@ -123,6 +109,18 @@ public class MainActivity extends AppCompatActivity
         }
         navigateToFragment(id, cache);
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "Permission GPS accordée !");
+            } else {
+                Log.e("MainActivity", "Permission GPS refusée !");
+            }
+        }
     }
 
     /**
@@ -168,7 +166,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Efface le cache d'un fragment.
      *
-     * @param id
+     * @param id L'ID du fragment.
      */
     public void clearCache(int id) {
         cache.remove(id);
@@ -199,7 +197,7 @@ public class MainActivity extends AppCompatActivity
      * @return Le fragment mis en cache.
      */
     private Fragment getCachedFragment(int id) {
-        Fragment fragment = null;
+        Fragment fragment;
         if (cache.containsKey(id)) {
             fragment = cache.get(id);
         } else {
@@ -216,8 +214,9 @@ public class MainActivity extends AppCompatActivity
      * @return La nouvelle instance du fragment.
      */
     private Fragment getNotCachedFragment(int id) {
-        Fragment fragment = null;
+        Fragment fragment;
         try {
+            //noinspection deprecation
             fragment = fragments.get(id).newInstance();
             cache.put(id, fragment);
         } catch (IllegalAccessException | InstantiationException e) {
@@ -242,17 +241,4 @@ public class MainActivity extends AppCompatActivity
         }
         return idFound;
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("MainActivity", "Permission GPS accordée !");
-            } else {
-                Log.e("MainActivity", "Permission GPS refusée !");
-            }
-        }
-    }
-
 }

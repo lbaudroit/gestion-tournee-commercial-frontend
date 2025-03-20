@@ -16,21 +16,15 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
- * Adapter for the history list
+ * Adapteur pour la liste d'historique.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class HistoryListAdapter extends ArrayAdapter<ParcoursReducedDTO> {
 
-    /**
-     * Identifiant de la vue permettant d’afficher chaque item de la liste
-     */
     private final int viewIdentifier;
-
-    /**
-     * Objet utilitaire permettant de dé-sérialiser une vue
-     */
     private final LayoutInflater inflater;
-
-    BiConsumer<ParcoursReducedDTO, Integer> onClickButtonDelete;
+    final BiConsumer<ParcoursReducedDTO, Integer> onClickButtonDelete;
 
     /**
      * Constructeur de l'adaptateur de la liste d'historique.
@@ -51,14 +45,6 @@ public class HistoryListAdapter extends ArrayAdapter<ParcoursReducedDTO> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    /**
-     * Méthode pour obtenir la vue d'un élément de la liste.
-     *
-     * @param position    La position de l'élément dans la liste.
-     * @param convertView La vue réutilisable.
-     * @param parent      Le parent de la vue.
-     * @return La vue de l'élément à la position spécifiée.
-     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

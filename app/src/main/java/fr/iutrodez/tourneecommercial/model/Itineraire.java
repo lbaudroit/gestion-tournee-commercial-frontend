@@ -1,12 +1,17 @@
 package fr.iutrodez.tourneecommercial.model;
 
+/**
+ * Classe représentant l'entité Itineraire.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class Itineraire {
 
     private final long id;
 
-    String nom;
+    final String nom;
 
-    int kilometres;
+    final int kilometres;
 
     public Itineraire(String nom, int kilometres, long id) {
         this.nom = nom;
