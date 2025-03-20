@@ -26,7 +26,7 @@ on:
         required: true
         default: "main"
 jobs:
-  # job qui s'occupe de la construction de l'apk, de son upload et de l'analyse.
+  # Job qui s'occupe de la construction de l'apk, de son upload et de l'analyse.
   build:
     runs-on: ubuntu-latest
 
@@ -37,7 +37,7 @@ jobs:
       with:
         fetch-depth: 0  # Important pour SonarQube
 
-    # Installe et configure la version 17 de java de la distrubution 'temurin' sur le runner.
+    # Installe et configure la version 17 de java de la distribution 'temurin' sur le runner.
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -45,11 +45,11 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # Donne les permissions d'éxécution du fichier gradlew. Cela permettra de lancer des commandes gradle.
+    # Donne les permissions d'exécution du fichier gradlew. Cela permettra de lancer des commandes gradle.
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # Cache les fichiers pour l'éxécution de sonarQube afin de rendre le workflow plus rapide 
+    # Cache les fichiers pour l'exécution de sonarQube afin de rendre le workflow plus rapide 
     # et d'éviter de télécharger plusieurs fois les fichiers.
     - name: Cache SonarQube packages
       uses: actions/cache@v4
@@ -78,19 +78,19 @@ jobs:
     - name: Run Unit Tests
       run: ./gradlew test
 
-    # Construit l'apk à partir des fichiers
-    # L'apk sera placé dans le dossier : 'app/build/outputs/apk/debug/app-debug.apk'
+    # Construit l'apk à partir des fichiers.
+    # L'apk sera placé dans le dossier : 'app/build/outputs/apk/debug/app-debug.apk'.
     - name: Build APK
       run: ./gradlew assembleDebug
 
-    # Partage l'apk sur GitHub en le nommant 'app-debug.apk'
+    # Partage l'apk sur GitHub en le nommant 'app-debug.apk'.
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug.apk
         path: app/build/outputs/apk/debug/app-debug.apk
 
-    # Lance l'analyse de sonarQube
+    # Lance l'analyse de sonarQube.
     - name: Run SonarQube Analysis
       uses: SonarSource/sonarqube-scan-action@v4.2.1
       env:
