@@ -41,7 +41,7 @@
                 style="@style/SecondaryInfoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/type_entreprise"/>
+                android:text="@string/type_entreprise_default"/>
     </LinearLayout>
 
     <!-- Bouton flottant pour recentrer la carte -->
