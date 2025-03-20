@@ -32,8 +32,8 @@ public class ParcoursApiRequest extends ApiRessource {
      *
      * @param requestQueue la file de requêtes à utiliser
      */
-    public ParcoursApiRequest(RequestQueue requestQueue) {
-        super(requestQueue);
+    public ParcoursApiRequest(RequestQueue requestQueue, String url) {
+        super(requestQueue, url);
     }
 
     /**

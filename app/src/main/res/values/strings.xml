@@ -182,4 +182,15 @@
     <string name="delete_parcours">Suppression du parcours</string>
     <string name="no_entry">Il n\'y a actuellement aucune entrée</string>
 
+    <!-- URL -->
+    <string name="url_validate">Valider cet URL</string>
+    <string name="return_to_connect">Retourner à la page de connexion</string>
+    <string name="url_server">URL du serveur</string>
+    <string name="param_administrateur">Paramètres administrateur</string>
+    <string name="invalid_url_config">Le serveur est inaccessible ou l\'URL est incorrecte.</string>
+    <string name="invalid_url_error">L\'URL n\'est pas valide</string>
+    <string name="invalid_url_error_header">L\'URL doit commencer par http:// ou https://</string>
+    <string name="invalid_url_error_trailer">L\'URL doit se terminer par un slash</string>
+    <string name="warning_modification_url">ATTENTION : Ceci modifie l\'adresse à laquelle le serveur est situé. Ne modifiez pas si vous n\'êtes pas sûr de ce que vous faites !</string>
+
 </resources>

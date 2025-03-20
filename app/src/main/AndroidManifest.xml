@@ -21,7 +21,9 @@
             android:theme="@style/Theme.TourneeCommercial"
             android:usesCleartextTraffic="true"
             tools:targetApi="33">
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+                android:name="org.apache.http.legacy"
+                android:required="false"/>
 
         <activity
                 android:name=".LoginActivity"
@@ -38,6 +40,10 @@
         </activity>
         <activity
                 android:name=".MainActivity"
+                android:exported="true">
+        </activity>
+        <activity
+                android:name=".UrlActivity"
                 android:exported="true">
         </activity>
 

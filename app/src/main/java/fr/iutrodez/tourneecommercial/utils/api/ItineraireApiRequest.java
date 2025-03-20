@@ -26,8 +26,8 @@ public class ItineraireApiRequest extends ApiRessource {
      *
      * @param requestQueue La file de requêtes à utiliser pour les requêtes réseau.
      */
-    public ItineraireApiRequest(RequestQueue requestQueue) {
-        super(requestQueue);
+    public ItineraireApiRequest(RequestQueue requestQueue, String url) {
+        super(requestQueue, url);
     }
 
     /**

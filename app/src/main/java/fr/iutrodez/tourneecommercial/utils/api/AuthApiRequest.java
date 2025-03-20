@@ -20,8 +20,8 @@ public class AuthApiRequest extends ApiRessource {
 
     private static final String RESOURCE_NAME = "auth";
 
-    public AuthApiRequest(RequestQueue requestQueue) {
-        super(requestQueue);
+    public AuthApiRequest(RequestQueue requestQueue, String url) {
+        super(requestQueue, url);
     }
 
     /**

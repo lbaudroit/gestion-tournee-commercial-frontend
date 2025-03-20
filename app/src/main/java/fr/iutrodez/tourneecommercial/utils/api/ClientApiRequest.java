@@ -26,8 +26,8 @@ public class ClientApiRequest extends ApiRessource {
      *
      * @param requestQueue La file d'attente des requêtes.
      */
-    public ClientApiRequest(RequestQueue requestQueue) {
-        super(requestQueue);
+    public ClientApiRequest(RequestQueue requestQueue, String url) {
+        super(requestQueue, url);
     }
 
     /**

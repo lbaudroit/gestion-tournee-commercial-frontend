@@ -28,7 +28,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class ApiRessource {
 
-    private static final String BASE_URL = "http://direct.bennybean.fr:9090/";
+    private static String url;
     private static RequestQueue requestQueue;
 
     /**
@@ -36,8 +36,9 @@ public class ApiRessource {
      *
      * @param requestQueue la file de requêtes à utiliser
      */
-    public ApiRessource(RequestQueue requestQueue) {
+    public ApiRessource(RequestQueue requestQueue, String url) {
         ApiRessource.requestQueue = requestQueue;
+        ApiRessource.url = url;
     }
 
     /**
@@ -76,7 +77,7 @@ public class ApiRessource {
                                             Response.Listener<JSONObject> onSuccess,
                                             Response.ErrorListener onError) {
         JsonRequest<JSONObject> request = new JsonObjectRequest(method,
-                BASE_URL + url,
+                ApiRessource.url + url,
                 body,
                 obj -> {
                     sendAnyUnsentParcours(context);
@@ -105,7 +106,7 @@ public class ApiRessource {
                                            String url,
                                            Response.Listener<JSONArray> onSuccess,
                                            Response.ErrorListener onError) {
-        JsonRequest<JSONArray> request = new JsonArrayRequest(Request.Method.GET, BASE_URL + url, null, onSuccess, onError) {
+        JsonRequest<JSONArray> request = new JsonArrayRequest(Request.Method.GET, ApiRessource.url + url, null, onSuccess, onError) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -125,7 +126,7 @@ public class ApiRessource {
      * @param onError   le listener pour l'erreur
      */
     public void post(String url, JSONObject body, Response.Listener<JSONObject> onSuccess, Response.ErrorListener onError) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, BASE_URL + url, body, onSuccess, onError);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ApiRessource.url + url, body, onSuccess, onError);
         requestQueue.add(jsonObjectRequest);
     }
 

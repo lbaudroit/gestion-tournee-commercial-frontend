@@ -17,8 +17,8 @@ public class UtilisateurApiRequest extends ApiRessource {
     private static final String RESOURCE_NAME = "utilisateur";
     private static final String TAG = "UtilisateurApiRequest";
 
-    public UtilisateurApiRequest(RequestQueue requestQueue) {
-        super(requestQueue);
+    public UtilisateurApiRequest(RequestQueue requestQueue, String url) {
+        super(requestQueue, url);
     }
 
     /**

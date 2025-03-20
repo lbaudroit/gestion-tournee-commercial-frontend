@@ -37,10 +37,16 @@ public class LoginActivity extends AppCompatActivity {
 
         email = findViewById(R.id.editText_email);
         password = findViewById(R.id.editText_password);
-
+        email.requestFocus();
         findViewById(R.id.button_login).setOnClickListener(this::onClickEnvoyer);
         findViewById(R.id.button_signup).setOnClickListener(this::onClickGoToInscription);
-        apiRequest = ApiRequest.buildInstance(this);
+        findViewById(R.id.button_url).setOnClickListener(this::onClickUrl);
+        apiRequest = ApiRequest.buildInstance(this,
+                getSharedPreferences("user", MODE_PRIVATE).getString("url", "http://direct.bennybean.fr:9090/"));
+    }
+
+    private void onClickUrl(View view) {
+        startActivity(new Intent(this, UrlActivity.class));
     }
 
     private void onClickEnvoyer(View view) {
@@ -81,7 +87,13 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-            }, error -> Toast.makeText(LoginActivity.this, R.string.invalid_login_params_error, Toast.LENGTH_LONG).show());
+            }, error -> {
+                if (error.networkResponse.statusCode == 403) {
+                    Toast.makeText(LoginActivity.this, R.string.invalid_login_params_error, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, R.string.invalid_url_config, Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 

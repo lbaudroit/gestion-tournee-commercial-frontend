@@ -26,13 +26,13 @@ public class ApiRequest {
      *
      * @param context le contexte de l'application
      */
-    private ApiRequest(Context context) {
+    private ApiRequest(Context context, String url) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        auth = new AuthApiRequest(requestQueue);
-        client = new ClientApiRequest(requestQueue);
-        itineraire = new ItineraireApiRequest(requestQueue);
-        parcours = new ParcoursApiRequest(requestQueue);
-        utilisateur = new UtilisateurApiRequest(requestQueue);
+        auth = new AuthApiRequest(requestQueue, url);
+        client = new ClientApiRequest(requestQueue, url);
+        itineraire = new ItineraireApiRequest(requestQueue, url);
+        parcours = new ParcoursApiRequest(requestQueue, url);
+        utilisateur = new UtilisateurApiRequest(requestQueue, url);
         ban = new BanApiRequest(requestQueue);
     }
 
@@ -51,8 +51,8 @@ public class ApiRequest {
      * @param context le contexte de l'application
      * @return l'instance singleton de ApiRequest
      */
-    public static ApiRequest buildInstance(Context context) {
-        instance = new ApiRequest(context);
+    public static ApiRequest buildInstance(Context context, String url) {
+        instance = new ApiRequest(context, url);
         return instance;
     }
 

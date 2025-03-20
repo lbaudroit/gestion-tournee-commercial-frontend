@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="@dimen/page_margin_default"
+              android:gravity="center"
+              android:orientation="vertical">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/warning_modification_url"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textColor="@color/delete"/>
+
+    <EditText
+            android:id="@+id/editText_url"
+            style="@style/RoundedEditText"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/space_vertical"
+            android:hint="@string/url_server"
+            android:autofillHints="url"
+            android:inputType="textUri"/>
+
+    <Button
+            android:id="@+id/button_validate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/PrimaryButton"
+            android:text="@string/url_validate"
+            android:layout_marginBottom="@dimen/space_vertical"/>
+
+    <Button
+            android:id="@+id/button_return"
+            style="@style/SecondaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/return_to_connect"/>
+</LinearLayout>
