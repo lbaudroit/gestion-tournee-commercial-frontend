@@ -1,6 +1,6 @@
 # Workflow ayant pour objectif de créer un apk à partir du code créé sur GitHub et de faire des analyses du code.
 # Avant de créer l'apk les tests créés sur l'application mobile doivent fonctionner. Pour tester, 'lint' est utilisé.
-# Une fois l'apk créé, il sera partagé sur github. Pour finir, une analyse SonarQube est lancé.
+# Une fois l'apk créé, il sera partagé sur github. Pour finir, une analyse SonarQube est lancée.
 name: Android CI
 
 # Le workflow sera lancé seulement lors de push ou de pull request.
