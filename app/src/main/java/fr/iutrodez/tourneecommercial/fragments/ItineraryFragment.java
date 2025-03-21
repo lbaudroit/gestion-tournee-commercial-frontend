@@ -120,6 +120,7 @@ public class ItineraryFragment extends Fragment {
             if (itineraryListAdapter.isEmpty()) {
                 noEntry.setVisibility(View.VISIBLE);
             }
+            isLoading = false;
             status.hide();
         }, error -> status.error(R.string.fetch_itinerary_error));
     }
@@ -239,7 +240,6 @@ public class ItineraryFragment extends Fragment {
                 if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < totalPages && totalItemCount > 0) {
                     isLoading = true;
                     fetchItinerariesNextpage();
-                    isLoading = false;
                 }
             }
         });

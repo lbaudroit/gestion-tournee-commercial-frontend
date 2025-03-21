@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.android.volley.NetworkResponse;
 import fr.iutrodez.tourneecommercial.model.dto.JwtToken;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
@@ -88,7 +89,8 @@ public class LoginActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }, error -> {
-                if (error.networkResponse.statusCode == 403) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null && networkResponse.statusCode == 403) {
                     Toast.makeText(LoginActivity.this, R.string.invalid_login_params_error, Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(LoginActivity.this, R.string.invalid_url_config, Toast.LENGTH_LONG).show();

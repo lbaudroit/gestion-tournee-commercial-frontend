@@ -111,7 +111,6 @@ public class HistoryFragment extends Fragment {
                 if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < totalPages && totalItemCount > 0) {
                     isLoading = true;
                     fetchParcoursofNextPage();
-                    isLoading = false;
                 }
             }
         });
@@ -192,6 +191,7 @@ public class HistoryFragment extends Fragment {
                 noEntry.setVisibility(View.VISIBLE);
             }
             currentPage++;
+            isLoading = false;
             status.hide();
         }, error -> status.error(R.string.fetch_itinerary_error));
     }

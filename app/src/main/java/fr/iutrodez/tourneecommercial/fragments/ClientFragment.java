@@ -89,7 +89,6 @@ public class ClientFragment extends Fragment {
                 if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < numberOfPages && totalItemCount > 0) {
                     isLoading = true;
                     fetchClientsPage();
-                    isLoading = false;
                 }
             }
         });
@@ -188,6 +187,7 @@ public class ClientFragment extends Fragment {
                 noEntry.setVisibility(View.VISIBLE);
             }
             currentPage++;
+            isLoading = false;
             status.hide();
         }, error -> status.error(R.string.fetch_client_error));
         isLoading = false;
