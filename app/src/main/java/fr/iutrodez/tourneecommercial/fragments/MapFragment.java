@@ -447,10 +447,10 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         companyAddress.setText(parcours.getCurrentAddress());
         companyName.setText(parcours.getCurrentClientName());
         companyType.setText(getString(R.string.type, parcours.getCurrentType()));
-        if (parcours.getCurrentType().equals("Client")) {
+        if (parcours.isCurrentCLientEffectif()) {
             end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
         } else {
-            end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_red, null));
+            end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_orange, null));
         }
         end.setPosition(destinationPoint);
         end.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);

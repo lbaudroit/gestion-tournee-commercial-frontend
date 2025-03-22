@@ -95,6 +95,15 @@ public class Parcours implements java.io.Serializable {
     }
 
     /**
+     * Récupère le type du client actuel.
+     *
+     * @return String du type du client actuel.
+     */
+    public boolean isCurrentCLientEffectif() {
+        return clients.get(currentClientIndex).isClientEffectif();
+    }
+
+    /**
      * Récupère le numéro de téléphone du client actuel.
      *
      * @return Le numéro de téléphone du client actuel.
