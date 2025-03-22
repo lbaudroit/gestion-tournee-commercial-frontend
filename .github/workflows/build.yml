@@ -1,5 +1,9 @@
+# Workflow ayant pour objectif de créer un apk à partir du code créé sur GitHub et de faire des analyses du code.
+# Avant de créer l'apk les tests créés sur l'application mobile doivent fonctionner. Pour tester, 'lint' est utilisé.
+# Une fois l'apk créé, il sera partagé sur github. Pour finir, une analyse SonarQube est lancée.
 name: Android CI
 
+# Le workflow sera lancé seulement lors de push ou de pull request.
 on:
   push:
     branches:
@@ -7,6 +11,7 @@ on:
       - develop
       - actions
       - test/deploiement
+      - doc/githubActions
   pull_request:
     branches:
       - main
@@ -21,25 +26,30 @@ on:
         required: true
         default: "main"
 jobs:
+  # Job qui s'occupe de la construction de l'apk, de son upload et de l'analyse.
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # Clone le dépôt sur le runner.
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Important pour SonarQube
 
+    # Installe et configure la version 17 de java de la distribution 'temurin' sur le runner.
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: 17
         distribution: 'temurin'
 
+    # Donne les permissions d'exécution du fichier gradlew. Cela permettra de lancer des commandes gradle.
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-      
+    # Cache les fichiers pour l'exécution de sonarQube afin de rendre le workflow plus rapide 
+    # et d'éviter de télécharger plusieurs fois les fichiers.
     - name: Cache SonarQube packages
       uses: actions/cache@v4
       with:
@@ -47,6 +57,7 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
 
+    # Cache les fichiers pour l'éxécution de gradle.
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
@@ -54,24 +65,31 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
 
+    # Met à jour la version de gradle dans le fichier gradlew.
     - name: Set Gradle version
       run: ./gradlew wrapper --gradle-version=8.5
 
+    # Lance l'analyse de code avec lint.
     - name: Run Lint
       run: ./gradlew lint
 
+    # Lance les tests. 
     - name: Run Unit Tests
       run: ./gradlew test
 
+    # Construit l'apk à partir des fichiers.
+    # L'apk sera placé dans le dossier : 'app/build/outputs/apk/debug/app-debug.apk'.
     - name: Build APK
       run: ./gradlew assembleDebug
 
+    # Partage l'apk sur GitHub en le nommant 'app-debug.apk'.
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug.apk
         path: app/build/outputs/apk/debug/app-debug.apk
 
+    # Lance l'analyse de sonarQube.
     - name: Run SonarQube Analysis
       uses: SonarSource/sonarqube-scan-action@v4.2.1
       env:

@@ -6,21 +6,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
+import fr.iutrodez.tourneecommercial.model.Itineraire;
+import fr.iutrodez.tourneecommercial.model.Parcours;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ItineraryListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.helper.SavedParcoursHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,20 +28,21 @@ import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilit
 
 /**
  * Fragment pour afficher et gérer la liste des itinéraires.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ItineraryFragment extends Fragment {
+    public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
+    private final List<Itineraire> itineraries = new ArrayList<>();
+    public MainActivity parent;
     private ItineraryListAdapter itineraryListAdapter;
     private Button add;
-
-    public MainActivity parent;
+    private TextView noEntry;
     private ListView list;
-
     private FullscreenFetchStatusDisplay status;
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalPages = 0;
-    private final List<Itineraire> itineraries = new ArrayList<>();
-    public static final ApiRequest API_REQUEST = ApiRequest.getInstance();
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -59,6 +60,7 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_itinerary_fragment, container, false);
         list = frag.findViewById(R.id.listView_itinerary);
+        noEntry = frag.findViewById(R.id.no_entries_text);
         add = frag.findViewById(R.id.button_add);
 
         status = frag.findViewById(R.id.fetchStatus_status);
@@ -72,6 +74,14 @@ public class ItineraryFragment extends Fragment {
         return frag;
     }
 
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
+     *
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    private void setContentVisibility(int visibility) {
+        setVisibilityFor(visibility, add, list);
+    }
 
     /**
      * Gère le clic sur le bouton d'ajout d'un nouvel itinéraire.
@@ -83,11 +93,11 @@ public class ItineraryFragment extends Fragment {
     }
 
     /**
+     * /**
      * Récupère le nombre de pages d'itinéraires depuis l'API.
      */
     private void fetchNumberOfItinerarypages() {
         status.loading();
-
 
         API_REQUEST.itineraire.getNumberOfPages(requireContext(),
                 response -> {
@@ -107,7 +117,10 @@ public class ItineraryFragment extends Fragment {
             itineraries.addAll(response);
             itineraryListAdapter.notifyDataSetChanged();
             currentPage++;
-
+            if (itineraryListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
+            isLoading = false;
             status.hide();
         }, error -> status.error(R.string.fetch_itinerary_error));
     }
@@ -137,33 +150,45 @@ public class ItineraryFragment extends Fragment {
         API_REQUEST.itineraire.delete(parent, itinerary.getId(), response -> {
             itineraries.remove(itinerary);
             itineraryListAdapter.notifyDataSetChanged();
+            if (itineraryListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             Toast.makeText(getContext(), R.string.itinerary_deleted_success, Toast.LENGTH_SHORT).show();
         }, error -> Toast.makeText(getContext(), R.string.itinerary_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Gère le clic sur un élément de la liste des itinéraires.
+     *
+     * @param position la position de l'itinéraire cliqué dans la liste
+     */
     private void onclickList(int position) {
         Itineraire itineraire = itineraries.get(position); // Récupérer l'itinéraire cliqué
-        if (parent.isMapUsed()) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(getString(R.string.launch_route))
-                    .setMessage(getString(R.string.unable_to_launch_route))
-                    .setNegativeButton(R.string.ok, (dialog, which) -> dialog.dismiss())
-                    .show();
-
-        } else {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(getString(R.string.launch_route))
-                    .setMessage(getString(R.string.confirm_add_route, itineraire.getNom()))
-                    .setPositiveButton(R.string.yes, (dialog, which) -> itineraryToMap(itineraire)) // Passer l'itinéraire
-                    .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
-                    .show();
-        }
-
+        SavedParcoursHelper savedParcoursHelper = new SavedParcoursHelper(requireContext());
+        File file = savedParcoursHelper.getFileForLocalSave();
+        boolean fileExists = file != null && file.exists();
+        new AlertDialog.Builder(getContext())
+                .setTitle(getString(R.string.launch_route))
+                .setMessage(getString(R.string.confirm_add_route, itineraire.getNom()) + (fileExists ? getString(R.string.confirm_start_route_file_exists) : ""))
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    if (fileExists) {
+                        Parcours mapData = savedParcoursHelper.deserializeSavedParcours();
+                        mapData.registerAndSaveItineraire(parent);
+                        savedParcoursHelper.deleteSavedParcours();
+                        parent.clearCache(MainActivity.MAP_FRAGMENT);
+                    }
+                    itineraryToMap(itineraire);
+                })
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss()).show();
     }
 
 
+    /**
+     * Navigue vers la carte avec les détails de l'itinéraire spécifié.
+     *
+     * @param itineraire l'itinéraire à afficher sur la carte
+     */
     private void itineraryToMap(Itineraire itineraire) {
-        parent.markMapAs(true);
         Bundle bundle = new Bundle();
 
         bundle.putLong("id", itineraire.getId()); // Correction du type (getId() est un long)
@@ -181,7 +206,6 @@ public class ItineraryFragment extends Fragment {
     private void onClickModify(Itineraire itinerary, int position) {
         Bundle bundle = new Bundle();
         bundle.putLong("idItineraire", itinerary.getId());
-        System.out.println("Navigating to FragmentCreationItineraire with id: " + itinerary.getId());
 
         parent.navigateToFragment(MainActivity.ITINERARY_CREATION_FRAGMENT, false, bundle);
     }
@@ -216,18 +240,8 @@ public class ItineraryFragment extends Fragment {
                 if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < totalPages && totalItemCount > 0) {
                     isLoading = true;
                     fetchItinerariesNextpage();
-                    isLoading = false;
                 }
             }
         });
-    }
-
-    /**
-     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
-     *
-     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
-     */
-    public void setContentVisibility(int visibility) {
-        setVisibilityFor(visibility, add, list);
     }
 }

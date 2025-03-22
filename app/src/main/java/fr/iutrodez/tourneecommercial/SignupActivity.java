@@ -1,7 +1,5 @@
 package fr.iutrodez.tourneecommercial;
 
-import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,7 +13,7 @@ import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.model.Adresse;
 import fr.iutrodez.tourneecommercial.utils.adapter.AddressAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 
@@ -24,6 +22,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static fr.iutrodez.tourneecommercial.utils.api.ApiRequest.hasInternetCapability;
+
+/**
+ * Activité de création de compte
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class SignupActivity extends AppCompatActivity {
 
     private final static ApiRequest API_REQUEST = ApiRequest.getInstance();
@@ -64,12 +69,21 @@ public class SignupActivity extends AppCompatActivity {
         setupAddress();
     }
 
+    /**
+     * Configure l'écouteur pour le champ d'adresse.
+     */
     private void setupAddress() {
         address.setOnClickListener(this::onClickAddress);
     }
 
+    /**
+     * Méthode appelée lors du clic sur le bouton d'inscription.
+     * Vérifie la connexion internet et les champs, puis envoie la requête d'inscription.
+     *
+     * @param view La vue qui a été cliquée.
+     */
     private void onClickSignup(View view) {
-        if (!hasInternetCapability(this)) {
+        if (hasInternetCapability(this)) {
             Toast.makeText(this, R.string.no_internet_error, Toast.LENGTH_LONG).show();
         } else if (checkFields()) {
             String name = this.name.getText().toString();
@@ -92,10 +106,21 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Méthode appelée lors du clic sur le bouton de connexion.
+     * Lance l'activité de connexion.
+     *
+     * @param view La vue qui a été cliquée.
+     */
     private void onClickLogin(View view) {
         startActivity(new Intent(this, LoginActivity.class));
     }
 
+    /**
+     * Vérifie les champs du formulaire d'inscription.
+     *
+     * @return true si tous les champs sont valides, false sinon.
+     */
     private boolean checkFields() {
         String nom = this.name.getText().toString();
         String prenom = this.firstname.getText().toString();
@@ -111,6 +136,11 @@ public class SignupActivity extends AppCompatActivity {
                 checkPasswordConfirmation(password, passwordConfirmation);
     }
 
+    /**
+     * Vérifie si une adresse a été sélectionnée.
+     *
+     * @return true si une adresse est sélectionnée, false sinon.
+     */
     private boolean checkAddress() {
         if (selectedAddress == null) {
             address.setError(getString(R.string.empty_field_error));
@@ -121,6 +151,12 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Vérifie si le champ nom est valide.
+     *
+     * @param nom Le nom à vérifier.
+     * @return true si le nom est valide, false sinon.
+     */
     private boolean checkName(String nom) {
         if (nom.trim().isEmpty()) {
             this.name.setError(getString(R.string.empty_field_error));
@@ -129,6 +165,12 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Vérifie si le champ prénom est valide.
+     *
+     * @param firstname Le prénom à vérifier.
+     * @return true si le prénom est valide, false sinon.
+     */
     private boolean checkFirstname(String firstname) {
         if (firstname.trim().isEmpty()) {
             this.firstname.setError(getString(R.string.empty_field_error));
@@ -137,6 +179,12 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Vérifie si le champ email est valide.
+     *
+     * @param email L'email à vérifier.
+     * @return true si l'email est valide, false sinon.
+     */
     private boolean checkEmail(String email) {
         if (email.trim().isEmpty()) {
             this.email.setError(getString(R.string.empty_field_error));
@@ -149,6 +197,12 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Vérifie si le champ mot de passe est valide.
+     *
+     * @param password Le mot de passe à vérifier.
+     * @return true si le mot de passe est valide, false sinon.
+     */
     private boolean checkPassword(String password) {
         if (password.trim().isEmpty()) {
             this.password.setError(getString(R.string.empty_field_error));
@@ -165,6 +219,13 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Vérifie si le champ de confirmation du mot de passe est valide.
+     *
+     * @param password             Le mot de passe.
+     * @param passwordConfirmation La confirmation du mot de passe.
+     * @return true si la confirmation du mot de passe est valide, false sinon.
+     */
     private boolean checkPasswordConfirmation(String password, String passwordConfirmation) {
         if (passwordConfirmation.trim().isEmpty()) {
             this.passwordConfirmation.setError(getString(R.string.empty_field_error));
@@ -177,6 +238,12 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Méthode appelée lors du clic sur le champ d'adresse.
+     * Affiche un dialog pour rechercher et sélectionner une adresse.
+     *
+     * @param v La vue qui a été cliquée.
+     */
     private void onClickAddress(View v) {
         // Préparer le dialog
         dialog = new Dialog(SignupActivity.this);

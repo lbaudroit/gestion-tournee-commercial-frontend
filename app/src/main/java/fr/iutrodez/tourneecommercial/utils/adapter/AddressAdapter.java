@@ -8,14 +8,26 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
+import fr.iutrodez.tourneecommercial.model.Adresse;
 
 import java.util.List;
 
+/**
+ * Adapteur pour les adresses.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class AddressAdapter extends ArrayAdapter<Adresse> {
     private final int viewIdentifier;
     private final LayoutInflater inflater;
 
+    /**
+     * Constructeur de l'AddressAdapter.
+     *
+     * @param context  Le contexte de l'application.
+     * @param resource L'identifiant de la vue à utiliser pour chaque élément.
+     * @param objects  La liste des objets Adresse à afficher.
+     */
     public AddressAdapter(@NonNull Context context,
                           int resource,
                           @NonNull List<Adresse> objects) {

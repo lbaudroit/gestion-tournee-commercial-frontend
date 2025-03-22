@@ -3,42 +3,60 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:layout_margin="@dimen/page_margin_default"
-              android:gravity="center"
               android:orientation="vertical">
 
-    <EditText
-            android:id="@+id/editText_email"
-            style="@style/RoundedEditText"
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/space_vertical"
-            android:hint="@string/email"
-            android:autofillHints="emailAddress"
-            android:inputType="textEmailAddress"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <EditText
-            android:id="@+id/editText_password"
-            style="@style/RoundedEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/space_vertical"
-            android:hint="@string/password"
-            android:autofillHints="password"
-            android:inputType="textPassword"/>
+        <EditText
+                android:id="@+id/editText_email"
+                style="@style/RoundedEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/space_vertical"
+                android:hint="@string/email"
+                android:autofillHints="emailAddress"
+                android:inputType="textEmailAddress"/>
+
+        <EditText
+                android:id="@+id/editText_password"
+                style="@style/RoundedEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/space_vertical"
+                android:hint="@string/password"
+                android:autofillHints="password"
+                android:inputType="textPassword"/>
+
+        <Button
+                android:id="@+id/button_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/PrimaryButton"
+                android:text="@string/login"
+                android:layout_marginBottom="@dimen/space_vertical"/>
+
+        <Button
+                android:id="@+id/button_signup"
+                style="@style/SecondaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/signup"/>
+    </LinearLayout>
 
     <Button
-            android:id="@+id/button_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/PrimaryButton"
-            android:text="@string/login"
-            android:layout_marginBottom="@dimen/space_vertical"/>
-
-    <Button
-            android:id="@+id/button_signup"
-            style="@style/SecondaryButton"
-            android:layout_width="match_parent"
+            android:id="@+id/button_url"
+            style="@style/AdminButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:text="@string/signup"/>
+            android:text="@string/param_administrateur"
+            android:layout_gravity="start|bottom"/>
 </LinearLayout>

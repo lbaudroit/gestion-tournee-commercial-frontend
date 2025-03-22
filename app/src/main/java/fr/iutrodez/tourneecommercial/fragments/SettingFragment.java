@@ -22,74 +22,36 @@ import java.util.Objects;
 import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.disableView;
 import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilityFor;
 
+/**
+ * Fragment de paramétrage de l'application.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class SettingFragment extends Fragment {
 
-    /**
-     * Expression régulière pour vérifier la validité d'une adresse email.
-     */
     private static final String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
-
-    /**
-     * Instance de la classe ApiRequest pour effectuer des requêtes API.
-     */
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-
-    /**
-     * EditText pour le nom, prénom et email de l'utilisateur.
-     */
     private EditText name, firstname, email;
-
-    /**
-     * Affichage pour mettre un Progress ou un message d'erreur
-     * pendant la récupération des données.
-     */
     private FullscreenFetchStatusDisplay status;
-
-    /**
-     * Le bouton "modifier"
-     */
     private Button modify;
 
-    /**
-     * Appelé lors de la création du fragment.
-     *
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir de cet état précédent.
-     */
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    /**
-     * Appelé lorsque le fragment est attaché à son contexte.
-     *
-     * @param context Le contexte auquel le fragment est attaché.
-     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
     }
 
-    /**
-     * Crée et renvoie la vue hiérarchique associée au fragment.
-     *
-     * @param inflater           L'objet LayoutInflater qui peut être utilisé pour gonfler les vues dans le fragment.
-     * @param container          Si non-null, c'est le parent auquel la vue du fragment est attachée.
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir de cet état précédent.
-     * @return La vue pour l'interface utilisateur du fragment.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.setting_fragment, container, false);
     }
 
-    /**
-     * Appelé après que la vue du fragment a été créée.
-     *
-     * @param view               La vue renvoyée par onCreateView.
-     * @param savedInstanceState Si non-null, ce fragment est reconstruit à partir de cet état précédent.
-     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -109,6 +71,51 @@ public class SettingFragment extends Fragment {
         initializeFields();
     }
 
+    /**
+     * Méthode appelée lors du clic sur le bouton de modification.
+     *
+     * @param view La vue qui a été cliquée.
+     */
+    private void modifier(View view) {
+        Context context = requireContext();
+        SharedPreferences pref = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+        String nameValue = name.getText().toString();
+        String firstnameValue = firstname.getText().toString();
+        String emailValue = email.getText().toString();
+
+        if (checkFields()) {
+            API_REQUEST.utilisateur.updateSelf(getContext(), nameValue, firstnameValue, emailValue, response -> {
+                Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
+                requireContext().getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
+                Thread thread = new Thread(() -> API_REQUEST.auth.refreshToken(context,
+                        emailValue, pref.getString("password", "")));
+                thread.start();
+            }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
+        }
+    }
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
+     *
+     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
+     */
+    private void setContentVisibility(int visibility) {
+        ViewGroup rootLayout = Objects.requireNonNull((ViewGroup) this.getView());
+        for (int i = 0; i < rootLayout.getChildCount(); i++) {
+            View child = rootLayout.getChildAt(i);
+            if (!(child instanceof FullscreenFetchStatusDisplay)) {
+                setVisibilityFor(visibility, child);
+            }
+        }
+    }
+
+    /**
+     * Initialise les champs de saisie avec les données de l'utilisateur.
+     * Fait une requête à l'API pour obtenir les informations de l'utilisateur.
+     * En cas de succès, les champs sont remplis avec les données reçues.
+     * En cas d'erreur, affiche un message d'erreur et désactive les champs de saisie.
+     */
     private void initializeFields() {
         API_REQUEST.utilisateur.getSelf(getContext(), response -> {
             status.hide();
@@ -126,32 +133,13 @@ public class SettingFragment extends Fragment {
         });
     }
 
-    private void goToPasswordModification(View view) {
-        ((MainActivity) requireContext()).navigateToFragment(MainActivity.PASSWORD_MODIFICATION_FRAGMENT, false);
-    }
-
     /**
-     * Méthode appelée lors du clic sur le bouton de modification.
+     * Navigue vers le fragment de modification du mot de passe.
      *
      * @param view La vue qui a été cliquée.
      */
-    public void modifier(View view) {
-        Context context = requireContext();
-        SharedPreferences pref = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-
-        String nameValue = name.getText().toString();
-        String firstnameValue = firstname.getText().toString();
-        String emailValue = email.getText().toString();
-
-        if (checkFields()) {
-            API_REQUEST.utilisateur.updateSelf(getContext(), nameValue, firstnameValue, emailValue, response -> {
-                Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
-                requireContext().getSharedPreferences("user", Context.MODE_PRIVATE).edit().putString("email", email.getText().toString()).apply();
-                Thread thread = new Thread(() -> API_REQUEST.auth.refreshToken(context,
-                        emailValue, pref.getString("password", "")));
-                thread.start();
-            }, error -> Toast.makeText(getContext(), R.string.save_params_error, Toast.LENGTH_LONG).show());
-        }
+    private void goToPasswordModification(View view) {
+        ((MainActivity) requireContext()).navigateToFragment(MainActivity.PASSWORD_MODIFICATION_FRAGMENT, false);
     }
 
     /**
@@ -209,21 +197,5 @@ public class SettingFragment extends Fragment {
             return false;
         }
         return true;
-    }
-
-
-    /**
-     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
-     *
-     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
-     */
-    public void setContentVisibility(int visibility) {
-        ViewGroup rootLayout = Objects.requireNonNull((ViewGroup) this.getView());
-        for (int i = 0; i < rootLayout.getChildCount(); i++) {
-            View child = rootLayout.getChildAt(i);
-            if (!(child instanceof FullscreenFetchStatusDisplay)) {
-                setVisibilityFor(visibility, child);
-            }
-        }
     }
 }

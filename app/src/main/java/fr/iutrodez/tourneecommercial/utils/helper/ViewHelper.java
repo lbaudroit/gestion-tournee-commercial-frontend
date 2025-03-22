@@ -2,10 +2,16 @@ package fr.iutrodez.tourneecommercial.utils.helper;
 
 import android.view.View;
 
+/**
+ * Classe utilitaire pour les vues.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class ViewHelper {
 
     /**
      * Désactive une vue affichée et diminue son opacité.
+     *
      * @param view la vue à modifier
      */
     public static void disableView(View view) {
@@ -15,6 +21,7 @@ public class ViewHelper {
 
     /**
      * Active une vue affichée et rétablit son opacité à 100¨%
+     *
      * @param view la vue à modifier
      */
     public static void enableView(View view) {
@@ -24,6 +31,7 @@ public class ViewHelper {
 
     /**
      * Met à jour la visibilité d'un ensemble d'éléments de vue.
+     *
      * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
      */
     public static void setVisibilityFor(int visibility, View... views) {

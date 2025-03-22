@@ -14,13 +14,16 @@
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"
-            android:icon="@mipmap/icon"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
             android:label="Avengo"
             android:supportsRtl="true"
             android:theme="@style/Theme.TourneeCommercial"
             android:usesCleartextTraffic="true"
             tools:targetApi="33">
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+                android:name="org.apache.http.legacy"
+                android:required="false"/>
 
         <activity
                 android:name=".LoginActivity"
@@ -37,6 +40,10 @@
         </activity>
         <activity
                 android:name=".MainActivity"
+                android:exported="true">
+        </activity>
+        <activity
+                android:name=".UrlActivity"
                 android:exported="true">
         </activity>
 
