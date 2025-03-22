@@ -243,7 +243,7 @@ public class ParcoursApiRequest extends ApiRessource {
     }
 
     public void getWithId(Context context, String id, SuccessCallback<HistoryDTO> successCallback, ErrorCallback errorCallback) {
-        String url = RESSOURCE_NAME + "/?id=" + id;
+        String url = RESSOURCE_NAME + "/" + id;
         super.getWithToken(context, url, response -> {
             try {
                 successCallback.onSuccess(extractFullParcours(response));

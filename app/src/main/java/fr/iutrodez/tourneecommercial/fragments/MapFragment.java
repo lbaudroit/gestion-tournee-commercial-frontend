@@ -447,6 +447,16 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         companyAddress.setText(parcours.getCurrentAddress());
         companyName.setText(parcours.getCurrentClientName());
         companyType.setText(getString(R.string.type, parcours.getCurrentType()));
+        if (parcours.getCurrentType().equals("Client")) {
+            end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_24, null));
+        } else {
+            end.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.baseline_flag_red, null));
+        }
+        end.setPosition(destinationPoint);
+        end.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        end.setTitle(parcours.getCurrentClientName());
+        end.setSnippet(parcours.getCurrentAddress());
+        end.showInfoWindow();
         mapHelper.drawMarker(end, destinationPoint, "Point d'arrivée");
         if (startPoint != null) {
             mapHelper.adjustZoomToMarkers(startPoint, destinationPoint);
@@ -547,9 +557,7 @@ public class MapFragment extends Fragment implements NotificationHelper.Notifica
         new AlertDialog.Builder(getContext())
                 .setTitle("Arrêter le parcours")
                 .setMessage("êtes vous sur de vouloir arrêter le parcours")
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    enregistrerParcours();
-                })
+                .setPositiveButton(R.string.yes, (dialog, which) -> enregistrerParcours())
                 .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
     }

@@ -46,9 +46,9 @@ public class HistoryDTO {
         int distance = 0;
         for (int i = 0; i < chemin.size() - 1; i++) {
             distance += MapHelper.computeHaversineFormula(new Coordonnees(chemin.get(i).getLatitude(), chemin.get(i).getLongitude()),
-                    new Coordonnees(chemin.get(i + 1).getLatitude(), chemin.get(i + 1).getLongitude()));
+                    new Coordonnees(chemin.get(i + 1).getLatitude(), chemin.get(i + 1).getLongitude())) / 1000;
         }
-        this.distance = distance + " m";
+        this.distance = distance + " Km";
 
 
     }
