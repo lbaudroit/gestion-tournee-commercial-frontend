@@ -16,7 +16,7 @@ import fr.iutrodez.tourneecommercial.R;
 import fr.iutrodez.tourneecommercial.model.Coordonnees;
 import fr.iutrodez.tourneecommercial.model.Visit;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
-import fr.iutrodez.tourneecommercial.utils.adapter.ClientListCourseAdapter;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListHistoryDetailAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
 import fr.iutrodez.tourneecommercial.utils.helper.MapHelper;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class HistoryDetailFragment extends Fragment {
     public MainActivity parent;
     private MapView map;
     private FullscreenFetchStatusDisplay status;
-    private ClientListCourseAdapter listClients;
+    private ClientListHistoryDetailAdapter listClients;
     private ListView listView;
     private TextView courseName;
     private TextView courseDate;
@@ -116,7 +116,7 @@ public class HistoryDetailFragment extends Fragment {
                     courseHEnd.setText(response.getHeureFin());
                     courseDistance.setText(response.getDistance());
 
-                    listClients = new ClientListCourseAdapter(parent, R.layout.course_clients_items, response.getVisitList(),
+                    listClients = new ClientListHistoryDetailAdapter(parent, R.layout.course_clients_items, response.getVisitList(),
                             // Lors d'un clic sur un client de la liste on ajuste le zoom
                             this::zoomToClient);
 

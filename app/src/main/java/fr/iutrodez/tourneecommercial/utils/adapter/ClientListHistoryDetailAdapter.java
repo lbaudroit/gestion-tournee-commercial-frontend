@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
-public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
+public class ClientListHistoryDetailAdapter extends ArrayAdapter<Visit> {
 
 
     private final int viewIdentifier;
@@ -35,9 +35,9 @@ public class ClientListCourseAdapter extends ArrayAdapter<Visit> {
      * @param objects     La liste des objets Client à afficher.
      * @param onClickList L'action à effectuer lors du click sur un élément de la liste.
      */
-    public ClientListCourseAdapter(@NonNull Context context,
-                                   int resource,
-                                   @NonNull List<Visit> objects, OnClickList onClickList) {
+    public ClientListHistoryDetailAdapter(@NonNull Context context,
+                                          int resource,
+                                          @NonNull List<Visit> objects, OnClickList onClickList) {
         super(context, resource, objects);
         this.viewIdentifier = resource;
         this.Visit = objects;

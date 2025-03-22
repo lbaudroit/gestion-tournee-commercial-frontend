@@ -12,7 +12,7 @@ public class Visit implements java.io.Serializable {
     private final Coordonnees coordonnees;
 
     public Visit(Client client, boolean visited) {
-        this.name = client.getNomEntreprise();
+        this.name = client.getNomEntreprise() + " - " + client.getAdresse().getVille();
         this.visited = visited;
         this.coordonnees = client.getCoordonnees();
     }
