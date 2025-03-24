@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -41,19 +40,8 @@
                 style="@style/SecondaryInfoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/type_entreprise"/>
+                android:text="@string/type_entreprise_default"/>
     </LinearLayout>
-
-    <!-- Bouton flottant pour recentrer la carte -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            android:layout_gravity="bottom|end"
-            app:backgroundTint="@color/white"
-            app:elevation="@dimen/map_elevation"
-            android:contentDescription="@string/description_map"/>
 
     <!-- Zone des boutons en bas -->
     <LinearLayout
@@ -82,6 +70,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="@dimen/space_half_horizontal"
                     android:text="@string/visiter"
+                    android:alpha="0.5"
                     android:enabled="false"
                     android:backgroundTint="@color/neutral_blue"/>
 
@@ -92,6 +81,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/space_half_horizontal"
                     android:text="@string/passer"
+                    android:alpha="0.5"
                     android:enabled="false"
                     android:backgroundTint="@color/neutral_blue"/>
         </LinearLayout>
@@ -121,6 +111,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="@dimen/space_half_horizontal"
                     android:text="@string/pause"
+                    android:alpha="0.5"
                     android:enabled="false"
                     android:backgroundTint="@color/neutral_blue"/>
 
@@ -131,6 +122,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/space_half_horizontal"
                     android:text="@string/arreter"
+                    android:alpha="0.5"
                     android:enabled="false"
                     android:backgroundTint="@color/neutral_blue"/>
         </LinearLayout>

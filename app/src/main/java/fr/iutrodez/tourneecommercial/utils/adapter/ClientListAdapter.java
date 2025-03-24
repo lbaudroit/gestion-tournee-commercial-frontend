@@ -8,41 +8,36 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Adresse;
-import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.model.Adresse;
+import fr.iutrodez.tourneecommercial.model.Client;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter permettant de gérer l’affichage des clients dans une ListView
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class ClientListAdapter extends ArrayAdapter<Client> {
 
-    public interface OnClickModifyCallback {
-
-        void onClickModifyClient(Client client);
-    }
-
-    public interface OnClickSupprimerCallback {
-
-        void onClickDeleteClient(Client client);
-    }
-
-    /**
-     * Identifiant de la vue permettant d’afficher chaque item de la liste
-     */
     private final int viewIdentifier;
-
-    /**
-     * Objet utilitaire permettant de dé-sérialiser une vue
-     */
     private final LayoutInflater inflater;
-
     private final OnClickModifyCallback onClickModify;
     private final OnClickSupprimerCallback onClickDelete;
-
     private final List<Client> originalClients;
     private final List<Client> filteredClients;
     private ClientListAdapter.filteredClient filteredClient;
 
+    /**
+     * Constructeur de l'adaptateur de la liste des clients.
+     *
+     * @param context       Le contexte de l'application.
+     * @param resource      L'identifiant de la vue pour chaque élément de la liste.
+     * @param objects       La liste des objets Client à afficher.
+     * @param onClickModify Le callback pour la modification d'un client.
+     * @param onClickDelete Le callback pour la suppression d'un client.
+     */
     public ClientListAdapter(@NonNull Context context,
                              int resource,
                              @NonNull List<Client> objects,
@@ -129,8 +124,33 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
         return filteredClient;
     }
 
+    /**
+     * Interface permettant de définir une action à effectuer lorsqu’un client est modifié
+     */
+    public interface OnClickModifyCallback {
+
+        void onClickModifyClient(Client client);
+    }
+
+    /**
+     * Interface permettant de définir une action à effectuer lorsqu’un client est supprimé
+     */
+    public interface OnClickSupprimerCallback {
+
+        void onClickDeleteClient(Client client);
+    }
+
+    /**
+     * Classe interne pour filtrer les clients.
+     */
     private class filteredClient extends Filter {
 
+        /**
+         * Effectue le filtrage des clients en fonction de la contrainte.
+         *
+         * @param constraint La contrainte de filtrage.
+         * @return Les résultats du filtrage.
+         */
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
@@ -159,12 +179,15 @@ public class ClientListAdapter extends ArrayAdapter<Client> {
             return results;
         }
 
+        /**
+         * @noinspection unchecked
+         */
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             filteredClients.clear();
+            //noinspection rawtypes
             filteredClients.addAll((List) results.values);
             notifyDataSetChanged();
         }
     }
-
 }

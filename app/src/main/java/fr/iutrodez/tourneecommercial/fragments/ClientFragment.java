@@ -6,16 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import fr.iutrodez.tourneecommercial.MainActivity;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
+import fr.iutrodez.tourneecommercial.model.Client;
 import fr.iutrodez.tourneecommercial.utils.FullscreenFetchStatusDisplay;
 import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
 import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
@@ -30,25 +27,21 @@ import static fr.iutrodez.tourneecommercial.utils.helper.ViewHelper.setVisibilit
  * Fragment de la navBar pour afficher la liste des clients
  * et pour soit modifier, créer ou supprimer un client
  *
- * @author Ahmed BRIBACH
- * Leila Baudroit
- * Enzo CLUZEL
- * Benjamin NICOL
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class ClientFragment extends Fragment {
 
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-    private ListView list;
-
+    private final List<Client> clients = new ArrayList<>();
     public MainActivity parent;
+    private ListView list;
     private ClientListAdapter clientListAdapter;
+    private TextView noEntry;
     private Button add;
     private FullscreenFetchStatusDisplay status;
-
     private boolean isLoading = false;
     private int currentPage = 0;
     private int numberOfPages = 0;
-    private final List<Client> clients = new ArrayList<>();
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -65,6 +58,7 @@ public class ClientFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View frag = inflater.inflate(R.layout.list_of_client_fragment, container, false);
         list = frag.findViewById(R.id.listitem_client);
+        noEntry = frag.findViewById(R.id.no_entries_text);
 
         status = frag.findViewById(R.id.fetchStatus_status);
         status.setShowContentFunction(() -> setContentVisibility(View.VISIBLE));
@@ -95,7 +89,6 @@ public class ClientFragment extends Fragment {
                 if (!isLoading && (firstVisibleItem + visibleItemCount >= totalItemCount) && currentPage < numberOfPages && totalItemCount > 0) {
                     isLoading = true;
                     fetchClientsPage();
-                    isLoading = false;
                 }
             }
         });
@@ -103,23 +96,24 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Callback lorsque le bouton modifier de l'adaptateur est cliqué
+     * Callback lorsque le bouton modifier de l'adaptateur est cliqué.
+     * Navigue vers le fragment de création de client avec les informations du client à modifier.
      *
-     * @param client le client appuyé
+     * @param client Le client à modifier.
      */
-    public void modify(Client client) {
+    private void modify(Client client) {
         Bundle bundle = new Bundle();
         bundle.putString("id", client.get_id());
         parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false, bundle);
-
     }
 
     /**
-     * Callback lorsque le bouton supprimer de l'adaptateur est cliqué
+     * Callback lorsque le bouton supprimer de l'adaptateur est cliqué.
+     * Affiche une boîte de dialogue de confirmation pour la suppression du client.
      *
-     * @param client le client appuyé
+     * @param client Le client à supprimer.
      */
-    public void delete(Client client) {
+    private void delete(Client client) {
         String message = parent.getString(R.string.confirm_delete_client, client.getNomEntreprise());
         new AlertDialog.Builder(parent)
                 .setTitle(R.string.delete_client)
@@ -129,14 +123,45 @@ public class ClientFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Méthode appelée quand le bouton "Ajouter" est cliqué.
+     * Navigue vers le fragment de création de client.
+     *
+     * @param view La vue qui a été cliquée.
+     */
+    private void add(View view) {
+        parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
+    }
+
+    /**
+     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment.
+     *
+     * @param visibility Un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}.
+     */
+    private void setContentVisibility(int visibility) {
+        setVisibilityFor(visibility, add, list);
+    }
+
+    /**
+     * Supprime le client de la base de données et met à jour la liste des clients.
+     *
+     * @param client Le client à supprimer.
+     */
     private void deleteClient(Client client) {
         API_REQUEST.client.delete(parent, client.get_id(), response -> {
             clients.remove(client);
             clientListAdapter.notifyDataSetChanged();
+            if (clientListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             Toast.makeText(parent, R.string.client_deleted_success, Toast.LENGTH_SHORT).show();
         }, error -> Toast.makeText(parent, R.string.client_deletion_error, Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Récupère le nombre total de pages de clients depuis l'API.
+     * Met à jour l'état de chargement et affiche une erreur en cas d'échec.
+     */
     private void fetchNumberOfClients() {
         status.loading();
 
@@ -148,36 +173,23 @@ public class ClientFragment extends Fragment {
                 error -> status.error(R.string.fetch_clients_count_error));
     }
 
+    /**
+     * Récupère une page de clients depuis l'API et met à jour la liste des clients.
+     * Met à jour l'état de chargement et affiche une erreur en cas d'échec.
+     */
     private void fetchClientsPage() {
         status.loading();
-
         isLoading = true;
         API_REQUEST.client.getPage(parent, currentPage, clients -> {
             this.clients.addAll(clients);
             clientListAdapter.notifyDataSetChanged();
+            if (clientListAdapter.isEmpty()) {
+                noEntry.setVisibility(View.VISIBLE);
+            }
             currentPage++;
-
+            isLoading = false;
             status.hide();
         }, error -> status.error(R.string.fetch_client_error));
         isLoading = false;
-    }
-
-    /**
-     * Méthode appelée quand le bouton "Ajouter" est cliqué.
-     * Navigue vers le fragment de création de client.
-     *
-     * @param view La vue qui a été cliquée.
-     */
-    public void add(View view) {
-        parent.navigateToFragment(MainActivity.CLIENT_CREATION_FRAGMENT, false);
-    }
-
-    /**
-     * Met à jour la visibilité de l'ensemble des éléments de contenu du fragment
-     *
-     * @param visibility un entier parmi {@code View.GONE}, {@code View.VISIBLE}, ou {@code View.INVISIBLE}
-     */
-    public void setContentVisibility(int visibility) {
-        setVisibilityFor(visibility, add, list);
     }
 }

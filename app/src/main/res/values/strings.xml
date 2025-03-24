@@ -58,7 +58,7 @@
     <string name="status">Statut</string>
     <string name="prospect">Prospect</string>
     <string name="client">Client</string>
-    <string name="fetching_params_error">Nous n\'avons pas pû récupéré vos informations</string>
+    <string name="fetching_params_error">Nous n\'avons pas pû récupérer vos informations</string>
     <string name="params_update_success">Mise à jour de l\'utilisateur réussie</string>
     <string name="params_update_error">Mise à jour impossible</string>
     <string name="confirm_delete_client">
@@ -71,7 +71,7 @@
     <!-- Action Bar -->
     <string name="create_route">Création d\'un itinéraire</string>
     <string name="search_company">Recherche une entreprise</string>
-    <string name="select_client">Séléctionner un client</string>
+    <string name="select_client">Sélectionner un client</string>
     <string name="search">Rechercher…</string>
 
     <string name="delete_client">Suppression du client</string>
@@ -93,8 +93,10 @@
     <string name="fetch_client_error">Erreur lors de la récupération des clients</string>
     <string name="generate_itinerary_error">Erreur : impossible de générer l\'itinéraire</string>
     <string name="create_itinerary_error">Erreur : impossible de créer l\'itinéraire</string>
-    <string name="fetch_itinerary_error">Erreur lors de la récupérations des itinéraires</string>
+    <string name="fetch_itinerary_error">Erreur lors de la récupération des itinéraires</string>
     <string name="fetch_clients_error">Erreur : impossible de récupérer les clients disponibles</string>
+    <string name="fetch_course_error">Erreur : impossible de récupérer le parcours</string>
+
 
     <!-- Toast Success Messages -->
     <string name="add_client">Ajout d\'un client</string>
@@ -102,13 +104,15 @@
     <string name="update_itinerary_success">Itinéraire modifié avec succès</string>
     <string name="sign_up_success">Inscription réussie</string>
     <string name="create_client_success">Client créé avec succès</string>
-    <string name="update_client_success">Client modifiée avec succès</string>
+    <string name="update_client_success">Client modifié avec succès</string>
 
-    <!-- Alert Dialog Builder -->
+    <!-- Quit App Dialog -->
     <string name="quit_app">Quitter l\'application</string>
     <string name="confirm_quit_app">Voulez-vous vraiment quitter l\'application ?</string>
+
+    <!-- Settings -->
     <string name="save_params_error">Erreur lors de la sauvegarde des paramètres</string>
-    <string name="no_itinerary">Vous n\'avez sélectionnez aucun itinéraire</string>
+    <string name="no_itinerary">Vous n\'avez sélectionné aucun itinéraire</string>
     <string name="clients_search_title">Ajout d\'un client</string>
     <string name="create_client_error">Impossible de créer le client</string>
     <string name="confirm_add_route">Voulez-vous parcourir cet itinéraire : %s ?</string>
@@ -122,13 +126,16 @@
     <string name="end_point">Position client</string>
 
     <!-- Carte -->
-    <string name="destination_done">Destination atteinte </string>
-    <!-- -->
-    <string name="itinerary_done">Itinéraire finit !</string>
+    <string name="destination_done">Destination atteinte</string>
+    <string name="itinerary_done">Itinéraire terminé !</string>
     <string name="message_destination">Merci d\'avoir utilisé notre service !</string>
+
+    <string name="destination_reached">Vous êtes arrivé !</string>
 
     <string name="nom_entreprise">Nom de l\'entreprise</string>
     <string name="adresse_entreprise">Adresse de l\'entreprise</string>
+    <string name="type">Type : %s</string>
+    <string name="type_entreprise_default">Type: type</string>
 
     <string name="description_map">Carte représentant la position actuelle et la position du prochain client à visiter.</string>
 
@@ -137,7 +144,7 @@
     <string name="centrer">Centrer</string>
     <string name="pause">Mettre en pause</string>
     <string name="arreter">Arrêter</string>
-    <string name="route_finished">Parcours Terminée</string>
+    <string name="route_finished">Parcours terminé</string>
 
     <!-- Connectivity errors -->
     <string name="no_internet_error">Impossible de se connecter à Internet. Veuillez vérifier que vous avez votre WiFi ou vos données mobiles activées.</string>
@@ -148,14 +155,42 @@
     <string name="new_password">Nouveau mot de passe</string>
     <string name="new_password_confirmation">Confirmation du nouveau mot de passe</string>
     <string name="modify_password_error">Impossible de changer le mot de passe</string>
-    <string name="destination_reached">Vous êtes arrivé !</string>
+
+    <!-- Notifications -->
     <string name="prospect_nearby">Prospect(s) à proximité :</string>
-    <string name="prospect_nearby_message">Ce(s) prospect(s) sont à proximiter ::\n%s</string>
-    <string name="prospect_nearby_sub_message">\n%s\n%s\n%s\n----------</string>
-    <string name="client_notification_message">Vous êtes à moins de 200 mètres du client :\n%s\nnuméro de téléphone: %s</string>
+    <string name="prospect_nearby_message">Ce(s) prospect(s) sont à proximité :\n%s</string>
+    <string name="prospect_nearby_sub_message" formatted="false">\n%s\n%s\n%s\n----------</string>
+    <string name="client_notification_message" formatted="false">Vous êtes à moins de 200 mètres du client :\n%s\nNuméro de téléphone: %s</string>
     <string name="time_remaining">Fermeture dans %d secondes.</string>
     <string name="ok">ok\n</string>
+
+    <!-- Launching route from itinerary -->
     <string name="unable_to_launch_route">Un itinéraire est déjà en cours, veuillez le finir avant d\'en lancer un nouveau.</string>
-    <string name="type">Type : %s</string>
-    <string name="type_entreprise">type: type</string>
+    <string name="confirm_start_route_file_exists">ATTENTION : Un parcours est déjà en cours, si vous acceptez de lancer cette itinéraire alors l\'ancien parcours sera terminé et sauvegardé en l\'état.</string>
+    <string name="resumeItinerary">Continuer le trajet</string>
+
+    <!-- Finished itinerary -->
+    <string name="title_visits_isClient">Visité ?</string>
+    <string name="title_visits_name">Nom du client</string>
+
+    <!-- History -->
+    <string name="confirm_delete_parcours">
+        Êtes-vous sûr de vouloir supprimer le parcours \"%s\" ?
+    </string>
+    <string name="parcours_delete_success">Le parcours a bien été supprimé</string>
+    <string name="parcours_deletion_error">Le parcours n\'a pas pû être supprimé</string>
+    <string name="delete_parcours">Suppression du parcours</string>
+    <string name="no_entry">Il n\'y a actuellement aucune entrée</string>
+
+    <!-- URL -->
+    <string name="url_validate">Valider cet URL</string>
+    <string name="return_to_connect">Retourner à la page de connexion</string>
+    <string name="url_server">URL du serveur</string>
+    <string name="param_administrateur">Paramètres administrateur</string>
+    <string name="invalid_url_config">Le serveur est inaccessible ou l\'URL est incorrecte.</string>
+    <string name="invalid_url_error">L\'URL n\'est pas valide</string>
+    <string name="invalid_url_error_header">L\'URL doit commencer par http:// ou https://</string>
+    <string name="invalid_url_error_trailer">L\'URL doit se terminer par un slash</string>
+    <string name="warning_modification_url">ATTENTION : Ceci modifie l\'adresse à laquelle le serveur est situé. Ne modifiez pas si vous n\'êtes pas sûr de ce que vous faites !</string>
+
 </resources>

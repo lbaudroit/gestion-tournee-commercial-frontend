@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-
 import fr.iutrodez.tourneecommercial.R;
 
 /**
@@ -19,48 +17,61 @@ import fr.iutrodez.tourneecommercial.R;
  * - loading : affiche une barre de chargement
  * - error : affiche un message d'erreur (nécessite de fournir un message d'erreur)
  *
- * @author Benjamin NICOL
- * @author Leïla BAUDROIT
- * @author Enzo CLUZEL
- * @author Ahmed BRIBACH
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
  */
 public class FullscreenFetchStatusDisplay extends LinearLayout {
     private ProgressBar progressBar;
-    private TextView error;
+    private TextView errorTV;
     private Runnable hideContentFunction;
     private Runnable showContentFunction;
+
+    /**
+     * Constructeur pour initialiser le composant avec un contexte.
+     *
+     * @param context le contexte de l'application
+     */
     public FullscreenFetchStatusDisplay(Context context) {
         super(context);
     }
 
+    /**
+     * Constructeur pour initialiser le composant avec un contexte et des attributs.
+     *
+     * @param context le contexte de l'application
+     * @param attrs   les attributs de l'interface utilisateur
+     */
     public FullscreenFetchStatusDisplay(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
+    /**
+     * Constructeur pour initialiser le composant avec un contexte, des attributs et un style par défaut.
+     *
+     * @param context      le contexte de l'application
+     * @param attrs        les attributs de l'interface utilisateur
+     * @param defStyleAttr l'attribut de style par défaut
+     */
     public FullscreenFetchStatusDisplay(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    public FullscreenFetchStatusDisplay(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
 
     /**
      * Initialise le composant à l'aide du Layout XML associé.
      * Récupère ainsi les composants ProgressBar et TextView
+     *
      * @param context le contexte d'inflation du Layout
      */
-    public void init(Context context) {
+    private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_fetch_status, this, true);
         progressBar = findViewById(R.id.progressBar_loading);
-        error = findViewById(R.id.textView_error);
+        errorTV = findViewById(R.id.textView_error);
     }
 
     /**
      * Modifie la fonction appelée pour cacher le reste du contenu de la page
+     *
      * @param hideContentFunction la fonction permettant de cacher le reste du contenu de la page
      */
     public void setHideContentFunction(Runnable hideContentFunction) {
@@ -69,6 +80,7 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
 
     /**
      * Modifie la fonction appelée pour afficher le reste du contenu de la page
+     *
      * @param showContentFunction la fonction permettant d'afficher le reste du contenu de la page
      */
     public void setShowContentFunction(Runnable showContentFunction) {
@@ -81,18 +93,19 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
     public void loading() {
         hideContentFunction.run();
         progressBar.setVisibility(VISIBLE);
-        error.setVisibility(GONE);
+        errorTV.setVisibility(GONE);
     }
 
     /**
      * Affiche un message d'erreur
+     *
      * @param message Ressource du message d'erreur
      */
     public void error(int message) {
         hideContentFunction.run();
         progressBar.setVisibility(GONE);
-        error.setText(getContext().getString(message));
-        error.setVisibility(VISIBLE);
+        errorTV.setText(getContext().getString(message));
+        errorTV.setVisibility(VISIBLE);
     }
 
     /**
@@ -102,6 +115,6 @@ public class FullscreenFetchStatusDisplay extends LinearLayout {
     public void hide() {
         showContentFunction.run();
         progressBar.setVisibility(GONE);
-        error.setVisibility(GONE);
+        errorTV.setVisibility(GONE);
     }
 }

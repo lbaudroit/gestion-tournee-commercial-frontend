@@ -10,27 +10,34 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Itineraire;
+import fr.iutrodez.tourneecommercial.model.Itineraire;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
+/**
+ * Adapteur for the list of itineraries
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class ItineraryListAdapter extends ArrayAdapter<Itineraire> {
 
-    /**
-     * Identifiant de la vue permettant d’afficher chaque item de la liste
-     */
     private final int viewIdentifier;
-
-    /**
-     * Objet utilitaire permettant de dé-sérialiser une vue
-     */
     private final LayoutInflater inflater;
 
-    BiConsumer<Itineraire, Integer> onClickButtonDelete;
+    final BiConsumer<Itineraire, Integer> onClickButtonDelete;
 
-    BiConsumer<Itineraire, Integer> onClickButtonModify;
+    final BiConsumer<Itineraire, Integer> onClickButtonModify;
 
+    /**
+     * Constructeur de l'adaptateur pour la liste des itinéraires.
+     *
+     * @param context             Le contexte de l'application.
+     * @param resource            L'identifiant de la vue de l'élément de la liste.
+     * @param objects             La liste des itinéraires à afficher.
+     * @param onClickButtonModify Action à exécuter lors du clic sur le bouton de modification.
+     * @param onClickButtonDelete Action à exécuter lors du clic sur le bouton de suppression.
+     */
     public ItineraryListAdapter(@NonNull Context context,
                                 int resource,
                                 @NonNull List<Itineraire> objects,

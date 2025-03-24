@@ -11,51 +11,46 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import fr.iutrodez.tourneecommercial.MainActivity;
+import fr.iutrodez.tourneecommercial.R;
+import fr.iutrodez.tourneecommercial.model.Client;
+import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
+import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
+import fr.iutrodez.tourneecommercial.utils.helper.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import fr.iutrodez.tourneecommercial.MainActivity;
-import fr.iutrodez.tourneecommercial.R;
-import fr.iutrodez.tourneecommercial.modeles.Client;
-import fr.iutrodez.tourneecommercial.utils.adapter.ClientListAdapter;
-import fr.iutrodez.tourneecommercial.utils.helper.ViewHelper;
-import fr.iutrodez.tourneecommercial.utils.api.ApiRequest;
-
+/**
+ * Fragment pour la création d'un itinéraire.
+ *
+ * @author Benjamin NICOL, Enzo CLUZEL, Ahmed BRIBACH, Leïla BAUDROIT
+ */
 public class ItineraryCreationFragment extends Fragment {
 
     private static final ApiRequest API_REQUEST = ApiRequest.getInstance();
-
+    //Autres variables
+    private final static int MAX_CLIENTS = 8;
+    public MainActivity parent;
     //Elements de la vue
     private EditText name;
     private TextView clientSelector;
     private Button addClientButton;
     private Button generateItineraryButton;
     private Button validateItineraryButton;
-    public MainActivity parent;
-
     //Listes
     private List<Client> itineraryClients;
     private List<Client> allClients;
-
     //Elements secondaires de la vue
     private ClientListAdapter itineraryClientsAdapter;
     private ClientListAdapter freeClientsAdapter;
     private Dialog dialog;
-
-    //Autres variables
-    private final static int MAX_CLIENTS = 8;
     private Integer distance;
     private Client selectedClient;
     private Long modifiedItineraryId = null;
@@ -109,7 +104,6 @@ public class ItineraryCreationFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             Long itineraryId = bundle.getLong("idItineraire");
-            System.out.println("Modification de l'itinéraire " + itineraryId);
             prepareForModification(itineraryId);
         }
     }
@@ -121,6 +115,9 @@ public class ItineraryCreationFragment extends Fragment {
         return inflater.inflate(R.layout.itinerary_creation_fragment, container, false);
     }
 
+    /**
+     * Récupère tous les clients disponibles via une requête API.
+     */
     private void getAllClients() {
         API_REQUEST.client.getAll(getContext(),
                 response -> allClients = response,
@@ -129,6 +126,9 @@ public class ItineraryCreationFragment extends Fragment {
                         Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Crée et gère la recherche de clients via un dialog.
+     */
     private void createClientResearch() {
         clientSelector.setOnClickListener(v -> {
             // Préparer le dialog
@@ -178,6 +178,11 @@ public class ItineraryCreationFragment extends Fragment {
         });
     }
 
+    /**
+     * Supprime un client de la liste des clients de l'itinéraire.
+     *
+     * @param client le client à supprimer
+     */
     private void deleteClientFromList(Client client) {
         itineraryClients.remove(client);
         itineraryClientsAdapter.notifyDataSetChanged();
@@ -194,12 +199,22 @@ public class ItineraryCreationFragment extends Fragment {
         ViewHelper.disableView(validateItineraryButton);
     }
 
+    /**
+     * Récupère la liste des clients disponibles pour l'ajout à l'itinéraire.
+     *
+     * @return la liste des clients disponibles
+     */
     private List<Client> getFreeClients() {
         List<Client> free = new ArrayList<>(allClients);
         free.removeAll(itineraryClients);
         return free;
     }
 
+    /**
+     * Ajoute un client sélectionné à la liste des clients de l'itinéraire.
+     *
+     * @param view la vue du bouton cliqué
+     */
     private void add(View view) {
         Toast.makeText(getContext(),
                 R.string.add_client,
@@ -224,6 +239,11 @@ public class ItineraryCreationFragment extends Fragment {
         ViewHelper.disableView(validateItineraryButton);
     }
 
+    /**
+     * Génère un itinéraire basé sur les clients ajoutés.
+     *
+     * @param view la vue du bouton cliqué
+     */
     private void generate(View view) {
         API_REQUEST.itineraire.generate(getContext(), itineraryClients,
                 response -> {
@@ -278,6 +298,11 @@ public class ItineraryCreationFragment extends Fragment {
         }
     }
 
+    /**
+     * Crée un nouvel itinéraire via une requête API.
+     *
+     * @param onExceptionCallback le callback en cas d'erreur
+     */
     private void createItinerary(Consumer<Exception> onExceptionCallback) {
 
         String itineraryName = name.getText().toString();
@@ -289,6 +314,11 @@ public class ItineraryCreationFragment extends Fragment {
         }, onExceptionCallback::accept);
     }
 
+    /**
+     * Modifie un itinéraire existant via une requête API.
+     *
+     * @param onExceptionCallback le callback en cas d'erreur
+     */
     private void modifyItinerary(Consumer<Exception> onExceptionCallback) {
         if (modifiedItineraryId != null) {
             String itineraryName = name.getText().toString();
@@ -300,7 +330,6 @@ public class ItineraryCreationFragment extends Fragment {
             }, onExceptionCallback::accept);
         }
     }
-
 
     /**
      * Prépare les champs pour une modification d'itinéraire
