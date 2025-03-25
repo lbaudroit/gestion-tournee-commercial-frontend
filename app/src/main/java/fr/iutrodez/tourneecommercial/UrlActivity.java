@@ -25,7 +25,7 @@ public class UrlActivity extends AppCompatActivity {
         setContentView(R.layout.url_activity);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.login);
         url = findViewById(R.id.editText_url);
-        url.setText(getSharedPreferences("user", MODE_PRIVATE).getString("url", "https://direct.bennybean.fr:9090/"));
+        url.setText(getSharedPreferences("user", MODE_PRIVATE).getString("url", "http://direct.bennybean.fr:9090/"));
 
         findViewById(R.id.button_validate).setOnClickListener(this::onClickValidate);
         findViewById(R.id.button_return).setOnClickListener(this::onClickReturn);
